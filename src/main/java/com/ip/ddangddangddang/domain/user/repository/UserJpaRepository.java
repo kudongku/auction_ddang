@@ -1,5 +1,11 @@
 package com.ip.ddangddangddang.domain.user.repository;
 
-public interface UserJpaRepository {
+import com.ip.ddangddangddang.domain.user.entity.User;
+import java.util.Optional;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface UserJpaRepository extends JpaRepository<User, Long> {
+
+    boolean existsByEmail(String email);
 
 }
