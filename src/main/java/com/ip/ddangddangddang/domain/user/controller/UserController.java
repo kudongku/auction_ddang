@@ -15,4 +15,13 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class UserController {
 
+    private final UserService userService;
+
+    @PostMapping("/signup")
+    public void signup(
+        @Valid @RequestBody UserSignupRequestDto requestDto
+    ) {
+        userService.signup(requestDto);
+    }
+
 }
