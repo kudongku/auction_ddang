@@ -4,11 +4,17 @@ plugins {
 	id 'io.spring.dependency-management' version '1.1.4'
 }
 
-group = 'com.ip'
+group = 'me.IP'
 version = '0.0.1-SNAPSHOT'
 
 java {
 	sourceCompatibility = '17'
+}
+
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
 }
 
 repositories {
@@ -16,8 +22,30 @@ repositories {
 }
 
 dependencies {
-	implementation 'org.springframework.boot:spring-boot-starter'
+	// JWT
+	compileOnly group: 'io.jsonwebtoken', name: 'jjwt-api', version: '0.11.5'
+	runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-impl', version: '0.11.5'
+	runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-jackson', version: '0.11.5'
+
+	// JPA
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+
+	// SECURITY
+	implementation 'org.springframework.boot:spring-boot-starter-security'
+
+	// VALIDATE
+	implementation 'org.springframework.boot:spring-boot-starter-validation'
+
+	// LOMBOK
+	compileOnly 'org.projectlombok:lombok'
+	annotationProcessor 'org.projectlombok:lombok'
+
+	// SQL
+	runtimeOnly 'com.mysql:mysql-connector-j'
+
+	// TEST
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testImplementation 'org.springframework.security:spring-security-test'
 }
 
 tasks.named('test') {
