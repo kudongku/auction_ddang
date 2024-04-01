@@ -23,4 +23,5 @@ public abstract class Timestamp {
     @Column
     @Temporal(TemporalType.TIMESTAMP)
     private LocalDateTime deletedAt;
+
 }
