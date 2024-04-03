@@ -22,6 +22,10 @@ repositories {
 }
 
 dependencies {
+    //POI
+    implementation 'org.apache.poi:poi:5.2.3'
+    implementation group: 'org.apache.poi', name: 'poi-ooxml', version: '5.2.4'
+
     //WEB
     implementation 'org.springframework.boot:spring-boot-starter-web'
 
@@ -49,7 +53,7 @@ dependencies {
     // TEST
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
-    
+
 }
 
 tasks.named('test') {
