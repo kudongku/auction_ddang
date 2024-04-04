@@ -46,7 +46,7 @@ public class TownService {
 
                 double distance = Math.sqrt(x + y);
 
-                if (distance < DEFAULT_DISTANCE && distance > 0.0) {
+                if (distance < DEFAULT_DISTANCE) {
                     idList.add(tl2.getId());
                 }
             }
