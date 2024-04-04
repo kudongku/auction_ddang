@@ -9,12 +9,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @RequiredArgsConstructor
-@Transactional
+@Transactional(readOnly = true)
 @Service
 public class AuctionService {
 
     private final AuctionRepository auctionRepository;
 
+    @Transactional
     public void createAuction(AuctionRequestDto requestDto, User user) {
         auctionRepository.save(new Auction(requestDto, user));
     }
