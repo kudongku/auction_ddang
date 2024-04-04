@@ -1,13 +1,11 @@
 package com.ip.ddangddangddang.domain.town.entity;
 
 import jakarta.persistence.Column;
-import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -26,7 +24,16 @@ public class Town {
     @Column(nullable = false)
     private String name;
 
-    @Convert(converter = StringListConverter.class)
-    private List<String> neighbor;
+    @Column(columnDefinition = "TEXT")
+    private String neighborIdList;
+
+    public Town(String name, String idList) {
+        this.name = name;
+        this.neighborIdList = idList;
+    }
 
 }
+
+//    @Column
+//    @Convert(converter = StringListConverter.class, attributeName = "neighbor")
+//    private List<String> neighbor;

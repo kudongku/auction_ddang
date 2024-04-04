@@ -1,5 +1,18 @@
 package com.ip.ddangddangddang.domain.town.repository;
 
-public class TownRepositoryImpl {
+import com.ip.ddangddangddang.domain.town.entity.Town;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Repository;
+
+@RequiredArgsConstructor
+@Repository
+public class TownRepositoryImpl implements TownRepository {
+
+    private final TownJpaRepository townJpaRepository;
+
+    @Override
+    public void save(Town town) {
+        townJpaRepository.save(town);
+    }
 
 }

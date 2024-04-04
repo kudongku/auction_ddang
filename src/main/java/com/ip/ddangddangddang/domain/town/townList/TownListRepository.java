@@ -8,10 +8,14 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class TownListRepository {
 
-    private final TownListJpaRepository townJpaRepository;
+    private final TownListJpaRepository townListJpaRepository;
 
     public void saveAll(List<TownList> townList) {
-        townJpaRepository.saveAll(townList);
+        townListJpaRepository.saveAll(townList);
+    }
+
+    public List<TownList> findAll() {
+        return townListJpaRepository.findAll().stream().toList();
     }
 
 }
