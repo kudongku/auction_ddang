@@ -1,5 +1,7 @@
 package com.ip.ddangddangddang.domain.auction.entity;
 
+import com.ip.ddangddangddang.domain.auction.dto.request.AuctionRequestDto;
+import com.ip.ddangddangddang.domain.auction.model.AuctionModel;
 import com.ip.ddangddangddang.domain.result.entity.Result;
 import com.ip.ddangddangddang.domain.user.entity.User;
 import com.ip.ddangddangddang.global.timestamp.Timestamp;
@@ -59,5 +61,28 @@ public class Auction extends Timestamp {
 
     @OneToOne(mappedBy = "auction")
     private Result result;
+
+    public AuctionModel toModel() {
+        return AuctionModel.builder()
+            .id(id)
+            .townId(townId)
+            .title(title)
+            .content(content)
+            .statusEnum(statusEnum)
+            .finishedAt(finishedAt)
+            .user(user)
+            .result(result)
+            .build();
+    }
+
+    public Auction(AuctionRequestDto requestDto, User user) {
+        //TODO 유저가 동네인증 하기 전 안됨
+        // this.townId = user.getTown().getId();
+        this.title = requestDto.getTitle();
+        this.content = requestDto.getContent();
+        this.statusEnum = StatusEnum.ON_SALE;
+        this.finishedAt = LocalDateTime.now().plusDays(1);
+        this.user = user;
+    }
 
 }

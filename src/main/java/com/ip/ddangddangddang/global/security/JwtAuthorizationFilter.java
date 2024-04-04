@@ -1,11 +1,5 @@
 package com.ip.ddangddangddang.global.security;
 
-//import com.sparta.mytodoapp.entity.UserEntity;
-//import com.sparta.mytodoapp.entity.UserRoleEnum;
-//import com.sparta.mytodoapp.jwt.JwtUtil;
-//import io.jsonwebtoken.Claims;
-//import io.jsonwebtoken.ExpiredJwtException;
-//import io.jsonwebtoken.MalformedJwtException;
 
 import com.ip.ddangddangddang.domain.user.entity.User;
 import com.ip.ddangddangddang.global.jwt.JwtUtil;
