@@ -20,4 +20,10 @@ public class AuctionService {
         auctionRepository.save(new Auction(requestDto, user));
     }
 
+    @Transactional
+    public void deleteAuction(Long auctionId, User user) {
+
+        auctionRepository.delete(auctionId, user.getId());
+    }
+
 }

@@ -6,4 +6,6 @@ public interface TownRepository {
 
     void save(Town town);
 
+    Town findById(Long townId);
+
 }

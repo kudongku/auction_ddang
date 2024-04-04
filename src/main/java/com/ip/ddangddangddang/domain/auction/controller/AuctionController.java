@@ -7,6 +7,8 @@ import com.ip.ddangddangddang.global.security.UserDetailsImpl;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,6 +27,14 @@ public class AuctionController {
         @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
         auctionService.createAuction(requestDto, userDetails.getUser());
+    }
+
+    @DeleteMapping("/{auctionId}")
+    public void deleteAuction(
+        @PathVariable Long auctionId,
+        @AuthenticationPrincipal UserDetailsImpl userDetails
+    ) {
+        auctionService.deleteAuction(auctionId, userDetails.getUser());
     }
 
 }

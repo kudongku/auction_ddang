@@ -47,10 +47,11 @@ public class User extends Timestamp {
         this.email = email;
     }
 
-    public User(String email, String nickname, String password) {
+    public User(String email, String nickname, String password, Town town) {
         this.email = email;
         this.nickname = nickname;
         this.password = password;
+        this.town = town;
     }
 
     public void updateUser(String nickname, String password) {

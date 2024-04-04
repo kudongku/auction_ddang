@@ -1,5 +1,6 @@
 package com.ip.ddangddangddang.domain.user.service;
 
+import com.ip.ddangddangddang.domain.town.service.TownService;
 import com.ip.ddangddangddang.domain.user.dto.request.UserSignupRequestDto;
 import com.ip.ddangddangddang.domain.user.dto.request.UserUpdateRequestDto;
 import com.ip.ddangddangddang.domain.user.entity.User;
@@ -16,23 +17,22 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final TownService townService;
 
     @Transactional
     public void signup(UserSignupRequestDto requestDto) {
-        // 밀비번호 일치 확인
+        // 비밀번호 일치 확인
         if (!requestDto.getPassword().equals(requestDto.getPasswordConfirm())) {
             throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
         }
         String email = requestDto.getEmail();
-        String nickname = requestDto.getNickname();
-        String password = passwordEncoder.encode(requestDto.getPassword());
-
-        //TODO 중복 닉네임 확인
         validateEmail(email);
-        //TODO 중복 이메일 확인
+        String nickname = requestDto.getNickname();
         validateNickname(nickname);
 
-        userRepository.save(new User(email, nickname, password));
+        String password = passwordEncoder.encode(requestDto.getPassword());
+
+        userRepository.save(new User(email, nickname, password, townService.getTown(1L)));
     }
 
     @Transactional
