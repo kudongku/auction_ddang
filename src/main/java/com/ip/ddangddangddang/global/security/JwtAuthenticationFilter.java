@@ -32,7 +32,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         this.jwtUtil = jwtUtil;
         this.userJpaRepository = userJpaRepository;
         this.passwordEncoder = passwordEncoder;
-        setFilterProcessesUrl("/version1/users/signin");
+        setFilterProcessesUrl("/v1/users/signin");
     }
 
     // 로그인 시도
