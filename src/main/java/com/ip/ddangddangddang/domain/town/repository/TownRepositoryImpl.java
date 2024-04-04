@@ -15,4 +15,11 @@ public class TownRepositoryImpl implements TownRepository {
         townJpaRepository.save(town);
     }
 
+    @Override
+    public Town findById(Long townId) {
+        return townJpaRepository.findById(townId).orElseThrow(
+            () -> new IllegalArgumentException("해당 동네가 없습니다.")
+        );
+    }
+
 }

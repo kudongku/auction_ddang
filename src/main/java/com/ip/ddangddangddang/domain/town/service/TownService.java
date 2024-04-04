@@ -28,6 +28,10 @@ public class TownService {
 
     private final ObjectMapper objectMapper;
 
+    public Town getTown(Long townId) {
+        return townRepository.findById(townId);
+    }
+
     public void createTown() throws JsonProcessingException {
         List<TownList> townList = townListRepository.findAll();
         List<Long> idList = new ArrayList<>();
