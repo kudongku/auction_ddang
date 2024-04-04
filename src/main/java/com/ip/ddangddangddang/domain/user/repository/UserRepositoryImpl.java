@@ -25,4 +25,16 @@ public class UserRepositoryImpl implements UserRepository {
         return userJpaRepository.existsByNickname(nickname);
     }
 
+    @Override
+    public User findById(Long id) {
+        return userJpaRepository.findById(id).orElseThrow(
+            () -> new IllegalArgumentException("회원이 존재하지 않습니다.")
+        );
+    }
+
+    @Override
+    public void delete(User user) {
+        userJpaRepository.delete(user);
+    }
+
 }
