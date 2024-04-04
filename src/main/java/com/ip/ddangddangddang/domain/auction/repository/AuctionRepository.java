@@ -6,4 +6,6 @@ public interface AuctionRepository {
 
     void save(Auction auction);
 
+    void delete(Long auctionId, Long id);
+
 }
