@@ -1,6 +1,7 @@
 package com.ip.ddangddangddang.domain.user.service;
 
 import com.ip.ddangddangddang.domain.user.dto.request.UserSignupRequestDto;
+import com.ip.ddangddangddang.domain.user.dto.request.UserUpdateRequestDto;
 import com.ip.ddangddangddang.domain.user.entity.User;
 import com.ip.ddangddangddang.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -32,6 +33,24 @@ public class UserService {
         validateNickname(nickname);
 
         userRepository.save(new User(email, nickname, password));
+    }
+
+    @Transactional
+    public void updateUser(UserUpdateRequestDto requestDto, User user) {
+        if (!requestDto.getPassword().equals(requestDto.getPasswordConfirm())) {
+            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
+        }
+        String nickname = requestDto.getNickname();
+        validateNickname(nickname);
+        String password = passwordEncoder.encode(requestDto.getPassword());
+
+        User saveUser = userRepository.findById(user.getId());
+        saveUser.updateUser(nickname, password);
+    }
+
+    @Transactional
+    public void deleteUser(User user) {
+        userRepository.delete(user);
     }
 
     private void validateEmail(String email) {
