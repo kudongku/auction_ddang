@@ -6,32 +6,40 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ip.ddangddangddang.domain.auction.dto.request.AuctionRequestDto;
 import com.ip.ddangddangddang.domain.auction.dto.response.AuctionResponseDto;
 import com.ip.ddangddangddang.domain.auction.entity.Auction;
+import com.ip.ddangddangddang.domain.auction.entity.File;
 import com.ip.ddangddangddang.domain.auction.model.AuctionModel;
 import com.ip.ddangddangddang.domain.auction.repository.AuctionRepository;
 import com.ip.ddangddangddang.domain.user.entity.User;
 import com.ip.ddangddangddang.domain.user.service.UserService;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 @Service
 public class AuctionService {
 
+    private final FileService fileService;
     private final AuctionRepository auctionRepository;
     private final UserService userService;
 
     @Transactional
-    public void createAuction(AuctionRequestDto requestDto, User u) {
+    public void createAuction(MultipartFile auctionImage, AuctionRequestDto requestDto, User u)
+        throws IOException {
+        File file = fileService.upload(auctionImage, requestDto.getObjectName());
         User user = userService.getUser(u.getId());
-        auctionRepository.save(new Auction(requestDto, user));
+        auctionRepository.save(new Auction(requestDto, user, file));
     }
 
     @Transactional
     public void deleteAuction(Long auctionId, User user) {
+        Auction auction = auctionRepository.findById(auctionId);
+        fileService.delete(auction.getFileKeyName());
         auctionRepository.delete(auctionId, user.getId());
     }
 
@@ -63,4 +71,10 @@ public class AuctionService {
         auctionRepository.findById(auctionId);
     }
 
+    @Transactional(readOnly = true)
+    public AuctionResponseDto getAuction(Long auctionId) {
+        Auction auction = auctionRepository.findById(auctionId);
+        String preSignedURL = fileService.getPresignedURL(auction.getFileKeyName());
+        return new AuctionResponseDto(auction, preSignedURL);
+    }
 }

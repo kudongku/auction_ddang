@@ -19,7 +19,8 @@ public class AuctionRepositoryImpl implements AuctionRepository {
 
     @Override
     public void delete(Long auctionId, Long id) {
-        Auction auction = findById(auctionId);
+        Auction auction = jpaRepository.findById(auctionId).orElseThrow(
+            () -> new IllegalArgumentException("게시글이 존재하지 않습니다."));
         if (!id.equals(auction.getUser().getId())) {
             throw new IllegalArgumentException("작성자가 아닙니다.");
         }
