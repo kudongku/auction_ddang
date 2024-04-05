@@ -62,6 +62,9 @@ public class Auction extends Timestamp {
     @OneToOne(mappedBy = "auction")
     private Result result;
 
+    @OneToOne
+    private File file;
+
     public AuctionModel toModel() {
         return AuctionModel.builder()
             .id(id)
@@ -75,7 +78,7 @@ public class Auction extends Timestamp {
             .build();
     }
 
-    public Auction(AuctionRequestDto requestDto, User user) {
+    public Auction(AuctionRequestDto requestDto, User user, File file) {
         //TODO 유저가 동네인증 하기 전 안됨
         // this.townId = user.getTown().getId();
         this.title = requestDto.getTitle();
@@ -83,6 +86,10 @@ public class Auction extends Timestamp {
         this.statusEnum = StatusEnum.ON_SALE;
         this.finishedAt = LocalDateTime.now().plusDays(1);
         this.user = user;
+        this.file = file;
     }
 
+    public String getFileKeyName() {
+        return this.file.getKeyName();
+    }
 }
