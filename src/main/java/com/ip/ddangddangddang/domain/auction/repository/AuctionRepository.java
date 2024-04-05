@@ -8,4 +8,5 @@ public interface AuctionRepository {
 
     void delete(Long auctionId, Long id);
 
+    Auction findById(Long auctionId);
 }

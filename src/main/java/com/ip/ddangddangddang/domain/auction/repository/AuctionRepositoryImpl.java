@@ -25,4 +25,11 @@ public class AuctionRepositoryImpl implements AuctionRepository {
         jpaRepository.delete(auction);
     }
 
+    @Override
+    public Auction findById(Long auctionId) {
+        return jpaRepository.findById(auctionId).orElseThrow(
+            () -> new NullPointerException("해당하는 옥션이 아닙니다.")
+        );
+    }
+
 }
