@@ -1,18 +1,51 @@
 package com.ip.ddangddangddang.domain.auction.dto.response;
 
 import com.ip.ddangddangddang.domain.auction.entity.Auction;
-import lombok.AllArgsConstructor;
+import com.ip.ddangddangddang.domain.auction.entity.StatusEnum;
+import com.ip.ddangddangddang.domain.auction.model.AuctionModel;
+import java.time.LocalDateTime;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.Setter;
 
+@Setter
 @Getter
-@NoArgsConstructor
-@AllArgsConstructor
 public class AuctionResponseDto {
 
-    private String preSignedURL;
+    private Long id;
 
-    public AuctionResponseDto(Auction auction, String preSignedURL) {
-        this.preSignedURL = preSignedURL;
+    private Long townId;
+
+    private String title;
+
+    private String content;
+
+    private StatusEnum statusEnum;
+
+    private LocalDateTime finishedAt;
+
+    private Long sellerId;
+
+    private String preSignedUrl;
+
+    public AuctionResponseDto(AuctionModel auctionModel) {
+        this.id = auctionModel.getId();
+        this.townId = auctionModel.getTownId();
+        this.title = auctionModel.getTitle();
+        this.content = auctionModel.getContent();
+        this.statusEnum = auctionModel.getStatusEnum();
+        this.finishedAt = auctionModel.getFinishedAt();
+        this.sellerId = auctionModel.getUser().getId();
     }
+
+    public AuctionResponseDto(Auction auction, String preSignedUrl) {
+        this.id = auction.getId();
+        this.townId = auction.getTownId();
+        this.title = auction.getTitle();
+        this.content = auction.getContent();
+        this.statusEnum = auction.getStatusEnum();
+        this.finishedAt = auction.getFinishedAt();
+        this.sellerId = auction.getUser().getId();
+        this.preSignedUrl = preSignedUrl;
+    }
+
 }

@@ -23,5 +23,4 @@ public class AuctionModel {
     private LocalDateTime finishedAt;
     private User user;
     private Result result;
-
 }

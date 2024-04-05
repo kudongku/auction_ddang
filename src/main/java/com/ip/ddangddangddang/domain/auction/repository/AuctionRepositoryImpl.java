@@ -1,6 +1,8 @@
 package com.ip.ddangddangddang.domain.auction.repository;
 
 import com.ip.ddangddangddang.domain.auction.entity.Auction;
+import com.ip.ddangddangddang.domain.auction.model.AuctionModel;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -26,10 +28,15 @@ public class AuctionRepositoryImpl implements AuctionRepository {
     }
 
     @Override
+    public List<AuctionModel> findAllByTownId(Long id) {
+        return jpaRepository.findAllByTownId(id).stream().map(Auction::toModel)
+            .toList();
+    }
+
+    @Override
     public Auction findById(Long auctionId) {
         return jpaRepository.findById(auctionId).orElseThrow(
-            () -> new NullPointerException("해당하는 옥션이 아닙니다.")
-        );
+            () -> new IllegalArgumentException("게시글이 존재하지 않습니다."));
     }
 
 }

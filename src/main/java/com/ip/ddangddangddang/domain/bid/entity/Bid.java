@@ -31,4 +31,10 @@ public class Bid extends Timestamp {
     @Column(nullable = false)
     private Long price;
 
+    public Bid(Long auctionId, Long userId, Long price) {
+        this.auctionId = auctionId;
+        this.userId = userId;
+        this.price = price;
+    }
+
 }

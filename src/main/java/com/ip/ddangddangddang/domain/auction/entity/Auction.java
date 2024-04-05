@@ -79,8 +79,7 @@ public class Auction extends Timestamp {
     }
 
     public Auction(AuctionRequestDto requestDto, User user, File file) {
-        //TODO 유저가 동네인증 하기 전 안됨
-        // this.townId = user.getTown().getId();
+        this.townId = user.getTown().getId();
         this.title = requestDto.getTitle();
         this.content = requestDto.getContent();
         this.statusEnum = StatusEnum.ON_SALE;
