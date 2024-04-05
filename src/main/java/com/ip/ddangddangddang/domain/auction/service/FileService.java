@@ -35,4 +35,7 @@ public class FileService {
         return extension + uuid;
     }
 
+    public String getPresignedURL(String fileKeyName) {
+        return s3Service.getPresignedURL(fileKeyName);
+    }
 }
