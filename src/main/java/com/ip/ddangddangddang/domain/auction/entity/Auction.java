@@ -1,10 +1,8 @@
 package com.ip.ddangddangddang.domain.auction.entity;
 
 import com.ip.ddangddangddang.domain.auction.dto.request.AuctionRequestDto;
-import com.ip.ddangddangddang.domain.auction.model.AuctionModel;
 import com.ip.ddangddangddang.domain.result.entity.Result;
 import com.ip.ddangddangddang.domain.user.entity.User;
-import com.ip.ddangddangddang.global.timestamp.Timestamp;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -65,19 +63,6 @@ public class Auction extends Timestamp {
     @OneToOne
     private File file;
 
-    public AuctionModel toModel() {
-        return AuctionModel.builder()
-            .id(id)
-            .townId(townId)
-            .title(title)
-            .content(content)
-            .statusEnum(statusEnum)
-            .finishedAt(finishedAt)
-            .user(user)
-            .result(result)
-            .build();
-    }
-
     public Auction(AuctionRequestDto requestDto, User user, File file) {
         this.townId = user.getTown().getId();
         this.title = requestDto.getTitle();
@@ -91,4 +76,5 @@ public class Auction extends Timestamp {
     public String getFileKeyName() {
         return this.file.getKeyName();
     }
+
 }
