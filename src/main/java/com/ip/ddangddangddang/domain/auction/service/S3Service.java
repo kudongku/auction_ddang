@@ -29,11 +29,10 @@ public class S3Service {
         ObjectMetadata objMeta = new ObjectMetadata();
         objMeta.setContentType(multipartFile.getContentType());
         objMeta.setContentLength(multipartFile.getInputStream().available());
-        // TODO: 4/5/24 메타데이터에 사진의 용량 설정
 
-        try{
+        try {
             amazonS3.putObject(bucket, keyName, multipartFile.getInputStream(), objMeta);
-        }catch (AmazonS3Exception e){
+        } catch (AmazonS3Exception e) {
             throw new NotValidBucketException("존재하지 않는 버킷입니다.");
         }
 
@@ -44,8 +43,11 @@ public class S3Service {
     }
 
     public void delete(String keyName) {
-        keyName = "noname";
-        amazonS3.deleteObject(bucket, keyName);
+        try {
+            amazonS3.deleteObject(bucket, keyName);
+        } catch (AmazonS3Exception e) {
+            throw new NotValidBucketException("존재하지 않는 버킷입니다.");
+        }
         // TODO: 4/5/24 삭제하려고 했는데 없을 경우, 예외처리
     }
 
@@ -55,8 +57,8 @@ public class S3Service {
 
         GeneratePresignedUrlRequest generatePresignedUrlRequest =
             new GeneratePresignedUrlRequest(bucket, keyName)
-            .withMethod(HttpMethod.GET)
-            .withExpiration(expiration);
+                .withMethod(HttpMethod.GET)
+                .withExpiration(expiration);
 
         URL presignedURL = amazonS3.generatePresignedUrl(generatePresignedUrlRequest);
         return presignedURL.toString();
