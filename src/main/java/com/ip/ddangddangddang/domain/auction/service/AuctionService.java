@@ -9,6 +9,7 @@ import com.ip.ddangddangddang.domain.auction.entity.Auction;
 import com.ip.ddangddangddang.domain.auction.repository.AuctionRepository;
 import com.ip.ddangddangddang.domain.user.entity.User;
 import com.ip.ddangddangddang.domain.user.service.UserService;
+import com.ip.ddangddangddang.global.exception.custom.CustomAuctionException;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -31,9 +32,8 @@ public class AuctionService {
 
     @Transactional
     public void deleteAuction(Long auctionId, Long userId) {
-        Auction auction = auctionRepository.findById(auctionId).orElseThrow(
-            () -> new IllegalArgumentException("게시글이 존재하지 않습니다.")
-        );
+        Auction auction = findAuctionOrElseThrow(auctionId);
+
 
         if (!userId.equals(auction.getUser().getId())) {
             throw new IllegalArgumentException("작성자가 아닙니다.");
@@ -66,10 +66,15 @@ public class AuctionService {
     }
 
     public AuctionResponseDto getAuction(Long auctionId) {
-        Auction auction = auctionRepository.findById(auctionId).orElseThrow(
-            () -> new IllegalArgumentException("게시글이 존재하지 않습니다.")
-        );
+        Auction auction = findAuctionOrElseThrow(auctionId);
+
         return new AuctionResponseDto(auction);
+    }
+
+    public Auction findAuctionOrElseThrow(Long auctionId) {
+        return auctionRepository.findById(auctionId).orElseThrow(
+            () -> new CustomAuctionException("게시글이 존재하지 않습니다.")
+        );
     }
 
     public void isExistAuction(Long auctionId) {
