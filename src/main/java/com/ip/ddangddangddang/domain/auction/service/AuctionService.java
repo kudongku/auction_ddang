@@ -7,7 +7,6 @@ import com.ip.ddangddangddang.domain.auction.dto.request.AuctionRequestDto;
 import com.ip.ddangddangddang.domain.auction.dto.response.AuctionResponseDto;
 import com.ip.ddangddangddang.domain.auction.entity.Auction;
 import com.ip.ddangddangddang.domain.auction.entity.File;
-import com.ip.ddangddangddang.domain.auction.model.AuctionModel;
 import com.ip.ddangddangddang.domain.auction.repository.AuctionRepository;
 import com.ip.ddangddangddang.domain.user.entity.User;
 import com.ip.ddangddangddang.domain.user.service.UserService;
@@ -29,23 +28,27 @@ public class AuctionService {
     private final UserService userService;
 
     @Transactional
-    public void createAuction(MultipartFile auctionImage, AuctionRequestDto requestDto, User u)
+    public void createAuction(MultipartFile auctionImage, AuctionRequestDto requestDto, Long userId)
         throws IOException {
         File file = fileService.upload(auctionImage, requestDto.getObjectName());
-        User user = userService.getUser(u.getId());
+        User user = userService.getUser(userId);
         auctionRepository.save(new Auction(requestDto, user, file));
     }
 
     @Transactional
-    public void deleteAuction(Long auctionId, User user) {
-        Auction auction = auctionRepository.findById(auctionId);
+    public void deleteAuction(Long auctionId, Long userId) {
+        Auction auction = auctionRepository.findById(auctionId).orElseThrow(
+            () -> new IllegalArgumentException("게시글이 존재하지 않습니다.")
+        );
+        if (!userId.equals(auction.getUser().getId())) {
+            throw new IllegalArgumentException("작성자가 아닙니다.");
+        }
         fileService.delete(auction.getFileKeyName());
-        auctionRepository.delete(auctionId, user.getId());
+        auctionRepository.delete(auction);
     }
 
-    public List<AuctionResponseDto> getAuctionList(User u) {
-        //User u = UserDetails의 User 객체이기 때문에 Id외의 값을 가지고 있지 않음
-        User user = userService.getUser(u.getId());
+    public List<AuctionResponseDto> getAuctionList(Long userId) {
+        User user = userService.getUser(userId);
         String townList = user.getTown().getNeighborIdList();
 
         ObjectMapper mapper = new ObjectMapper();
@@ -59,22 +62,26 @@ public class AuctionService {
 
         List<AuctionResponseDto> response = new ArrayList<>();
         for (Long id : neighbor) {
-            List<AuctionModel> modelList = auctionRepository.findAllByTownId(id);
-            for (AuctionModel auctionModel : modelList) {
-                response.add(new AuctionResponseDto(auctionModel));
+            List<Auction> auctionList = auctionRepository.findAllByTownId(id);
+            for (Auction auction : auctionList) {
+                response.add(new AuctionResponseDto(
+                    auction,
+                    fileService.getPresignedURL(auction.getFileKeyName())));
             }
         }
         return response;
+    }
+    
+    public AuctionResponseDto getAuction(Long auctionId) {
+        Auction auction = auctionRepository.findById(auctionId).orElseThrow(
+            () -> new IllegalArgumentException("게시글이 존재하지 않습니다.")
+        );
+        String preSignedURL = fileService.getPresignedURL(auction.getFileKeyName());
+        return new AuctionResponseDto(auction, preSignedURL);
     }
 
     public void isExistAuction(Long auctionId) {
         auctionRepository.findById(auctionId);
     }
 
-    @Transactional(readOnly = true)
-    public AuctionResponseDto getAuction(Long auctionId) {
-        Auction auction = auctionRepository.findById(auctionId);
-        String preSignedURL = fileService.getPresignedURL(auction.getFileKeyName());
-        return new AuctionResponseDto(auction, preSignedURL);
-    }
 }
