@@ -37,7 +37,7 @@ public class UserService {
             email,
             nickname,
             password,
-            townService.findTownByName(requestDto.getAddress())));
+            townService.findTownByNameOrElseThrow(requestDto.getAddress())));
     }
 
     @Transactional
@@ -61,7 +61,7 @@ public class UserService {
     @Transactional
     public void updateLocation(Long userId, UserLocationRequestDto requestDto) {
         User user = findUserOrElseThrow(userId);
-        user.updateLocation(townService.findTownByName(requestDto.getAddress()));
+        user.updateLocation(townService.findTownByNameOrElseThrow(requestDto.getAddress()));
 
     }
 
