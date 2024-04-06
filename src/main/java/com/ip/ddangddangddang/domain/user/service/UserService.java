@@ -1,6 +1,7 @@
 package com.ip.ddangddangddang.domain.user.service;
 
 import com.ip.ddangddangddang.domain.town.service.TownService;
+import com.ip.ddangddangddang.domain.user.dto.request.UserLocationRequestDto;
 import com.ip.ddangddangddang.domain.user.dto.request.UserSignupRequestDto;
 import com.ip.ddangddangddang.domain.user.dto.request.UserUpdateRequestDto;
 import com.ip.ddangddangddang.domain.user.entity.User;
@@ -32,11 +33,15 @@ public class UserService {
 
         String password = passwordEncoder.encode(requestDto.getPassword());
 
-        userRepository.save(new User(email, nickname, password, townService.getTown(1L)));
+        userRepository.save(new User(
+            email,
+            nickname,
+            password,
+            townService.findTownByNameOrElseThrow(requestDto.getAddress())));
     }
 
     @Transactional
-    public void updateUser(UserUpdateRequestDto requestDto, User user) {
+    public void updateUser(UserUpdateRequestDto requestDto, Long userId) {
         if (!requestDto.getPassword().equals(requestDto.getPasswordConfirm())) {
             throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
         }
@@ -44,13 +49,20 @@ public class UserService {
         validateNickname(nickname);
         String password = passwordEncoder.encode(requestDto.getPassword());
 
-        User saveUser = userRepository.findById(user.getId());
+        User saveUser = findUserOrElseThrow(userId);
         saveUser.updateUser(nickname, password);
     }
 
     @Transactional
-    public void deleteUser(User user) {
-        userRepository.delete(user);
+    public void deleteUser(Long userId) {
+        userRepository.delete(findUserOrElseThrow(userId));
+    }
+
+    @Transactional
+    public void updateLocation(Long userId, UserLocationRequestDto requestDto) {
+        User user = findUserOrElseThrow(userId);
+        user.updateLocation(townService.findTownByNameOrElseThrow(requestDto.getAddress()));
+
     }
 
     private void validateEmail(String email) {
@@ -66,7 +78,14 @@ public class UserService {
     }
 
     public User getUser(Long id) {
-        return userRepository.findById(id);
+        return userRepository.findById(id).orElseThrow(
+            () -> new IllegalArgumentException("회원이 존재하지 않습니다."));
+    }
+
+    public User findUserOrElseThrow(Long id) {
+        return userRepository.findById(id).orElseThrow(
+            () -> new IllegalArgumentException("회원이 존재하지 않습니다.")
+        );
     }
 
 }
