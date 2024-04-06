@@ -1,4 +1,4 @@
-package com.ip.ddangddangddang.domain.auction.service;
+package com.ip.ddangddangddang.domain.file.service;
 
 import java.io.IOException;
 import org.springframework.web.multipart.MultipartFile;

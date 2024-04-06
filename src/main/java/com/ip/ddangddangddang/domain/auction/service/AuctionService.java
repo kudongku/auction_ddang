@@ -8,6 +8,7 @@ import com.ip.ddangddangddang.domain.auction.dto.response.AuctionResponseDto;
 import com.ip.ddangddangddang.domain.auction.entity.Auction;
 import com.ip.ddangddangddang.domain.auction.entity.File;
 import com.ip.ddangddangddang.domain.auction.repository.AuctionRepository;
+import com.ip.ddangddangddang.domain.file.service.FileService;
 import com.ip.ddangddangddang.domain.user.entity.User;
 import com.ip.ddangddangddang.domain.user.service.UserService;
 import java.io.IOException;
@@ -71,7 +72,7 @@ public class AuctionService {
         }
         return response;
     }
-    
+
     public AuctionResponseDto getAuction(Long auctionId) {
         Auction auction = auctionRepository.findById(auctionId).orElseThrow(
             () -> new IllegalArgumentException("게시글이 존재하지 않습니다.")

@@ -1,12 +1,12 @@
-package com.ip.ddangddangddang.domain.auction.service;
+package com.ip.ddangddangddang.domain.file.service;
 
 import com.amazonaws.HttpMethod;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.AmazonS3Exception;
 import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest;
 import com.amazonaws.services.s3.model.ObjectMetadata;
-import com.ip.ddangddangddang.domain.auction.exception.EmptyImageException;
-import com.ip.ddangddangddang.domain.auction.exception.NotValidBucketException;
+import com.ip.ddangddangddang.global.exception.custom.EmptyImageException;
+import com.ip.ddangddangddang.global.exception.custom.NotValidBucketException;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Date;

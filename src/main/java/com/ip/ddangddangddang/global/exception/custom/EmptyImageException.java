@@ -1,4 +1,4 @@
-package com.ip.ddangddangddang.domain.auction.exception;
+package com.ip.ddangddangddang.global.exception.custom;
 
 import com.amazonaws.services.s3.model.AmazonS3Exception;
 
