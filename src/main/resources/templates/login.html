@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+  <script src="https://code.jquery.com/jquery-3.7.0.min.js"
+          integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g="
+          crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.5/dist/js.cookie.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/paginationjs/2.1.4/pagination.min.js"></script>
+</head>
+<body>
+<header>
+  <h1>땅땅땅 로그인</h1> <!-- Header with the specified text -->
+  <a href="http://localhost:8080/api/users/signup">회원가입 하러가기</a> <!-- Link to signup page -->
+</header>
+
+<div id="login-form">
+  <labe현l for="email">이메일:</labe현l> <!-- Label for username input -->
+  <input type="text" id="email" name="email" required><br><br> <!-- Text input for username -->
+
+  <label for="password">비밀번호:</label> <!-- Label for password input -->
+  <input type="password" id="password" name="password" required><br><br> <!-- Password input -->
+
+  <button type="submit" onclick="login()">로그인하기</button> <!-- Submit button for form -->
+
+  <script>
+    function login() {
+      let password = $('#password').val();
+      let email = $('#email').val();
+
+      const UserSigninRequestDto = {
+        "password" : password,
+        "email" : email
+      }
+
+      $.ajax({
+        type: 'POST',
+        url: '/v1/users/login',
+        contentType: 'application/json',
+        data: JSON.stringify(UserSigninRequestDto),
+        success: function () {
+          alert("성공");
+        }
+      });
+    }
+  </script>
+</div>
+</body>
+</html>
