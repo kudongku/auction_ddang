@@ -5,6 +5,6 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
-public class ImageRequestDto {
+public class ImageCreateRequestDto {
     private String imageName;
 }

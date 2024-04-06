@@ -1,6 +1,6 @@
 package com.ip.ddangddangddang.domain.file.controller;
 
-import com.ip.ddangddangddang.domain.file.dto.request.ImageRequestDto;
+import com.ip.ddangddangddang.domain.file.dto.request.ImageCreateRequestDto;
 import com.ip.ddangddangddang.domain.file.service.FileService;
 import com.ip.ddangddangddang.global.security.UserDetailsImpl;
 import jakarta.validation.Valid;
@@ -26,7 +26,7 @@ public class FileController {
     @PostMapping
     public Long uploadImage(
         @RequestPart("auctionImage") MultipartFile auctionImage,
-        @Valid @RequestPart("requestDto") ImageRequestDto imageRequestDto,
+        @Valid @RequestPart("requestDto") ImageCreateRequestDto imageRequestDto,
         @AuthenticationPrincipal UserDetailsImpl userDetails
     ) throws IOException {
         return fileService.upload(
