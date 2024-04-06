@@ -33,7 +33,3 @@ public class Town {
     }
 
 }
-
-//    @Column
-//    @Convert(converter = StringListConverter.class, attributeName = "neighbor")
-//    private List<String> neighbor;

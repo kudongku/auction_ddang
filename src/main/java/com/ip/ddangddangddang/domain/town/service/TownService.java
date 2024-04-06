@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @RequiredArgsConstructor
-@Transactional
+@Transactional(readOnly = true)
 @Service
 public class TownService {
 
@@ -28,10 +28,7 @@ public class TownService {
 
     private final ObjectMapper objectMapper;
 
-    public Town getTown(Long townId) {
-        return townRepository.findById(townId);
-    }
-
+    @Transactional
     public void createTown() throws JsonProcessingException {
         List<TownList> townList = townListRepository.findAll();
         List<Long> idList = new ArrayList<>();
@@ -57,6 +54,13 @@ public class TownService {
             townRepository.save(town);
             idList.clear();
         }
+    }
+
+    @Transactional
+    public Town findTownByNameOrElseThrow(String address) {
+        return townRepository.findByName(address).orElseThrow(
+            () -> new IllegalArgumentException("해당 동네가 없습니다.")
+        );
     }
 
     public String getTownName(TownList t) {
