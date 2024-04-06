@@ -1,6 +1,6 @@
 package com.ip.ddangddangddang.domain.bid.entity;
 
-import com.ip.ddangddangddang.global.timestamp.Timestamp;
+import com.ip.ddangddangddang.domain.common.timestamp.Timestamp;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;

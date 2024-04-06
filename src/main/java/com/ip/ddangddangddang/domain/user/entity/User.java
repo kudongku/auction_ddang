@@ -1,7 +1,7 @@
 package com.ip.ddangddangddang.domain.user.entity;
 
+import com.ip.ddangddangddang.domain.common.timestamp.Timestamp;
 import com.ip.ddangddangddang.domain.town.entity.Town;
-import com.ip.ddangddangddang.global.timestamp.Timestamp;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;

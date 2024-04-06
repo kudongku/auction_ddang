@@ -4,7 +4,7 @@ package com.ip.ddangddangddang.domain.auction.controller;
 import com.ip.ddangddangddang.domain.auction.dto.request.AuctionRequestDto;
 import com.ip.ddangddangddang.domain.auction.dto.response.AuctionResponseDto;
 import com.ip.ddangddangddang.domain.auction.service.AuctionService;
-import com.ip.ddangddangddang.domain.common.CommonResponseDto;
+import com.ip.ddangddangddang.domain.common.dto.CommonResponseDto;
 import com.ip.ddangddangddang.global.security.UserDetailsImpl;
 import jakarta.validation.Valid;
 import java.io.IOException;

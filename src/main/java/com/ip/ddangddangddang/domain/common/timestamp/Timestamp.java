@@ -1,4 +1,4 @@
-package com.ip.ddangddangddang.global.timestamp;
+package com.ip.ddangddangddang.domain.common.timestamp;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.EntityListeners;
