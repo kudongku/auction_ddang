@@ -1,4 +1,4 @@
-package com.ip.ddangddangddang.domain.common;
+package com.ip.ddangddangddang.domain.common.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
