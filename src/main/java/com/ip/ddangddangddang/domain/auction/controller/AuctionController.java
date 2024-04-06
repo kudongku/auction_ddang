@@ -6,7 +6,6 @@ import com.ip.ddangddangddang.domain.auction.dto.response.AuctionResponseDto;
 import com.ip.ddangddangddang.domain.auction.service.AuctionService;
 import com.ip.ddangddangddang.global.security.UserDetailsImpl;
 import jakarta.validation.Valid;
-import java.io.IOException;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -29,7 +28,7 @@ public class AuctionController {
     public void createAuction(
         @Valid @RequestBody AuctionRequestDto requestDto,
         @AuthenticationPrincipal UserDetailsImpl userDetails
-    ) throws IOException {
+    ) {
         auctionService.createAuction(requestDto, userDetails.getUser().getId());
     }
 
