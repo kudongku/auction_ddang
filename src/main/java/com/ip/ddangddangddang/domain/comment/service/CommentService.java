@@ -2,7 +2,7 @@ package com.ip.ddangddangddang.domain.comment.service;
 
 import com.ip.ddangddangddang.domain.auction.entity.Auction;
 import com.ip.ddangddangddang.domain.auction.service.AuctionService;
-import com.ip.ddangddangddang.domain.comment.dto.request.CommentRequestDto;
+import com.ip.ddangddangddang.domain.comment.dto.request.CommentCreateRequestDto;
 import com.ip.ddangddangddang.domain.comment.entity.Comment;
 import com.ip.ddangddangddang.domain.comment.repository.CommentRepository;
 import com.ip.ddangddangddang.domain.result.entity.Result;
@@ -25,7 +25,7 @@ public class CommentService {
     private final ResultService resultService;
 
     @Transactional
-    public void createComment(Long auctionId, CommentRequestDto requestDto, Long userId) {
+    public void createComment(Long auctionId, CommentCreateRequestDto requestDto, Long userId) {
         User user = userService.getUser(userId);
         Auction auction = auctionService.findAuctionOrElseThrow(auctionId);
         Result result = resultService.findResultOrElseThrow(auctionId);

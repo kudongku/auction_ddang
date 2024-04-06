@@ -1,6 +1,6 @@
 package com.ip.ddangddangddang.domain.comment.controller;
 
-import com.ip.ddangddangddang.domain.comment.dto.request.CommentRequestDto;
+import com.ip.ddangddangddang.domain.comment.dto.request.CommentCreateRequestDto;
 import com.ip.ddangddangddang.domain.comment.service.CommentService;
 import com.ip.ddangddangddang.global.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +21,7 @@ public class CommentController {
     @PostMapping
     public void createComment(
         @PathVariable Long auctionId,
-        @RequestBody CommentRequestDto requestDto,
+        @RequestBody CommentCreateRequestDto requestDto,
         @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
         commentService.createComment(auctionId, requestDto, userDetails.getUser().getId());
