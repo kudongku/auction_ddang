@@ -1,11 +1,11 @@
 package com.ip.ddangddangddang.domain.town.repository;
 
 import com.ip.ddangddangddang.domain.town.entity.Town;
+import java.util.Optional;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface TownRepository {
+public interface TownRepository extends JpaRepository<Town, Long> {
 
-    void save(Town town);
-
-    Town findById(Long townId);
+    Optional<Town> findByName(String address);
 
 }

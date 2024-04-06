@@ -1,6 +1,8 @@
 package com.ip.ddangddangddang.domain.file.controller;
 
-import com.ip.ddangddangddang.domain.file.dto.request.ImageRequestDto;
+import com.ip.ddangddangddang.domain.file.dto.request.FileCreateRequestDto;
+import com.ip.ddangddangddang.domain.file.dto.response.FileCreateResponseDto;
+import com.ip.ddangddangddang.domain.file.dto.response.FileReadResponseDto;
 import com.ip.ddangddangddang.domain.file.service.FileService;
 import com.ip.ddangddangddang.global.security.UserDetailsImpl;
 import jakarta.validation.Valid;
@@ -24,20 +26,22 @@ public class FileController {
     private final FileService fileService;
 
     @PostMapping
-    public Long uploadImage(
+    public FileCreateResponseDto uploadImage(
         @RequestPart("auctionImage") MultipartFile auctionImage,
-        @Valid @RequestPart("requestDto") ImageRequestDto imageRequestDto,
+        @Valid @RequestPart("requestDto") FileCreateRequestDto imageRequestDto,
         @AuthenticationPrincipal UserDetailsImpl userDetails
     ) throws IOException {
-        return fileService.upload(
+        Long fileId =  fileService.upload(
             auctionImage,
             imageRequestDto.getImageName(),
             userDetails.getUser().getId()
         );
+
+        return new FileCreateResponseDto(fileId);
     }
 
     @GetMapping("/{fileId}")
-    public String getPreSignedUrl(
+    public FileReadResponseDto getPreSignedUrl(
         @PathVariable Long fileId,
         @AuthenticationPrincipal UserDetailsImpl userDetails
     ){

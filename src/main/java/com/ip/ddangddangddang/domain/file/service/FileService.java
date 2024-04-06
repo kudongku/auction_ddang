@@ -1,5 +1,6 @@
 package com.ip.ddangddangddang.domain.file.service;
 
+import com.ip.ddangddangddang.domain.file.dto.response.FileReadResponseDto;
 import com.ip.ddangddangddang.domain.file.entity.File;
 import com.ip.ddangddangddang.domain.file.repository.FileRepository;
 import com.ip.ddangddangddang.domain.user.service.UserService;
@@ -49,7 +50,7 @@ public class FileService {
         fileRepository.delete(file);
     }
 
-    public String getPresignedURL(Long fileId, Long userId) {
+    public FileReadResponseDto getPresignedURL(Long fileId, Long userId) {
         File file = fileRepository.findById(fileId).orElseThrow(
             ()-> new NullPointerException("없는 이미지 입니다.")
         );
@@ -58,7 +59,8 @@ public class FileService {
             throw new IllegalArgumentException("작성자만 삭제가 가능합니다.");
         }
 
-        return s3Service.getPresignedURL(file.getKeyName());
+        String preSignedUrl = s3Service.getPresignedURL(file.getKeyName());
+        return new FileReadResponseDto(preSignedUrl);
     }
 
     private String createKeyName(String objectName) {
