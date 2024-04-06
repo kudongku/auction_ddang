@@ -1,6 +1,7 @@
 package com.ip.ddangddangddang.domain.user.controller;
 
 
+import com.ip.ddangddangddang.domain.user.dto.request.UserLocationRequestDto;
 import com.ip.ddangddangddang.domain.user.dto.request.UserSignupRequestDto;
 import com.ip.ddangddangddang.domain.user.dto.request.UserUpdateRequestDto;
 import com.ip.ddangddangddang.domain.user.service.UserService;
@@ -34,14 +35,22 @@ public class UserController {
         @Valid @RequestBody UserUpdateRequestDto requestDto,
         @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
-        userService.updateUser(requestDto, userDetails.getUser());
+        userService.updateUser(requestDto, userDetails.getUser().getId());
     }
 
     @DeleteMapping
     public void deleteUser(
         @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
-        userService.deleteUser(userDetails.getUser());
+        userService.deleteUser(userDetails.getUser().getId());
+    }
+
+    @PatchMapping("/location")
+    public void updateLocation(
+        @AuthenticationPrincipal UserDetailsImpl userDetails,
+        @RequestBody UserLocationRequestDto requestDto
+    ) {
+        userService.updateLocation(userDetails.getUser().getId(), requestDto);
     }
 
 }

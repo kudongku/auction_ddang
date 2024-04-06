@@ -31,4 +31,7 @@ public class UserSignupRequestDto {
     @NotBlank(message = "비밀번호는 필수로 입력해야 합니다.")
     private String passwordConfirm;
 
+    @NotBlank
+    private String address;
+
 }
