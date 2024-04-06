@@ -47,8 +47,8 @@ public class UserController {
 
     @PatchMapping("/location")
     public void updateLocation(
-        @AuthenticationPrincipal UserDetailsImpl userDetails,
-        @RequestBody UserLocationRequestDto requestDto
+        @RequestBody UserLocationRequestDto requestDto,
+        @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
         userService.updateLocation(userDetails.getUser().getId(), requestDto);
     }
