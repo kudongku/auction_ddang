@@ -59,4 +59,8 @@ public class User extends Timestamp {
         this.password = password;
     }
 
+    public void updateLocation(Town town) {
+        this.town = town;
+    }
+
 }

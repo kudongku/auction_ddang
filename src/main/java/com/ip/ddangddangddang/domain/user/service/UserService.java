@@ -62,7 +62,6 @@ public class UserService {
     public void updateLocation(Long userId, UserLocationRequestDto requestDto) {
         User user = findUserOrElseThrow(userId);
         user.updateLocation(townService.findTownByNameOrElseThrow(requestDto.getAddress()));
-
     }
 
     private void validateEmail(String email) {

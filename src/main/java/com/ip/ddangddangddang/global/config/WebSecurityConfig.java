@@ -1,6 +1,6 @@
 package com.ip.ddangddangddang.global.config;
 
-import com.ip.ddangddangddang.domain.user.repository.UserJpaRepository;
+import com.ip.ddangddangddang.domain.user.repository.UserRepository;
 import com.ip.ddangddangddang.global.jwt.JwtUtil;
 import com.ip.ddangddangddang.global.security.JwtAuthenticationFilter;
 import com.ip.ddangddangddang.global.security.JwtAuthorizationFilter;
@@ -24,7 +24,7 @@ public class WebSecurityConfig {
 
     private final JwtUtil jwtUtil;
     private final AuthenticationConfiguration authenticationConfiguration;
-    private final UserJpaRepository userJpaRepository;
+    private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
 
@@ -41,7 +41,7 @@ public class WebSecurityConfig {
     // 로그인, jwt생성
     @Bean
     public JwtAuthenticationFilter jwtAuthenticationFilter() throws Exception {
-        JwtAuthenticationFilter filter = new JwtAuthenticationFilter(jwtUtil, userJpaRepository,
+        JwtAuthenticationFilter filter = new JwtAuthenticationFilter(jwtUtil, userRepository,
             passwordEncoder);
         filter.setAuthenticationManager(authenticationManager(authenticationConfiguration));
         return filter;
@@ -71,7 +71,6 @@ public class WebSecurityConfig {
                 .requestMatchers("/").permitAll() // 메인 페이지 요청 허가
                 .requestMatchers("/v1/users/signin").permitAll() // 회원가입,로그인 요청 모두 접근 허가
                 .requestMatchers("/v1/users/signup").permitAll()
-                .requestMatchers("/health").permitAll()
                 .anyRequest().authenticated() // 그 외 모든 요청 인증처리
         );
 
