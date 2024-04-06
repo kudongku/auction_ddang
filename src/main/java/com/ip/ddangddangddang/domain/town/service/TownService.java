@@ -57,7 +57,7 @@ public class TownService {
     }
 
     @Transactional
-    public Town findByNameOrElseThrow(String address) {
+    public Town findTownByNameOrElseThrow(String address) {
         return townRepository.findByName(address).orElseThrow(
             () -> new IllegalArgumentException("해당 동네가 없습니다.")
         );
