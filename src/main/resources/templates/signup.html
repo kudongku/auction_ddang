@@ -137,7 +137,7 @@
     let passwordConfirm = $('#passwordConfirm').val();
     let email = $('#email').val();
 
-    const data = {
+    const UserSignupRequestDto = {
       "address": address,
       "nickname": nickname,
       "password" : password,
@@ -147,9 +147,9 @@
 
     $.ajax({
       type: 'POST',
-      url: '/kakao/api/address',
+      url: '/v1/users/signup',
       contentType: 'application/json',
-      data: JSON.stringify(data),
+      data: JSON.stringify(UserSignupRequestDto),
       success: function () {
         alert("성공");
       }
