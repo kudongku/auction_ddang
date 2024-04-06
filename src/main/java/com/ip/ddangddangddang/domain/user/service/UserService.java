@@ -49,18 +49,18 @@ public class UserService {
         validateNickname(nickname);
         String password = passwordEncoder.encode(requestDto.getPassword());
 
-        User saveUser = findUser(userId);
+        User saveUser = findUserOrElseThrow(userId);
         saveUser.updateUser(nickname, password);
     }
 
     @Transactional
     public void deleteUser(Long userId) {
-        userRepository.delete(findUser(userId));
+        userRepository.delete(findUserOrElseThrow(userId));
     }
 
     @Transactional
     public void updateLocation(Long userId, UserLocationRequestDto requestDto) {
-        User user = findUser(userId);
+        User user = findUserOrElseThrow(userId);
         user.updateLocation(townService.findTownByName(requestDto.getAddress()));
 
     }
@@ -82,7 +82,7 @@ public class UserService {
             () -> new IllegalArgumentException("회원이 존재하지 않습니다."));
     }
 
-    public User findUser(Long id) {
+    public User findUserOrElseThrow(Long id) {
         return userRepository.findById(id).orElseThrow(
             () -> new IllegalArgumentException("회원이 존재하지 않습니다.")
         );
