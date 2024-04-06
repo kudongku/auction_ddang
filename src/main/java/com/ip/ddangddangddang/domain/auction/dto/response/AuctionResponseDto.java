@@ -2,7 +2,6 @@ package com.ip.ddangddangddang.domain.auction.dto.response;
 
 import com.ip.ddangddangddang.domain.auction.entity.Auction;
 import com.ip.ddangddangddang.domain.auction.entity.StatusEnum;
-import com.ip.ddangddangddang.domain.auction.model.AuctionModel;
 import java.time.LocalDateTime;
 import lombok.Getter;
 import lombok.Setter;
@@ -26,16 +25,6 @@ public class AuctionResponseDto {
     private Long sellerId;
 
     private String preSignedUrl;
-
-    public AuctionResponseDto(AuctionModel auctionModel) {
-        this.id = auctionModel.getId();
-        this.townId = auctionModel.getTownId();
-        this.title = auctionModel.getTitle();
-        this.content = auctionModel.getContent();
-        this.statusEnum = auctionModel.getStatusEnum();
-        this.finishedAt = auctionModel.getFinishedAt();
-        this.sellerId = auctionModel.getUser().getId();
-    }
 
     public AuctionResponseDto(Auction auction, String preSignedUrl) {
         this.id = auction.getId();
