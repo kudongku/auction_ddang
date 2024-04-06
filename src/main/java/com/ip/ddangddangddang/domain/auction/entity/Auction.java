@@ -2,9 +2,9 @@ package com.ip.ddangddangddang.domain.auction.entity;
 
 import com.ip.ddangddangddang.domain.auction.dto.request.AuctionRequestDto;
 import com.ip.ddangddangddang.domain.auction.model.AuctionModel;
+import com.ip.ddangddangddang.domain.common.timestamp.Timestamp;
 import com.ip.ddangddangddang.domain.result.entity.Result;
 import com.ip.ddangddangddang.domain.user.entity.User;
-import com.ip.ddangddangddang.global.timestamp.Timestamp;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
