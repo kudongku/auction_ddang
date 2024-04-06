@@ -13,5 +13,5 @@ public class AuctionRequestDto {
     private String content;
 
     @NotBlank(message = "물건 이름이 없습니다")
-    private String objectName;
+    private Long fileId;
 }

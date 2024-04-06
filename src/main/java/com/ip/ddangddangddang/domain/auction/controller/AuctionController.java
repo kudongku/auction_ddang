@@ -6,7 +6,6 @@ import com.ip.ddangddangddang.domain.auction.dto.response.AuctionResponseDto;
 import com.ip.ddangddangddang.domain.auction.service.AuctionService;
 import com.ip.ddangddangddang.global.security.UserDetailsImpl;
 import jakarta.validation.Valid;
-import java.io.IOException;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -14,10 +13,9 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
 
 @RequiredArgsConstructor
 @RequestMapping("/v1/auctions")
@@ -28,11 +26,10 @@ public class AuctionController {
 
     @PostMapping
     public void createAuction(
-        @RequestPart("auctionImage") MultipartFile auctionImage,
-        @Valid @RequestPart("requestDto") AuctionRequestDto requestDto,
+        @Valid @RequestBody AuctionRequestDto requestDto,
         @AuthenticationPrincipal UserDetailsImpl userDetails
-    ) throws IOException {
-        auctionService.createAuction(auctionImage, requestDto, userDetails.getUser().getId());
+    ) {
+        auctionService.createAuction(requestDto, userDetails.getUser().getId());
     }
 
     @DeleteMapping("/{auctionId}")

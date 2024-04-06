@@ -24,9 +24,7 @@ public class AuctionResponseDto {
 
     private Long sellerId;
 
-    private String preSignedUrl;
-
-    public AuctionResponseDto(Auction auction, String preSignedUrl) {
+    public AuctionResponseDto(Auction auction) {
         this.id = auction.getId();
         this.townId = auction.getTownId();
         this.title = auction.getTitle();
@@ -34,7 +32,6 @@ public class AuctionResponseDto {
         this.statusEnum = auction.getStatusEnum();
         this.finishedAt = auction.getFinishedAt();
         this.sellerId = auction.getUser().getId();
-        this.preSignedUrl = preSignedUrl;
     }
 
 }

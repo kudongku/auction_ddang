@@ -1,6 +1,6 @@
-package com.ip.ddangddangddang.domain.auction.repository;
+package com.ip.ddangddangddang.domain.file.repository;
 
-import com.ip.ddangddangddang.domain.auction.entity.File;
+import com.ip.ddangddangddang.domain.file.entity.File;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
