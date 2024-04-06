@@ -14,10 +14,9 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
 
 @RequiredArgsConstructor
 @RequestMapping("/v1/auctions")
@@ -28,11 +27,10 @@ public class AuctionController {
 
     @PostMapping
     public void createAuction(
-        @RequestPart("auctionImage") MultipartFile auctionImage,
-        @Valid @RequestPart("requestDto") AuctionRequestDto requestDto,
+        @Valid @RequestBody AuctionRequestDto requestDto,
         @AuthenticationPrincipal UserDetailsImpl userDetails
     ) throws IOException {
-        auctionService.createAuction(auctionImage, requestDto, userDetails.getUser().getId());
+        auctionService.createAuction(requestDto, userDetails.getUser().getId());
     }
 
     @DeleteMapping("/{auctionId}")
