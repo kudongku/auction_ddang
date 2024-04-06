@@ -36,4 +36,10 @@ public class Comment {
     @JoinColumn(name = "auction_id")
     private Auction auction;
 
+    public Comment(String content, User user, Auction auction) {
+        this.content = content;
+        this.user = user;
+        this.auction = auction;
+    }
+
 }
