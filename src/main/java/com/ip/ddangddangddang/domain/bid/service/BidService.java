@@ -1,10 +1,11 @@
 package com.ip.ddangddangddang.domain.bid.service;
 
+import com.ip.ddangddangddang.domain.auction.entity.Auction;
 import com.ip.ddangddangddang.domain.auction.service.AuctionService;
 import com.ip.ddangddangddang.domain.bid.dto.request.BidRequestDto;
 import com.ip.ddangddangddang.domain.bid.entity.Bid;
 import com.ip.ddangddangddang.domain.bid.repository.BidRepository;
-import com.ip.ddangddangddang.domain.user.entity.User;
+import com.ip.ddangddangddang.global.exception.custom.CustomBidException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,10 +19,19 @@ public class BidService {
     private final AuctionService auctionService;
 
     @Transactional
-    public void createBid(Long auctionId, BidRequestDto requestDto, User user) {
-        auctionService.isExistAuction(auctionId);
+    public void createBid(Long auctionId, BidRequestDto requestDto, Long userId) {
+        Auction auction = auctionService.findAuctionOrElseThrow(auctionId);
 
-        bidRepository.save(new Bid(auctionId, user.getId(), requestDto.getPrice()));
+        Long seller = auction.getUser().getId();
+        validateBidBySeller(seller, userId);
+
+        bidRepository.save(new Bid(auctionId, userId, requestDto.getPrice()));
+    }
+
+    private void validateBidBySeller(Long sellerId, Long userId) {
+        if (sellerId.equals(userId)) {
+            throw new CustomBidException("본인의 게시글은 입찰을 할 수 없습니다.");
+        }
     }
 
 }
