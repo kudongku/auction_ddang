@@ -44,6 +44,7 @@
 <header>
   <h1>땅땅땅 프로필 수정하기</h1> <!-- Header with the specified text -->
 </header>
+
 <div id="edit-form">
   <label for="nickname">닉네임:</label> <!-- Label for password input -->
   <input type="text" id="nickname" name="nickname" required><br><br> <!-- Password input -->
@@ -54,17 +55,17 @@
   <label for="postPassword">바꿀 비밀번호 확인:</label> <!-- Label for password input -->
   <input type="text" id="postPassword" name="postPassword" required><br><br> <!-- Password input -->
 
-  <div class="map_wrap">
-    <div id="map" style="width:80%;height:100%;position:relative;overflow:hidden;"></div>
-    <div class="hAddr">
-      <span class="title">지도중심기준 행정동 주소정보</span>
-      <span id="centerAddr"></span>
-    </div>
-  </div>
-
   <button type="submit" onclick="editProfile()">수정하기</button>
-
 </div>
+
+<div class="map_wrap">
+  <div id="map" style="width:80%;height:100%;position:relative;overflow:hidden;"></div>
+  <div class="hAddr">
+    <span class="title">지도중심기준 행정동 주소정보</span>
+    <span id="centerAddr"></span>
+  <button type="submit" onclick="editAddress()">수정하기</button>
+</div>
+
 
 <script src="https://code.jquery.com/jquery-3.7.0.min.js"
         integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g="
@@ -127,16 +128,14 @@
   });
 
   function editProfile() {
-    alert(address);
     let nickname = $('#username').val();
     let password = $('#password').val();
     let passwordConfirm = $('#passwordConfirm').val();
 
     const UserUpdateRequestDto = {
-      "address": address,
       "nickname": nickname,
-      "password" : password,
-      "passwordConfirm" : passwordConfirm,
+      "password": password,
+      "passwordConfirm": passwordConfirm,
     }
 
     $.ajax({
@@ -144,6 +143,23 @@
       url: '/v1/users',
       contentType: 'application/json',
       data: JSON.stringify(UserUpdateRequestDto),
+      success: function () {
+        alert("성공");
+      }
+    });
+  }
+
+  function editAddress() {
+
+    const UserLocationRequestDto = {
+      "address": address
+    }
+
+    $.ajax({
+      type: 'PATCH',
+      url: '/v1/users/location',
+      contentType: 'application/json',
+      data: JSON.stringify(UserLocationRequestDto),
       success: function () {
         alert("성공");
       }
