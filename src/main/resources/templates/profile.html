@@ -95,10 +95,11 @@
       infowindow = new kakao.maps.InfoWindow({zindex: 1}); // 클릭한 위치에 대한 주소를 표시할 인포윈도우입니다
 
   // 현재 지도 중심좌표로 주소를 검색해서 지도 좌측 상단에 표시합니다
-  searchAddrFromCoords(map.getCenter(), displayCenterInfo);
+  // searchAddrFromCoords(map.getCenter(), displayCenterInfo);
 
   // 지도를 클릭했을 때 클릭 위치 좌표에 대한 주소정보를 표시하도록 이벤트를 등록합니다
   kakao.maps.event.addListener(map, 'click', function (mouseEvent) {
+    searchAddrFromCoords(mouseEvent.latLng, displayCenterInfo);
     searchDetailAddrFromCoords(mouseEvent.latLng, function (result, status) {
       if (status === kakao.maps.services.Status.OK) {
 
@@ -106,9 +107,9 @@
             + result[0].road_address.address_name + '</div>' : '';
         detailAddr += '<div>지번 주소 : ' + result[0].address.address_name + '</div>';
 
-        address = result[0].address.address_name.split(" ")[0] + " "
-            + result[0].address.address_name.split(" ")[1] + " "
-            + result[0].address.address_name.split(" ")[2];
+        // address = result[0].address.address_name.split(" ")[0] + " "
+        //     + result[0].address.address_name.split(" ")[1] + " "
+        //     + result[0].address.address_name.split(" ")[2];
 
         var content = '<div class="bAddr">' +
             '<span class="title">법정동 주소정보</span>' +
@@ -128,6 +129,8 @@
   });
 
   function editProfile() {
+    alert(address);
+
     let nickname = $('#username').val();
     let password = $('#password').val();
     let passwordConfirm = $('#passwordConfirm').val();
@@ -167,9 +170,9 @@
   }
 
   // 중심 좌표나 확대 수준이 변경됐을 때 지도 중심 좌표에 대한 주소 정보를 표시하도록 이벤트를 등록합니다
-  kakao.maps.event.addListener(map, 'idle', function () {
-    searchAddrFromCoords(map.getCenter(), displayCenterInfo);
-  });
+  // kakao.maps.event.addListener(map, 'idle', function () {
+  //   searchAddrFromCoords(map.getCenter(), displayCenterInfo);
+  // });
 
   function searchAddrFromCoords(coords, callback) {
     // 좌표로 행정동 주소 정보를 요청합니다
