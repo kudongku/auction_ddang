@@ -13,6 +13,8 @@ import com.ip.ddangddangddang.global.exception.custom.CustomAuctionException;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -63,6 +65,14 @@ public class AuctionService {
             }
         }
         return response;
+    }
+
+    public Page<AuctionResponseDto> getAuctionsByTitle(String title, Pageable pageable) {
+        if (title == null || title.isEmpty()) {
+            throw new IllegalArgumentException("제목을 찾을 수 없습니다.");
+        }
+        Page<Auction> auctionList = auctionRepository.findAllByTitle(title, pageable);
+        return auctionList.map(AuctionResponseDto::new);
     }
 
     public AuctionResponseDto getAuction(Long auctionId) {
