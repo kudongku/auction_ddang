@@ -51,6 +51,9 @@ public class Auction extends Timestamp {
     private StatusEnum statusEnum;
 
     @Column
+    private LocalDateTime createdAt;
+
+    @Column
     @Temporal(TemporalType.TIMESTAMP)
     private LocalDateTime finishedAt;
 
@@ -69,6 +72,7 @@ public class Auction extends Timestamp {
         this.title = requestDto.getTitle();
         this.content = requestDto.getContent();
         this.statusEnum = StatusEnum.ON_SALE;
+        this.createdAt = LocalDateTime.now();
         this.finishedAt = LocalDateTime.now().plusDays(1);
         this.user = user;
         this.fileId = requestDto.getFileId();
