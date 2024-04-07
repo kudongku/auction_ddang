@@ -49,7 +49,7 @@ public class CommentService {
 
         validateUser(sellerId, buyerId, userId);
 
-        List<Comment> comments = commentRepository.findAllByAuctionIdOrderByCreatedAt(auctionId);
+        List<Comment> comments = commentRepository.findAllByAuctionId(auctionId);
         return comments.stream()
             .map(CommentReadResponseDto::new)
             .toList();
