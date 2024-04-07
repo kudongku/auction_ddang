@@ -7,6 +7,7 @@ import com.ip.ddangddangddang.global.exception.custom.CustomCommentException;
 import com.ip.ddangddangddang.global.exception.custom.CustomResultException;
 import com.ip.ddangddangddang.global.exception.custom.CustomTownException;
 import com.ip.ddangddangddang.global.exception.custom.CustomUserException;
+import com.ip.ddangddangddang.global.exception.custom.LockNotAcquiredException;
 import com.ip.ddangddangddang.global.exception.custom.TimeOutLockException;
 import jakarta.persistence.EntityNotFoundException;
 import java.util.Objects;
@@ -24,6 +25,12 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(TimeOutLockException.class)
     public ResponseEntity<ExceptionDto> timeOutLockException(final TimeOutLockException e) {
         log.error("TimeOutLockException: ", e);
+        return createResponse(HttpStatus.REQUEST_TIMEOUT, "Lock Exception: " + e.getMessage());
+    }
+
+    @ExceptionHandler(LockNotAcquiredException.class)
+    public ResponseEntity<ExceptionDto> lockNotAcquiredException(final LockNotAcquiredException e) {
+        log.error("LockNotAcquiredException: ", e);
         return createResponse(HttpStatus.REQUEST_TIMEOUT, "Lock Exception: " + e.getMessage());
     }
 
