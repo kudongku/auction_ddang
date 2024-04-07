@@ -1,6 +1,7 @@
 package com.ip.ddangddangddang.domain.comment.entity;
 
 import com.ip.ddangddangddang.domain.auction.entity.Auction;
+import com.ip.ddangddangddang.domain.common.timestamp.Timestamp;
 import com.ip.ddangddangddang.domain.user.entity.User;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -19,7 +20,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Entity
 @Table(name = "comments")
-public class Comment {
+public class Comment extends Timestamp {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
