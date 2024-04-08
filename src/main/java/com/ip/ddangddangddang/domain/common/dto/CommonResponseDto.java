@@ -20,5 +20,6 @@ public class CommonResponseDto<T> {
     ) {
         return ResponseEntity.status(status).body(new CommonResponseDto<>(status, message, data));
     }
+    // TODO: 4/8/24 제거?
 
 }

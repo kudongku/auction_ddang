@@ -25,7 +25,7 @@ public class BidController {
         @Valid @RequestBody BidRequestDto requestDto,
         @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
-        bidService.createBid(auctionId, requestDto, userDetails.getUser().getId());
+        bidService.createBid(auctionId, requestDto, userDetails.getUserId());
     }
 
 }
