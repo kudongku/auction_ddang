@@ -7,6 +7,8 @@ import com.ip.ddangddangddang.domain.auction.dto.request.AuctionRequestDto;
 import com.ip.ddangddangddang.domain.auction.dto.response.AuctionResponseDto;
 import com.ip.ddangddangddang.domain.auction.entity.Auction;
 import com.ip.ddangddangddang.domain.auction.repository.AuctionRepository;
+import com.ip.ddangddangddang.domain.file.entity.File;
+import com.ip.ddangddangddang.domain.file.service.FileService;
 import com.ip.ddangddangddang.domain.user.entity.User;
 import com.ip.ddangddangddang.domain.user.service.UserService;
 import com.ip.ddangddangddang.global.exception.custom.CustomAuctionException;
@@ -25,11 +27,13 @@ public class AuctionService {
 
     private final AuctionRepository auctionRepository;
     private final UserService userService;
+    private final FileService fileService;
 
     @Transactional
     public void createAuction(AuctionRequestDto requestDto, Long userId) {
         User user = userService.getUser(userId);
-        auctionRepository.save(new Auction(requestDto, user));
+        File file = fileService.findFileOrElseThrow(requestDto.getFileId());
+        auctionRepository.save(new Auction(requestDto, user, file));
     }
 
     @Transactional

@@ -68,7 +68,7 @@ public class FileService {
         return new FileReadResponseDto(preSignedUrl);
     }
 
-    private File findFileOrElseThrow(Long fileId){
+    public File findFileOrElseThrow(Long fileId){
         return fileRepository.findById(fileId).orElseThrow(
             ()-> new NullPointerException("없는 이미지 입니다.")
         );

@@ -6,7 +6,6 @@ import com.ip.ddangddangddang.domain.auction.dto.response.AuctionResponseDto;
 import com.ip.ddangddangddang.domain.auction.service.AuctionService;
 import com.ip.ddangddangddang.global.security.UserDetailsImpl;
 import jakarta.validation.Valid;
-import java.io.IOException;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -19,9 +18,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
 
 @RequiredArgsConstructor
 @RequestMapping("/v1/auctions")
@@ -35,7 +32,7 @@ public class AuctionController {
         @Valid @RequestBody AuctionRequestDto requestDto,
         @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
-        auctionService.createAuction(requestDto, userDetails.getUser().getId());
+        auctionService.createAuction(requestDto, userDetails.getUserId());
     }
 
     @DeleteMapping("/{auctionId}")
@@ -43,14 +40,14 @@ public class AuctionController {
         @PathVariable Long auctionId,
         @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
-        auctionService.deleteAuction(auctionId, userDetails.getUser().getId());
+        auctionService.deleteAuction(auctionId, userDetails.getUserId());
     }
 
     @GetMapping
     public List<AuctionResponseDto> getAuctionList(
         @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
-        return auctionService.getAuctionList(userDetails.getUser().getId());
+        return auctionService.getAuctionList(userDetails.getUserId());
     }
 
     @GetMapping("/{auctionId}")
