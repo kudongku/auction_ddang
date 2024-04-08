@@ -35,14 +35,14 @@ public class UserController {
         @Valid @RequestBody UserUpdateRequestDto requestDto,
         @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
-        userService.updateUser(requestDto, userDetails.getUser().getId());
+        userService.updateUser(requestDto, userDetails.getUserId());
     }
 
     @DeleteMapping
     public void deleteUser(
         @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
-        userService.deleteUser(userDetails.getUser().getId());
+        userService.deleteUser(userDetails.getUserId());
     }
 
     @PatchMapping("/location")
@@ -50,7 +50,7 @@ public class UserController {
         @RequestBody UserLocationRequestDto requestDto,
         @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
-        userService.updateLocation(userDetails.getUser().getId(), requestDto);
+        userService.updateLocation(userDetails.getUserId(), requestDto);
     }
 
 }

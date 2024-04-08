@@ -23,6 +23,10 @@ public class UserDetailsImpl implements UserDetails {
         return null;
     }
 
+    public Long getUserId(){
+        return user.getId();
+    }
+
     public String getEmail() {
         return user.getEmail();
     }

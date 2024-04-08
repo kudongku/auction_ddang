@@ -27,7 +27,7 @@ public class CommentController {
         @RequestBody CommentCreateRequestDto requestDto,
         @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
-        commentService.createComment(auctionId, requestDto, userDetails.getUser().getId());
+        commentService.createComment(auctionId, requestDto, userDetails.getUserId());
     }
 
     @GetMapping
@@ -35,7 +35,7 @@ public class CommentController {
         @PathVariable Long auctionId,
         @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
-        return commentService.getComments(auctionId, userDetails.getUser().getId());
+        return commentService.getComments(auctionId, userDetails.getUserId());
     }
 
 }
