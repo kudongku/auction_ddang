@@ -14,12 +14,17 @@ import com.ip.ddangddangddang.domain.user.service.UserService;
 import com.ip.ddangddangddang.global.exception.custom.CustomAuctionException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@Slf4j(topic = "AuctionService")
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 @Service
@@ -28,12 +33,22 @@ public class AuctionService {
     private final AuctionRepository auctionRepository;
     private final UserService userService;
     private final FileService fileService;
+    private final RedisTemplate<String, String> redisTemplate;
 
     @Transactional
     public void createAuction(AuctionRequestDto requestDto, Long userId) {
         User user = userService.getUser(userId);
         File file = fileService.findFileOrElseThrow(requestDto.getFileId());
-        auctionRepository.save(new Auction(requestDto, user, file));
+
+        Auction auction = auctionRepository.save(new Auction(requestDto, user, file));
+
+        ValueOperations<String, String> operations = redisTemplate.opsForValue();
+
+        String redisKey = "auctionId: " + String.valueOf(auction.getId());
+        operations.set(redisKey, "just value");
+        redisTemplate.expire(redisKey, 60, TimeUnit.SECONDS);
+
+        log.info("경매 등록, "+redisKey);
     }
 
     @Transactional
@@ -48,6 +63,18 @@ public class AuctionService {
         auctionRepository.delete(auction);
     }
 
+    @Transactional
+    public void getNotification(String message) {
+        if(message.startsWith("auctionId:")){
+            Long auctionId = Long.parseLong(message.split(" ")[1]);
+            log.info("경매 기한 만료, "+message);
+            Auction auction = findAuctionOrElseThrow(auctionId);
+            auction.updateStatus();
+        }else{
+            throw new RuntimeException("redis 에러");
+        }
+    }
+
     public List<AuctionResponseDto> getAuctionList(Long userId) {
         User user = userService.getUser(userId);
         String townList = user.getTown().getNeighborIdList();
@@ -55,10 +82,9 @@ public class AuctionService {
         ObjectMapper mapper = new ObjectMapper();
         List<Long> neighbor = new ArrayList<>();
         try {
-            neighbor = mapper.readValue(townList, new TypeReference<List<Long>>() {
-            });
+            neighbor = mapper.readValue(townList, new TypeReference<List<Long>>() {});
         } catch (JsonProcessingException e) {
-            e.printStackTrace();
+            throw new IllegalArgumentException("JsonProcessingException exceptio ");
         }
 
         List<AuctionResponseDto> response = new ArrayList<>();
@@ -90,9 +116,4 @@ public class AuctionService {
             () -> new CustomAuctionException("게시글이 존재하지 않습니다.")
         );
     }
-
-    public void isExistAuction(Long auctionId) {
-        auctionRepository.findById(auctionId);
-    }
-
 }
