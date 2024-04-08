@@ -9,6 +9,7 @@ import com.ip.ddangddangddang.domain.auction.entity.Auction;
 import com.ip.ddangddangddang.domain.auction.repository.AuctionRepository;
 import com.ip.ddangddangddang.domain.file.entity.File;
 import com.ip.ddangddangddang.domain.file.service.FileService;
+import com.ip.ddangddangddang.domain.result.service.ResultService;
 import com.ip.ddangddangddang.domain.user.entity.User;
 import com.ip.ddangddangddang.domain.user.service.UserService;
 import com.ip.ddangddangddang.global.exception.custom.CustomAuctionException;
@@ -33,6 +34,7 @@ public class AuctionService {
     private final AuctionRepository auctionRepository;
     private final UserService userService;
     private final FileService fileService;
+    private final ResultService resultService;
     private final RedisTemplate<String, String> redisTemplate;
 
     @Transactional
@@ -43,7 +45,8 @@ public class AuctionService {
         Auction auction = auctionRepository.save(new Auction(requestDto, user, file));
 
         ValueOperations<String, String> operations = redisTemplate.opsForValue();
-        String redisKey = "auctionId:" + auction.getId(); // redisKey = "auctionId:1";
+        String redisKey = "auctionId:" + auction.getId();
+        // redisKey = "auctionId:1";
 
         operations.set(redisKey, "1");
         redisTemplate.expire(redisKey, 60, TimeUnit.SECONDS);
@@ -63,7 +66,8 @@ public class AuctionService {
     }
 
     @Transactional
-    public void getNotification(String message) {
+    public void updateStatusToHold(String message) {
+
         if (message.startsWith("auctionId:")) {
             // message = "auctionId: 1", string
             // message.split(" ") = {"auctionId:", "1"}, Array<String>
@@ -73,13 +77,22 @@ public class AuctionService {
             log.info("경매 기한 만료, " + message);
             Auction auction = findAuctionOrElseThrow(auctionId);
             auction.updateStatusToHold();
-
-//            resultService.createResult(auctionId);
-
-//            bidService.
+            resultService.createResult(auction);
         } else {
             throw new RuntimeException("redis 에러");
         }
+
+    }
+
+    @Transactional
+    public void updateStatusToComplete(Long auctionId, Long userId) {
+        Auction auction = findAuctionOrElseThrow(auctionId);
+
+        if(!auction.getUser().getId().equals(userId)){
+            throw new IllegalArgumentException("사용자가 불일치");
+        }
+
+        auction.updateStatusToComplete();
     }
 
     public List<AuctionResponseDto> getAuctionList(Long userId) {
@@ -129,4 +142,5 @@ public class AuctionService {
             () -> new CustomAuctionException("게시글이 존재하지 않습니다.")
         );
     }
+
 }

@@ -1,9 +1,10 @@
 package com.ip.ddangddangddang.domain.bid.repository;
 
 import com.ip.ddangddangddang.domain.bid.entity.Bid;
+import java.util.List;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface BidRepository {
+public interface BidRepository extends JpaRepository<Bid, Long> {
 
-    void save(Bid bid);
-
+    List<Bid> findAllByAuctionId(Long auctionId);
 }

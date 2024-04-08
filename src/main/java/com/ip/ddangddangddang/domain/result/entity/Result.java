@@ -1,6 +1,7 @@
 package com.ip.ddangddangddang.domain.result.entity;
 
 import com.ip.ddangddangddang.domain.auction.entity.Auction;
+import com.ip.ddangddangddang.domain.bid.entity.Bid;
 import com.ip.ddangddangddang.domain.user.entity.User;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -37,4 +38,9 @@ public class Result {
     @JoinColumn(name= "auction_id")
     private Auction auction;
 
+    public Result(Bid bid, User buyer, Auction auction) {
+        this.price = bid.getPrice();
+        this.user = buyer;
+        this.auction = auction;
+    }
 }
