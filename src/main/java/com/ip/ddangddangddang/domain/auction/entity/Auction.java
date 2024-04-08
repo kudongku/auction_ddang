@@ -80,4 +80,7 @@ public class Auction extends Timestamp {
         this.file = file;
     }
 
+    public void updateStatusToHold() {
+        this.statusEnum = StatusEnum.HOLD;
+    }
 }
