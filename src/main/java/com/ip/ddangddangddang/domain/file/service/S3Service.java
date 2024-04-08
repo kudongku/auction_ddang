@@ -16,13 +16,14 @@ import org.springframework.web.multipart.MultipartFile;
 
 @RequiredArgsConstructor
 @Service
-public class S3Service {
+public class S3Service implements FileUploadService{
 
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
 
     private final AmazonS3 amazonS3;
 
+    @Override
     public void upload(MultipartFile auctionImage, String keyName) throws IOException {
         ObjectMetadata objMeta = new ObjectMetadata();
         objMeta.setContentType(auctionImage.getContentType());
@@ -36,6 +37,7 @@ public class S3Service {
 
     }
 
+    @Override
     public void delete(String keyName) {
         try {
             amazonS3.deleteObject(bucket, keyName);
@@ -44,6 +46,7 @@ public class S3Service {
         }
     }
 
+    @Override
     public String getPresignedURL(String keyName) {
         Date expiration = new Date();
         expiration.setTime(expiration.getTime() + 1000 * 60 * 2);
