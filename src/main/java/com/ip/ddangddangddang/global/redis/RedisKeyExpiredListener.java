@@ -28,9 +28,10 @@ public class RedisKeyExpiredListener extends KeyExpirationEventMessageListener {
     /**
      * @param message redis key
      * @param pattern __keyEvent@*__:expired
+     * 만료시 알림을 받으면 이 메소드가 실행됨
      */
     @Override
-    public void onMessage(Message message, byte[] pattern) {
+    public void onMessage(Message message, byte[] pattern) { //message = "auctionId: 1"
         auctionService.getNotification(message.toString());
     }
 }

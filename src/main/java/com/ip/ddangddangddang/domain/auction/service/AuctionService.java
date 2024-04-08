@@ -43,18 +43,17 @@ public class AuctionService {
         Auction auction = auctionRepository.save(new Auction(requestDto, user, file));
 
         ValueOperations<String, String> operations = redisTemplate.opsForValue();
+        String redisKey = "auctionId:" + auction.getId(); // redisKey = "auctionId:1";
 
-        String redisKey = "auctionId: " + String.valueOf(auction.getId());
-        operations.set(redisKey, "just value");
+        operations.set(redisKey, "1");
         redisTemplate.expire(redisKey, 60, TimeUnit.SECONDS);
 
-        log.info("경매 등록, "+redisKey);
+        log.info("경매 등록, " + redisKey);
     }
 
     @Transactional
     public void deleteAuction(Long auctionId, Long userId) {
         Auction auction = findAuctionOrElseThrow(auctionId);
-
 
         if (!userId.equals(auction.getUser().getId())) {
             throw new IllegalArgumentException("작성자가 아닙니다.");
@@ -65,24 +64,34 @@ public class AuctionService {
 
     @Transactional
     public void getNotification(String message) {
-        if(message.startsWith("auctionId:")){
-            Long auctionId = Long.parseLong(message.split(" ")[1]);
-            log.info("경매 기한 만료, "+message);
+        if (message.startsWith("auctionId:")) {
+            // message = "auctionId: 1", string
+            // message.split(" ") = {"auctionId:", "1"}, Array<String>
+            // message.split(" ")[1] = "1", string
+            // Long.parseLong(message.split(" ")[1]) = 1L, Long
+            Long auctionId = Long.parseLong(message.split(":")[1]);
+            log.info("경매 기한 만료, " + message);
             Auction auction = findAuctionOrElseThrow(auctionId);
-            auction.updateStatus();
-        }else{
+            auction.updateStatusToHold();
+
+//            resultService.createResult(auctionId);
+
+//            bidService.
+        } else {
             throw new RuntimeException("redis 에러");
         }
     }
 
     public List<AuctionResponseDto> getAuctionList(Long userId) {
+        // TODO: 4/8/24 판매중인것만보이게
         User user = userService.getUser(userId);
         String townList = user.getTown().getNeighborIdList();
 
         ObjectMapper mapper = new ObjectMapper();
         List<Long> neighbor = new ArrayList<>();
         try {
-            neighbor = mapper.readValue(townList, new TypeReference<List<Long>>() {});
+            neighbor = mapper.readValue(townList, new TypeReference<List<Long>>() {
+            });
         } catch (JsonProcessingException e) {
             throw new IllegalArgumentException("JsonProcessingException exceptio ");
         }
@@ -104,6 +113,10 @@ public class AuctionService {
         Page<Auction> auctionList = auctionRepository.findAllByTitle(title, pageable);
         return auctionList.map(AuctionResponseDto::new);
     }
+
+    // TODO: 4/8/24 자신이 입찰한 게시글리스트 보기 getList
+
+    // TODO: 4/8/24 자신이 올린 옥션리스트 보기 getList
 
     public AuctionResponseDto getAuction(Long auctionId) {
         Auction auction = findAuctionOrElseThrow(auctionId);
