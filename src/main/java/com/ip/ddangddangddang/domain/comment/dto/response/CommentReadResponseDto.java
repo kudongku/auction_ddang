@@ -7,9 +7,9 @@ import lombok.Getter;
 @Getter
 public class CommentReadResponseDto {
 
-    private final String nickname;
-    private final String content;
-    private final LocalDateTime createdAt;
+    private String nickname;
+    private String content;
+    private LocalDateTime createdAt;
 
     public CommentReadResponseDto(Comment comment) {
         this.nickname = comment.getUser().getNickname();
