@@ -19,14 +19,19 @@ public class AuctionQueryRepositoryImpl implements AuctionQueryRepository {
     @Override
     public Page<Auction> findAllByTitle(String title, Pageable pageable) {
 
+        long adjustedPageNumber = pageable.getPageNumber() - 1;
+        if (adjustedPageNumber < 0) {
+            throw new IllegalArgumentException("페이지의 넘버는 0보다 커야합니다.");
+        }
+
+        // todo : 페이지 이상의 값이 나왔을 때의 예외처리가 필요한가요?
+
         List<Auction> result = queryFactory.selectFrom(auction)
-            .where(auction.title.contains(title).and(auction.finishedAt.isNull()))
+            .where(auction.title.contains(title).and(auction.finishedAt.isNotNull()))
             .orderBy(auction.createdAt.desc())
-            .offset(pageable.getOffset())
+            .offset(pageable.getPageSize() * adjustedPageNumber)
             .limit(pageable.getPageSize())
             .fetch();
-
-//        List<Auction> auctionList = result.fetch();
 
         JPAQuery<Long> count = queryFactory.select(auction.count())
             .from(auction);
