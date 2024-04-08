@@ -32,6 +32,6 @@ public class RedisKeyExpiredListener extends KeyExpirationEventMessageListener {
      */
     @Override
     public void onMessage(Message message, byte[] pattern) { //message = "auctionId: 1"
-        auctionService.getNotification(message.toString());
+        auctionService.updateStatusToHold(message.toString());
     }
 }

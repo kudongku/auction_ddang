@@ -83,4 +83,8 @@ public class Auction extends Timestamp {
     public void updateStatusToHold() {
         this.statusEnum = StatusEnum.HOLD;
     }
+
+    public void updateStatusToComplete() {
+        this.statusEnum = StatusEnum.COMPLETED;
+    }
 }

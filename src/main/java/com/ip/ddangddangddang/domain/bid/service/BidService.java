@@ -7,6 +7,7 @@ import com.ip.ddangddangddang.domain.bid.entity.Bid;
 import com.ip.ddangddangddang.domain.bid.repository.BidRepository;
 import com.ip.ddangddangddang.global.aop.DistributedLock;
 import com.ip.ddangddangddang.global.exception.custom.CustomBidException;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -37,4 +38,21 @@ public class BidService {
         }
     }
 
+    public Bid getHighestBid(Long auctionId) {
+        List<Bid> bids = bidRepository.findAllByAuctionId(auctionId);
+        Long highestPrice = Long.MIN_VALUE;
+        Bid highestBid = null;
+
+        for(Bid bid : bids){
+
+            if(bid.getPrice()>highestPrice){
+                highestPrice = bid.getPrice();
+                highestBid = bid;
+            }
+
+        }
+
+        return highestBid;
+
+    }
 }
