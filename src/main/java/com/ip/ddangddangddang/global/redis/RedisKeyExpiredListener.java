@@ -1,6 +1,8 @@
 package com.ip.ddangddangddang.global.redis;
 
+import com.ip.ddangddangddang.domain.auction.dto.request.AuctionKeyNotificationRequestDto;
 import com.ip.ddangddangddang.domain.auction.service.AuctionService;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.redis.connection.Message;
 import org.springframework.data.redis.connection.MessageListener;
 import org.springframework.data.redis.listener.KeyExpirationEventMessageListener;
@@ -10,7 +12,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class RedisKeyExpiredListener extends KeyExpirationEventMessageListener {
 
-    private final AuctionService auctionService;
+    private final ApplicationEventPublisher applicationEventPublisher;
 
     /**
      * Creates new {@link MessageListener} for {@code __keyEvent@*__:expired} messages.
@@ -19,10 +21,10 @@ public class RedisKeyExpiredListener extends KeyExpirationEventMessageListener {
      */
     public RedisKeyExpiredListener(
         RedisMessageListenerContainer listenerContainer,
-        AuctionService auctionService
+        ApplicationEventPublisher applicationEventPublisher
     ) {
         super(listenerContainer);
-        this.auctionService = auctionService;
+        this.applicationEventPublisher = applicationEventPublisher;
     }
 
     /**
@@ -32,6 +34,6 @@ public class RedisKeyExpiredListener extends KeyExpirationEventMessageListener {
      */
     @Override
     public void onMessage(Message message, byte[] pattern) { //message = "auctionId: 1"
-        auctionService.updateStatusToHold(message.toString());
+        applicationEventPublisher.publishEvent(new AuctionKeyNotificationRequestDto(message.toString()));
     }
 }
