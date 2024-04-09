@@ -1,7 +1,6 @@
 package com.ip.ddangddangddang.domain.bid.service;
 
 import com.ip.ddangddangddang.domain.auction.entity.Auction;
-import com.ip.ddangddangddang.domain.auction.service.AuctionService;
 import com.ip.ddangddangddang.domain.bid.dto.request.BidRequestDto;
 import com.ip.ddangddangddang.domain.bid.entity.Bid;
 import com.ip.ddangddangddang.domain.bid.repository.BidRepository;
@@ -19,12 +18,12 @@ import org.springframework.transaction.annotation.Transactional;
 public class BidService {
 
     private final BidRepository bidRepository;
-    private final AuctionService auctionService;
+    private final AuctionValidator auctionValidator;
 
     @Transactional
     @DistributedLock(value = "bidLock", waitTime = 50, leaseTime = 50, timeUnit = TimeUnit.MINUTES)
     public void createBid(Long auctionId, BidRequestDto requestDto, Long userId) {
-        Auction auction = auctionService.findAuctionOrElseThrow(auctionId);
+        Auction auction = auctionValidator.findAuctionOrElseThrow(auctionId);
 
         Long seller = auction.getUser().getId();
         validateBidBySeller(seller, userId);
@@ -43,9 +42,9 @@ public class BidService {
         Long highestPrice = Long.MIN_VALUE;
         Bid highestBid = null;
 
-        for(Bid bid : bids){
+        for (Bid bid : bids) {
 
-            if(bid.getPrice()>highestPrice){
+            if (bid.getPrice() > highestPrice) {
                 highestPrice = bid.getPrice();
                 highestBid = bid;
             }
