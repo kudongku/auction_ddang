@@ -45,9 +45,9 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
             //인증 처리를 하는 메서드 입력받은 이메일과 비밀번호로 검증
             User user = userRepository.findByEmail(
                 requestDto.getEmail()).orElseThrow(
-                () -> new BadCredentialsException("잘못된 이메일을 입력하셨습니다.")); //인증실패를 위한 예외
+                () -> new BadCredentialsException("잘못된 이메일을 입력했습니다.")); //인증실패를 위한 예외
             if (!passwordEncoder.matches(requestDto.getPassword(), user.getPassword())) {
-                throw new BadCredentialsException("잘못된 비밀번호를 입력하셨습니다.");
+                throw new BadCredentialsException("잘못된 비밀번호를 입력했습니다.");
             }
             return new CustomAuthenticationToken(
                 user,
@@ -72,13 +72,13 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     @Override
     protected void unsuccessfulAuthentication(HttpServletRequest request,
         HttpServletResponse response, AuthenticationException failed) throws IOException {
-        response.setStatus(401);
+        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         ObjectNode json = new ObjectMapper().createObjectNode();
         json.put("message", failed.getMessage());
         String newResponse = new ObjectMapper().writeValueAsString(json);
         response.setContentType("application/json");
-        response.setContentLength(newResponse.length());
-        response.getOutputStream().write(newResponse.getBytes());
+        response.setContentLength(newResponse.getBytes("UTF-8").length);
+        response.getOutputStream().write(newResponse.getBytes("UTF-8"));
         log.error(failed.getMessage());
     }
 
