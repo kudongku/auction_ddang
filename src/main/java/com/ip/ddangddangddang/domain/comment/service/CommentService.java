@@ -30,19 +30,19 @@ public class CommentService {
     public void createComment(Long auctionId, CommentCreateRequestDto requestDto, Long userId) {
         User user = userService.findUserOrElseThrow(userId);
         Auction auction = auctionService.findAuctionOrElseThrow(auctionId);
-        Result result = resultService.findResultOrElseThrow(auctionId);
+        Result result = resultService.findByAuctionAndUserIsNotNullOrElseThrow(auction);
 
         Long sellerId = auction.getUser().getId();
         Long buyerId = result.getUser().getId();
 
-        validateUser(sellerId, buyerId, userId);
+        validateUser(sellerId, buyerId, userId); // todo
         Comment comment = new Comment(requestDto.getContent(), user, auction);
         commentRepository.save(comment);
     }
 
     public List<CommentReadResponseDto> getComments(Long auctionId, Long userId) {
         Auction auction = auctionService.findAuctionOrElseThrow(auctionId);
-        Result result = resultService.findResultOrElseThrow(auctionId);
+        Result result = resultService.findByAuctionAndUserIsNotNullOrElseThrow(auction);
 
         Long sellerId = auction.getUser().getId();
         Long buyerId = result.getUser().getId();

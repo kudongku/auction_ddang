@@ -43,29 +43,20 @@ public class FileService {
     }
 
     @Transactional
-    public void delete(Long fileId, Long userId) {
-        File file = findFileOrElseThrow(fileId);
-        User user = userService.findUserOrElseThrow(userId);
-
-        if(!file.getUser().equals(user)){
-            throw new IllegalArgumentException("작성자만 삭제가 가능합니다.");
-            // TODO: 4/8/24 에러메세지 통일시키기 -> 문장을 이넘으로
-        }
-
+    public void delete(File file) {
         fileUploadService.delete(file.getKeyName());
         fileRepository.delete(file);
     }
 
     public FileReadResponseDto getPresignedURL(Long fileId, Long userId) {
         File file = findFileOrElseThrow(fileId);
-        User user = userService.findUserOrElseThrow(userId);
 
-        if(!file.getUser().equals(user)){
+        if(!file.getUser().getId().equals(userId)){
             throw new IllegalArgumentException("작성자만 삭제가 가능합니다.");
         }
 
         String preSignedUrl = fileUploadService.getPresignedURL(file.getKeyName());
-        return new FileReadResponseDto(preSignedUrl);
+        return new FileReadResponseDto(file.getId(), preSignedUrl);
     }
 
     public File findFileOrElseThrow(Long fileId){

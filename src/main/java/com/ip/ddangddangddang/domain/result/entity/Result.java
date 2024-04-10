@@ -38,8 +38,8 @@ public class Result {
     @JoinColumn(name= "auction_id")
     private Auction auction;
 
-    public Result(Bid bid, User buyer, Auction auction) {
-        this.price = bid.getPrice();
+    public Result(Long price, User buyer, Auction auction) {
+        this.price = price;
         this.user = buyer;
         this.auction = auction;
     }

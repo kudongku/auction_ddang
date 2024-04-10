@@ -21,17 +21,29 @@ public class ResultService {
     private final BidService bidService;
     private final UserService userService;
 
-    public Result findResultOrElseThrow(Long auctionId) {
-        return resultRepository.findById(auctionId).orElseThrow(
-            () -> new CustomResultException("결과가 존재하지 않습니다.")
+    public Result findByAuctionAndUserIsNotNullOrElseThrow(Auction auction) {
+        Result result = resultRepository.findByAuction(auction).orElseThrow(
+            () -> new CustomResultException("결과가 없습니다.")
         );
+
+        if(result.getUser() == null){
+            throw new IllegalArgumentException("구매자가 없는 옥션입니다.");
+        }
+
+        return result;
     }
 
     @Transactional
     public void createResult(Auction auction) {
-        Bid bid = bidService.getHighestBid(auction.getId());
-        User buyer = userService.getUser(bid.getUserId());
-        Result result = new Result(bid, buyer, auction);
-        resultRepository.save(result);
+        Bid highestBid = bidService.getHighestBid(auction.getId());
+
+        if(highestBid == null){
+            resultRepository.save(new Result(0L, null, auction));
+        }else{
+            User buyer = userService.findUserOrElseThrow(highestBid.getUserId());
+            Result result = new Result(highestBid.getPrice(), buyer, auction);
+            resultRepository.save(result);
+        }
+
     }
 }
