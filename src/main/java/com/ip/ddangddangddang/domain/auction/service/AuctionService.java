@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ip.ddangddangddang.domain.auction.dto.request.AuctionRequestDto;
+import com.ip.ddangddangddang.domain.auction.dto.response.AuctionListResponseDto;
 import com.ip.ddangddangddang.domain.auction.dto.response.AuctionResponseDto;
 import com.ip.ddangddangddang.domain.auction.entity.Auction;
 import com.ip.ddangddangddang.domain.auction.repository.AuctionRepository;
@@ -88,7 +89,7 @@ public class AuctionService {
     public void updateStatusToComplete(Long auctionId, Long userId) {
         Auction auction = findAuctionOrElseThrow(auctionId);
 
-        if(!auction.getUser().getId().equals(userId)){
+        if (!auction.getUser().getId().equals(userId)) {
             throw new IllegalArgumentException("사용자가 불일치");
         }
 
@@ -119,17 +120,14 @@ public class AuctionService {
         return response;
     }
 
-    public Page<AuctionResponseDto> getAuctionsByTitle(String title, Pageable pageable) {
+    public Page<AuctionListResponseDto> getAuctionsByTitle(String title, Pageable pageable) {
         if (title == null || title.isEmpty()) {
             throw new IllegalArgumentException("제목을 찾을 수 없습니다.");
         }
-        Page<Auction> auctionList = auctionRepository.findAllByTitle(title, pageable);
-        return auctionList.map(AuctionResponseDto::new);
+        return auctionRepository.findAllByTitle(title, pageable);
     }
 
     // TODO: 4/8/24 자신이 입찰한 게시글리스트 보기 getList
-
-    // TODO: 4/8/24 자신이 올린 옥션리스트 보기 getList
 
     public AuctionResponseDto getAuction(Long auctionId) {
         Auction auction = findAuctionOrElseThrow(auctionId);
@@ -137,10 +135,14 @@ public class AuctionService {
         return new AuctionResponseDto(auction);
     }
 
+    // TODO: 4/8/24 자신이 올린 옥션리스트 보기 getList
+    public Page<AuctionListResponseDto> getMyAuctions(Long userId, Pageable pageable) {
+        return auctionRepository.findAuctionsByUserId(userId, pageable);
+    }
+
     public Auction findAuctionOrElseThrow(Long auctionId) {
         return auctionRepository.findById(auctionId).orElseThrow(
             () -> new CustomAuctionException("게시글이 존재하지 않습니다.")
         );
     }
-
 }

@@ -2,6 +2,7 @@ package com.ip.ddangddangddang.domain.auction.controller;
 
 
 import com.ip.ddangddangddang.domain.auction.dto.request.AuctionRequestDto;
+import com.ip.ddangddangddang.domain.auction.dto.response.AuctionListResponseDto;
 import com.ip.ddangddangddang.domain.auction.dto.response.AuctionResponseDto;
 import com.ip.ddangddangddang.domain.auction.service.AuctionService;
 import com.ip.ddangddangddang.global.security.UserDetailsImpl;
@@ -67,11 +68,19 @@ public class AuctionController {
     }
 
     @GetMapping("/search")
-    public Page<AuctionResponseDto> searchAuctions(
+    public Page<AuctionListResponseDto> searchAuctions(
         @RequestParam String title,
         Pageable pageable
     ) {
         return auctionService.getAuctionsByTitle(title, pageable);
+    }
+
+    @GetMapping("/myauction")
+    public Page<AuctionListResponseDto> getMyAuctions(
+        @AuthenticationPrincipal UserDetailsImpl userDetails,
+        Pageable pageable
+    ) {
+        return auctionService.getMyAuctions(userDetails.getUserId(), pageable);
     }
 
 }
