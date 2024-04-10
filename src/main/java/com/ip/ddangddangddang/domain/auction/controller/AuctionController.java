@@ -75,12 +75,20 @@ public class AuctionController {
         return auctionService.getAuctionsByTitle(title, pageable);
     }
 
-    @GetMapping("/myauction")
+    @GetMapping("/myauctions")
     public Page<AuctionListResponseDto> getMyAuctions(
         @AuthenticationPrincipal UserDetailsImpl userDetails,
         Pageable pageable
     ) {
         return auctionService.getMyAuctions(userDetails.getUserId(), pageable);
+    }
+
+    @GetMapping("/mybids")
+    public Page<AuctionListResponseDto> getMyBids(
+        @AuthenticationPrincipal UserDetailsImpl userDetails,
+        Pageable pageable
+    ) {
+        return auctionService.getMyBids(userDetails.getUserId(), pageable);
     }
 
 }
