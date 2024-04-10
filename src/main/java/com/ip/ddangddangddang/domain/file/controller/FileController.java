@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 @RequiredArgsConstructor
-@RequestMapping("/v1/files")
+@RequestMapping("/v1/auctions/files") // todo API 이대로 괜찮?
 @RestController
 public class FileController {
 
@@ -45,14 +45,6 @@ public class FileController {
         @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
         return fileService.getPresignedURL(fileId, userDetails.getUserId());
-    }
-
-    @DeleteMapping("/{fileId}")
-    public void deleteFile(
-        @PathVariable Long fileId,
-        @AuthenticationPrincipal UserDetailsImpl userDetails
-    ) {
-        fileService.delete(fileId, userDetails.getUserId());
     }
 
 }
