@@ -29,9 +29,15 @@ public class ResultService {
 
     @Transactional
     public void createResult(Auction auction) {
-        Bid bid = bidService.getHighestBid(auction.getId());
-        User buyer = userService.getUser(bid.getUserId());
-        Result result = new Result(bid.getPrice(), buyer, auction);
-        resultRepository.save(result);
+        Bid highestBid = bidService.getHighestBid(auction.getId());
+
+        if(highestBid == null){
+            resultRepository.save(new Result(0L, null, auction));
+        }else{
+            User buyer = userService.findUserOrElseThrow(highestBid.getUserId());
+            Result result = new Result(highestBid.getPrice(), buyer, auction);
+            resultRepository.save(result);
+        }
+
     }
 }
