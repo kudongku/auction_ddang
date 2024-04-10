@@ -7,7 +7,6 @@ import com.ip.ddangddangddang.domain.auction.dto.response.AuctionResponseDto;
 import com.ip.ddangddangddang.domain.auction.service.AuctionService;
 import com.ip.ddangddangddang.global.security.UserDetailsImpl;
 import jakarta.validation.Valid;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -46,10 +45,11 @@ public class AuctionController {
     }
 
     @GetMapping
-    public List<AuctionResponseDto> getAuctionList(
-        @AuthenticationPrincipal UserDetailsImpl userDetails
+    public Page<AuctionListResponseDto> getAuctions(
+        @AuthenticationPrincipal UserDetailsImpl userDetails,
+        Pageable pageable
     ) {
-        return auctionService.getAuctionList(userDetails.getUserId());
+        return auctionService.getAuctions(userDetails.getUserId(), pageable);
     }
 
     @GetMapping("/{auctionId}")
