@@ -3,6 +3,7 @@ package com.ip.ddangddangddang.domain.auction.repository;
 import static com.ip.ddangddangddang.domain.auction.entity.QAuction.auction;
 
 import com.ip.ddangddangddang.domain.auction.entity.Auction;
+import com.ip.ddangddangddang.domain.auction.entity.StatusEnum;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
@@ -34,6 +35,21 @@ public class AuctionQueryRepositoryImpl implements AuctionQueryRepository {
 
         return PageableExecutionUtils.getPage(result, pageable, count::fetchOne);
 
+    }
+
+    @Override
+    public Page<Auction> findAllByTownIdAndOnSale(Long townId, Pageable pageable,
+        Long adjustedPageNumber) {
+
+        List<Auction> result = queryFactory.selectFrom(auction)
+            .where(auction.townId.eq(townId).and(auction.statusEnum.eq(StatusEnum.ON_SALE)))
+            .orderBy(auction.createdAt.desc())
+            .offset(pageable.getPageSize() * adjustedPageNumber)
+            .limit(pageable.getPageSize())
+            .fetch();
+
+        JPAQuery<Long> count = queryFactory.select(auction.count()).from(auction);
+        return PageableExecutionUtils.getPage(result, pageable, count::fetchOne);
     }
 
     @Override

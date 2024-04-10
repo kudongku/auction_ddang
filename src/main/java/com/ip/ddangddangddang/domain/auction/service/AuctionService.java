@@ -20,6 +20,7 @@ import java.util.concurrent.TimeUnit;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
@@ -105,29 +106,29 @@ public class AuctionService {
         auction.updateStatusToComplete();
     }
 
-    public List<AuctionResponseDto> getAuctionList(Long userId) {
-        // TODO: 4/8/24 판매중인것만보이게
-        User user = userService.getUser(userId);
+    public Page<AuctionListResponseDto> getAuctions(Long userId, Pageable pageable) {
+        User user = userService.findUserOrElseThrow(userId);
         String townList = user.getTown().getNeighborIdList();
 
         ObjectMapper mapper = new ObjectMapper();
-        List<Long> neighbor = new ArrayList<>();
+        List<Long> neighbor;
         try {
             neighbor = mapper.readValue(townList, new TypeReference<List<Long>>() {
             });
         } catch (JsonProcessingException e) {
-            throw new IllegalArgumentException("JsonProcessingException exceptio ");
+            throw new IllegalArgumentException("JsonProcessingException exception");
         }
 
-        List<AuctionResponseDto> response = new ArrayList<>();
-        for (Long id : neighbor) {
-            List<Auction> auctionList = auctionRepository.findAllByTownId(
-                id);
-            for (Auction auction : auctionList) {
-                response.add(new AuctionResponseDto(auction));
-            }
+        List<Auction> response = new ArrayList<>();
+        for (Long townId : neighbor) {
+            Page<Auction> auctionList = auctionRepository.findAllByTownIdAndOnSale(townId,
+                pageable, pageLimit(pageable));
+            response.addAll(auctionList.getContent());
         }
-        return response;
+        Page<Auction> allAuctions = new PageImpl<>(response, pageable, response.size());
+        return allAuctions.map(
+            auction -> new AuctionListResponseDto(auction.getId(), auction.getTitle(),
+                auction.getStatusEnum(), auction.getFinishedAt()));
     }
 
     public Page<AuctionListResponseDto> getAuctionsByTitle(String title, Pageable pageable) {
@@ -182,4 +183,5 @@ public class AuctionService {
         }
         return adjustedPageNumber;
     }
+
 }
