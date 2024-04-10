@@ -4,9 +4,7 @@ import com.ip.ddangddangddang.domain.auction.entity.Auction;
 import com.ip.ddangddangddang.domain.auction.entity.StatusEnum;
 import java.time.LocalDateTime;
 import lombok.Getter;
-import lombok.Setter;
 
-@Setter
 @Getter
 public class AuctionResponseDto {
 

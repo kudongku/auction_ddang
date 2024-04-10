@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ip.ddangddangddang.domain.auction.dto.request.AuctionRequestDto;
+import com.ip.ddangddangddang.domain.auction.dto.response.AuctionListResponseDto;
 import com.ip.ddangddangddang.domain.auction.dto.response.AuctionResponseDto;
 import com.ip.ddangddangddang.domain.auction.entity.Auction;
 import com.ip.ddangddangddang.domain.auction.repository.AuctionRepository;
@@ -38,11 +39,12 @@ public class AuctionService {
     private final RedisTemplate<String, String> redisTemplate;
 
     @Transactional
-    public void createAuction(AuctionRequestDto requestDto, Long userId) { // Todo fileId 곂칠때 duplicated error
+    public void createAuction(AuctionRequestDto requestDto,
+        Long userId) { // Todo fileId 곂칠때 duplicated error
         User user = userService.getUser(userId);
         File file = fileService.findFileOrElseThrow(requestDto.getFileId());
 
-        if(!file.getUser().equals(user)){
+        if (!file.getUser().equals(user)) {
             throw new IllegalArgumentException("파일에 대한 권한이 없습니다.");
         }
 
@@ -60,7 +62,8 @@ public class AuctionService {
 
     @Transactional
     public void deleteAuction(Long auctionId, Long userId) {
-        Auction auction = findAuctionOrElseThrow(auctionId);
+        Auction auction = findAuctionOrElseThrow(
+            auctionId);
 
         if (!userId.equals(auction.getUser().getId())) {
             throw new IllegalArgumentException("작성자가 아닙니다.");
@@ -80,7 +83,8 @@ public class AuctionService {
             // Long.parseLong(message.split(" ")[1]) = 1L, Long
             Long auctionId = Long.parseLong(message.split(":")[1]);
             log.info("경매 기한 만료, " + message);
-            Auction auction = findAuctionOrElseThrow(auctionId);
+            Auction auction = findAuctionOrElseThrow(
+                auctionId);
             auction.updateStatusToHold();
             resultService.createResult(auction);
         } else {
@@ -91,9 +95,10 @@ public class AuctionService {
 
     @Transactional
     public void updateStatusToComplete(Long auctionId, Long userId) {
-        Auction auction = findAuctionOrElseThrow(auctionId);
+        Auction auction = findAuctionOrElseThrow(
+            auctionId);
 
-        if(!auction.getUser().getId().equals(userId)){
+        if (!auction.getUser().getId().equals(userId)) {
             throw new IllegalArgumentException("사용자가 불일치");
         }
 
@@ -116,7 +121,8 @@ public class AuctionService {
 
         List<AuctionResponseDto> response = new ArrayList<>();
         for (Long id : neighbor) {
-            List<Auction> auctionList = auctionRepository.findAllByTownId(id);
+            List<Auction> auctionList = auctionRepository.findAllByTownId(
+                id);
             for (Auction auction : auctionList) {
                 response.add(new AuctionResponseDto(auction));
             }
@@ -124,28 +130,56 @@ public class AuctionService {
         return response;
     }
 
-    public Page<AuctionResponseDto> getAuctionsByTitle(String title, Pageable pageable) {
+    public Page<AuctionListResponseDto> getAuctionsByTitle(String title, Pageable pageable) {
         if (title == null || title.isEmpty()) {
             throw new IllegalArgumentException("제목을 찾을 수 없습니다.");
         }
-        Page<Auction> auctionList = auctionRepository.findAllByTitle(title, pageable);
-        return auctionList.map(AuctionResponseDto::new);
+
+        Long adjustedPageNumber = pageLimit(pageable);
+
+        return auctionRepository.findAllByTitle(title, pageable, adjustedPageNumber).map(
+            auction -> new AuctionListResponseDto(auction.getId(), auction.getTitle(),
+                auction.getStatusEnum(), auction.getFinishedAt())
+        );
     }
 
-    // TODO: 4/8/24 자신이 입찰한 게시글리스트 보기 getList
-
-    // TODO: 4/8/24 자신이 올린 옥션리스트 보기 getList
-
     public AuctionResponseDto getAuction(Long auctionId) {
-        Auction auction = findAuctionOrElseThrow(auctionId);
+        Auction auction = findAuctionOrElseThrow(
+            auctionId);
 
         return new AuctionResponseDto(auction);
     }
 
-    public Auction findAuctionOrElseThrow(Long auctionId) {
+    // TODO: 4/8/24 자신이 올린 옥션리스트 보기 getList
+    public Page<AuctionListResponseDto> getMyAuctions(Long userId, Pageable pageable) {
+        Long adjustedPageNumber = pageLimit(pageable);
+        return auctionRepository.findAuctionsByUserId(userId, pageable, adjustedPageNumber).map(
+            auction -> new AuctionListResponseDto(auction.getId(), auction.getTitle(),
+                auction.getStatusEnum(), auction.getFinishedAt())
+        );
+    }
+
+    // TODO: 4/8/24 자신이 입찰한(최고가를 부른 게시글) 게시글리스트 보기 getList
+    public Page<AuctionListResponseDto> getMyBids(Long userId, Pageable pageable) {
+        Long adjustedPageNumber = pageLimit(pageable);
+        return auctionRepository.findBidsByUserId(userId, pageable, adjustedPageNumber).map(
+            auction -> new AuctionListResponseDto(auction.getId(), auction.getTitle(),
+                auction.getStatusEnum(), auction.getFinishedAt())
+        );
+    }
+
+    public Auction findAuctionOrElseThrow(
+        Long auctionId) {
         return auctionRepository.findById(auctionId).orElseThrow(
             () -> new CustomAuctionException("게시글이 존재하지 않습니다.")
         );
     }
 
+    public Long pageLimit(Pageable pageable) {
+        long adjustedPageNumber = pageable.getPageNumber() - 1;
+        if (adjustedPageNumber < 0) {
+            throw new IllegalArgumentException("페이지의 넘버는 0보다 커야합니다.");
+        }
+        return adjustedPageNumber;
+    }
 }

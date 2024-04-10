@@ -6,5 +6,12 @@ import org.springframework.data.domain.Pageable;
 
 public interface AuctionQueryRepository {
 
-    Page<Auction> findAllByTitle(String title, Pageable pageable);
+    Page<Auction> findAllByTitle(String title, Pageable pageable,
+        Long adjustedPageNumber);
+
+    Page<Auction> findAuctionsByUserId(Long userId, Pageable pageable,
+        Long adjustedPageNumber);
+
+    Page<Auction> findBidsByUserId(Long userId, Pageable pageable,
+        Long adjustedPageNumber);
 }
