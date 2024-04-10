@@ -31,7 +31,7 @@ public class ResultService {
     public void createResult(Auction auction) {
         Bid bid = bidService.getHighestBid(auction.getId());
         User buyer = userService.getUser(bid.getUserId());
-        Result result = new Result(bid, buyer, auction);
+        Result result = new Result(bid.getPrice(), buyer, auction);
         resultRepository.save(result);
     }
 }
