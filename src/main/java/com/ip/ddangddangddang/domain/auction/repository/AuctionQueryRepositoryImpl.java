@@ -38,11 +38,8 @@ public class AuctionQueryRepositoryImpl implements AuctionQueryRepository {
     }
 
     @Override
-    public Page<Auction> findAllByTownIdAndOnSale(Long townId, Pageable pageable) {
-        long adjustedPageNumber = pageable.getPageNumber() - 1;
-        if (adjustedPageNumber < 0) {
-            throw new IllegalArgumentException("페이지의 넘버는 0보다 커야합니다.");
-        }
+    public Page<Auction> findAllByTownIdAndOnSale(Long townId, Pageable pageable,
+        Long adjustedPageNumber) {
 
         List<Auction> result = queryFactory.selectFrom(auction)
             .where(auction.townId.eq(townId).and(auction.statusEnum.eq(StatusEnum.ON_SALE)))
@@ -76,7 +73,7 @@ public class AuctionQueryRepositoryImpl implements AuctionQueryRepository {
 
         return PageableExecutionUtils.getPage(result, pageable, count::fetchOne);
     }
-    
+
     @Override
     public Page<Auction> findBidsByUserId(Long userId, Pageable pageable,
         Long adjustedPageNumber) {

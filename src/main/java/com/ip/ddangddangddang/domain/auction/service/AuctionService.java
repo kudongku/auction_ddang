@@ -122,7 +122,7 @@ public class AuctionService {
         List<Auction> response = new ArrayList<>();
         for (Long townId : neighbor) {
             Page<Auction> auctionList = auctionRepository.findAllByTownIdAndOnSale(townId,
-                pageable);
+                pageable, pageLimit(pageable));
             response.addAll(auctionList.getContent());
         }
         Page<Auction> allAuctions = new PageImpl<>(response, pageable, response.size());
