@@ -38,9 +38,13 @@ public class AuctionService {
     private final RedisTemplate<String, String> redisTemplate;
 
     @Transactional
-    public void createAuction(AuctionRequestDto requestDto, Long userId) {
+    public void createAuction(AuctionRequestDto requestDto, Long userId) { // Todo fileId 곂칠때 duplicated error
         User user = userService.getUser(userId);
         File file = fileService.findFileOrElseThrow(requestDto.getFileId());
+
+        if(!file.getUser().equals(user)){
+            throw new IllegalArgumentException("파일에 대한 권한이 없습니다.");
+        }
 
         Auction auction = auctionRepository.save(new Auction(requestDto, user, file));
 
@@ -62,6 +66,7 @@ public class AuctionService {
             throw new IllegalArgumentException("작성자가 아닙니다.");
         }
 
+        fileService.delete(auction.getFile());
         auctionRepository.delete(auction);
     }
 
