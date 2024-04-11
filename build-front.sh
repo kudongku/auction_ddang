@@ -3,4 +3,4 @@
 npm run build --prefix front
 mkdir -p src/main/resources/static
 find src/main/resources/static -type f ! -name "*.properties" -exec rm -f {} \;
-cp -r front/build/* src/main/resources/static
+cp -r front/dist/* src/main/resources/static
