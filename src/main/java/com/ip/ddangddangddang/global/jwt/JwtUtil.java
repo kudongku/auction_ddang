@@ -29,7 +29,9 @@ public class JwtUtil {
     public static final String BEARER_PREFIX = "Bearer ";
 
     //토큰 만료시간
-    private final long TOKEN_TIME = 60 * 60 * 1000L;
+//    private final long TOKEN_TIME = 60 * 60 * 1000L;
+    // todo 개발 중 귀찮음 해결을 위한 무제한 토큰 -> 나중에 꼭 지우기
+    private final long TOKEN_TIME = Long.MAX_VALUE;
 
     @Value("${jwt.secret.key}") //application-.properties에 들어있던 값이 들어감
     private String secretKey;
