@@ -1,6 +1,7 @@
 package com.ip.ddangddangddang.domain.bid.service;
 
 import com.ip.ddangddangddang.domain.auction.entity.Auction;
+import com.ip.ddangddangddang.domain.auction.entity.StatusEnum;
 import com.ip.ddangddangddang.domain.bid.dto.request.BidRequestDto;
 import com.ip.ddangddangddang.domain.bid.entity.Bid;
 import com.ip.ddangddangddang.domain.bid.repository.BidRepository;
@@ -24,6 +25,7 @@ public class BidService {
     @DistributedLock(value = "bidLock", waitTime = 50, leaseTime = 50, timeUnit = TimeUnit.MINUTES)
     public void createBid(Long auctionId, BidRequestDto requestDto, Long userId) {
         Auction auction = auctionValidator.findAuctionOrElseThrow(auctionId);
+        validateAuctionStatus(auction);
 
         Long seller = auction.getUser().getId();
         validateBidBySeller(seller, userId);
@@ -34,6 +36,12 @@ public class BidService {
     private void validateBidBySeller(Long sellerId, Long userId) {
         if (sellerId.equals(userId)) {
             throw new CustomBidException("본인의 게시글은 입찰을 할 수 없습니다.");
+        }
+    }
+
+    private void validateAuctionStatus(Auction auction) {
+        if (!auction.getStatusEnum().equals(StatusEnum.ON_SALE)) {
+            throw new CustomBidException("입찰 기간이 종료되었습니다.");
         }
     }
 
@@ -54,4 +62,5 @@ public class BidService {
         return highestBid;
 
     }
+
 }
