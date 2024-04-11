@@ -16,6 +16,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 
 @Configuration
 @EnableWebSecurity
@@ -66,13 +67,12 @@ public class WebSecurityConfig {
         http.authorizeHttpRequests((authorizeHttpRequests) ->
             authorizeHttpRequests
                 // 정적 리소스(예: CSS, JavaScript, 이미지 파일 등)는 보안 검사를 거치지 않고 누구나 접근할 수 있도록 허용
-                .requestMatchers(PathRequest.toStaticResources().atCommonLocations())
-                .permitAll() // resources 접근 허용 설정
-                .requestMatchers("/").permitAll() // 메인 페이지 요청 허가
-                .requestMatchers("/login").permitAll() // 메인 페이지 요청 허가
-                .requestMatchers("/signup").permitAll() // 메인 페이지 요청 허가
-                .requestMatchers("/v1/users/signin").permitAll() // 회원가입,로그인 요청 모두 접근 허가
-                .requestMatchers("/v1/users/signup").permitAll()
+                .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll() // resources 접근 허용 설정
+                .requestMatchers("/**").permitAll() // 메인 페이지 요청 허가
+//                .requestMatchers("/login").permitAll() // 메인 페이지 요청 허가
+//                .requestMatchers("/signup").permitAll() // 메인 페이지 요청 허가
+//                .requestMatchers("/v1/users/signin").permitAll() // 회원가입,로그인 요청 모두 접근 허가
+//                .requestMatchers("/v1/users/signup").permitAll()
                 .anyRequest().authenticated() // 그 외 모든 요청 인증처리
         );
 
@@ -83,5 +83,4 @@ public class WebSecurityConfig {
 
         return http.build();
     }
-
 }
