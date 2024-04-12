@@ -10,26 +10,32 @@ public class AuctionResponseDto {
 
     private Long id;
 
-    private Long townId;
+    private String townName;
 
     private String title;
 
     private String content;
 
+    private Long price;
+
     private StatusEnum statusEnum;
 
     private LocalDateTime finishedAt;
 
-    private Long sellerId;
+    private String sellerNickname;
 
-    public AuctionResponseDto(Auction auction) {
+    private String buyerNickname;
+
+    public AuctionResponseDto(Auction auction, String townName, String buyerNickname) {
         this.id = auction.getId();
-        this.townId = auction.getTownId();
+        this.townName = townName;
         this.title = auction.getTitle();
         this.content = auction.getContent();
+        this.price = auction.getPrice();
         this.statusEnum = auction.getStatusEnum();
         this.finishedAt = auction.getFinishedAt();
-        this.sellerId = auction.getUser().getId();
+        this.sellerNickname = auction.getUser().getNickname();
+        this.buyerNickname = buyerNickname;
     }
 
 }
