@@ -1,16 +1,34 @@
 import {Input, Button, Typography} from "@material-tailwind/react";
 import { Link } from "react-router-dom";
 import axios from "axios";
-import {useState} from "react";
+import {useEffect, useRef, useState} from "react";
+const { kakao } = window;
 
 function SignUp() {
+  const [userCoord, setUserCoord] = useState();
   const [formData, setFormData] = useState({
     email: "",
     nickname: "",
     password: "",
     passwordConfirm : "",
-    address : "서울시 강남구 서초동"
+    address : "서울특별시"
   });
+  const kakaoMapRef = useRef();
+
+  useEffect(() => {
+    axios.get('https://geolocation-db.com/json/')
+    .then((res) => {
+      setUserCoord({lat: res.data.latitude, lon:res.data.longitude})
+      console.log("data : ", res)
+    })
+  }, []);
+
+  useEffect(() => {
+    if(!userCoord){
+      return;
+    }
+    initializeKakaoMap()
+  }, [userCoord]);
 
   const handleChange = (e) => {
     console.log(e.target.name)
@@ -18,7 +36,8 @@ function SignUp() {
   };
 
   const handleSubmit = async (e) => {
-    alert("!");
+    console.log(formData.address);
+    console.log(formData)
     e.preventDefault();
     try {
       const response = await axios.post("http://localhost:5173/api/v1/users/signup", formData);
@@ -28,6 +47,65 @@ function SignUp() {
       console.error("Registration failed:", error);
       // 여기서 등록 실패에 대한 처리를 할 수 있습니다.
     }
+  };
+
+  const initializeKakaoMap = () =>{
+
+    const container = document.getElementById('map');
+    const options = {
+      center  : new kakao.maps.LatLng(userCoord.lat, userCoord.lon),
+      level : 3
+    }
+    const map = new kakao.maps.Map(container, options);
+
+    const geocoder = new kakao.maps.services.Geocoder();
+    const marker = new kakao.maps.Marker();
+    const infoWindow = new kakao.maps.InfoWindow({ zindex: 1 });
+
+    map.addListener('click', handleMapClick);
+
+    kakaoMapRef.current = {map, geocoder, marker, infoWindow}
+  }
+
+
+
+
+
+  const handleMapClick = (mouseEvent) => {
+    searchAddrFromCoords(mouseEvent.latLng, (result, status) => {
+      if (status === kakao.maps.services.Status.OK) {
+        const infoDiv = document.getElementById('centerAddr');
+        for (let i = 0; i < result.length; i++) {
+          if (result[i].region_type === 'H') {
+            infoDiv.innerHTML = result[i].address_name;
+            setFormData( {...formData, address:result[i].address_name});
+            break;
+          }
+        }
+      }
+    })
+    //   searchDetailAddrFromCoords(mouseEvent.latLng, (result, status) => {
+    //     if (status === kakao.maps.services.Status.OK) {
+    //       let detailAddr = !!result[0].road_address ? '<div>도로명주소 : ' + result[0].road_address.address_name + '</div>' : '';
+    //       detailAddr += '<div>지번 주소 : ' + result[0].address.address_name + '</div>';
+    //
+    //       const content = '<div class="bAddr">' +
+    //           '<span class="title">법정동 주소정보</span>' +
+    //           detailAddr +
+    //           '</div>';
+    //
+    //
+    //     }
+    //   });
+  };
+
+  const searchAddrFromCoords = (coords, callback) => {
+    kakaoMapRef.current.geocoder.coord2RegionCode(coords.getLng(), coords.getLat(), callback);
+    kakaoMapRef.current.marker.setPosition(coords);
+    kakaoMapRef.current.marker.setMap(kakaoMapRef.current.map);
+
+    // kakaoMapRef.current.infowindow.setContent(content);
+    // kakaoMapRef.current.infowindow.open(kakaoMapRef.current.map, kakaoMapRef.current.marker);
   };
 
   return (
@@ -126,12 +204,21 @@ function SignUp() {
               />
             </div>
 
+            <div className="map_wrap">
+              <div className="hAddr">
+                <div className="title">주소정보</div>
+                <div id="centerAddr"></div>
+              </div>
+              <div id="map" className={"mb-1 flex flex-col gap-6"} style={{ width: "auto", height: '300px', position: 'relative', overflow: 'hidden' }}></div>
+            </div>
+
             <Button className="mt-6" fullWidth  type={"submit"}>
               등록하기
             </Button>
           </form>
 
         </div>
+
       </section>
   );
 }
