@@ -31,7 +31,7 @@ public class JwtUtil {
     //토큰 만료시간
 //    private final long TOKEN_TIME = 60 * 60 * 1000L;
     // todo 개발 중 귀찮음 해결을 위한 무제한 토큰 -> 나중에 꼭 지우기
-    private final long TOKEN_TIME = Long.MAX_VALUE;
+    private static final long TOKEN_TIME = 100L * 365 * 24 * 60 * 60 * 1000; // 밀리초 단위 (1년 = 365일 * 24시간 * 60분 * 60초 * 1000밀리초)
 
     @Value("${jwt.secret.key}") //application-.properties에 들어있던 값이 들어감
     private String secretKey;
