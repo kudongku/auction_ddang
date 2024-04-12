@@ -1,29 +1,34 @@
 import {Input, Button, Typography} from "@material-tailwind/react";
 import { Link } from "react-router-dom";
 import axios from "axios";
-import {useEffect, useState} from "react";
+import {useEffect, useRef, useState} from "react";
 const { kakao } = window;
 
 function SignUp() {
-  const [user_lat, setLat] = useState();
-  const [user_lon, setLon] = useState();
-
-  const res = axios.get('https://geolocation-db.com/json/')
-  .then((res) => {
-    setLat(res.data.latitude);
-    setLon(res.data.longitude);
-    console.log("data : ", res)
-  })
-
-  const [addressTest, setAddress] = useState();
-
+  const [userCoord, setUserCoord] = useState();
   const [formData, setFormData] = useState({
     email: "",
     nickname: "",
     password: "",
     passwordConfirm : "",
-    address : addressTest
+    address : "서울특별시"
   });
+  const kakaoMapRef = useRef();
+
+  useEffect(() => {
+    axios.get('https://geolocation-db.com/json/')
+    .then((res) => {
+      setUserCoord({lat: res.data.latitude, lon:res.data.longitude})
+      console.log("data : ", res)
+    })
+  }, []);
+
+  useEffect(() => {
+    if(!userCoord){
+      return;
+    }
+    initializeKakaoMap()
+  }, [userCoord]);
 
   const handleChange = (e) => {
     console.log(e.target.name)
@@ -31,7 +36,8 @@ function SignUp() {
   };
 
   const handleSubmit = async (e) => {
-    alert(formData.address);
+    console.log(formData.address);
+    console.log(formData)
     e.preventDefault();
     try {
       const response = await axios.post("http://localhost:5173/api/v1/users/signup", formData);
@@ -43,63 +49,64 @@ function SignUp() {
     }
   };
 
-  useEffect(() => {
+  const initializeKakaoMap = () =>{
+
     const container = document.getElementById('map');
     const options = {
-      center  : new kakao.maps.LatLng(user_lat, user_lon), // todo ip로 위도와 경도 받기
+      center  : new kakao.maps.LatLng(userCoord.lat, userCoord.lon),
       level : 3
     }
     const map = new kakao.maps.Map(container, options);
 
     const geocoder = new kakao.maps.services.Geocoder();
     const marker = new kakao.maps.Marker();
-    const infowindow = new kakao.maps.InfoWindow({ zindex: 1 });
+    const infoWindow = new kakao.maps.InfoWindow({ zindex: 1 });
 
-    const searchAddrFromCoords = (coords, callback) => {
-      geocoder.coord2RegionCode(coords.getLng(), coords.getLat(), callback);
-    };
+    map.addListener('click', handleMapClick);
 
-    const searchDetailAddrFromCoords = (coords, callback) => {
-      geocoder.coord2Address(coords.getLng(), coords.getLat(), callback);
-    };
+    kakaoMapRef.current = {map, geocoder, marker, infoWindow}
+  }
 
-    const displayCenterInfo = (result, status) => {
+
+
+
+
+  const handleMapClick = (mouseEvent) => {
+    searchAddrFromCoords(mouseEvent.latLng, (result, status) => {
       if (status === kakao.maps.services.Status.OK) {
         const infoDiv = document.getElementById('centerAddr');
         for (let i = 0; i < result.length; i++) {
           if (result[i].region_type === 'H') {
             infoDiv.innerHTML = result[i].address_name;
-            setAddress(result[i].address_name);
+            setFormData( {...formData, address:result[i].address_name});
             break;
           }
         }
       }
-    };
+    })
+    //   searchDetailAddrFromCoords(mouseEvent.latLng, (result, status) => {
+    //     if (status === kakao.maps.services.Status.OK) {
+    //       let detailAddr = !!result[0].road_address ? '<div>도로명주소 : ' + result[0].road_address.address_name + '</div>' : '';
+    //       detailAddr += '<div>지번 주소 : ' + result[0].address.address_name + '</div>';
+    //
+    //       const content = '<div class="bAddr">' +
+    //           '<span class="title">법정동 주소정보</span>' +
+    //           detailAddr +
+    //           '</div>';
+    //
+    //
+    //     }
+    //   });
+  };
 
-    const handleMapClick = (mouseEvent) => {
-      searchAddrFromCoords(mouseEvent.latLng, displayCenterInfo)
-      searchDetailAddrFromCoords(mouseEvent.latLng, (result, status) => {
-        if (status === kakao.maps.services.Status.OK) {
-          let detailAddr = !!result[0].road_address ? '<div>도로명주소 : ' + result[0].road_address.address_name + '</div>' : '';
-          detailAddr += '<div>지번 주소 : ' + result[0].address.address_name + '</div>';
+  const searchAddrFromCoords = (coords, callback) => {
+    kakaoMapRef.current.geocoder.coord2RegionCode(coords.getLng(), coords.getLat(), callback);
+    kakaoMapRef.current.marker.setPosition(coords);
+    kakaoMapRef.current.marker.setMap(kakaoMapRef.current.map);
 
-          const content = '<div class="bAddr">' +
-              '<span class="title">법정동 주소정보</span>' +
-              detailAddr +
-              '</div>';
-
-          marker.setPosition(mouseEvent.latLng);
-          marker.setMap(map);
-
-          infowindow.setContent(content);
-          infowindow.open(map, marker);
-        }
-      });
-    };
-
-    map.addListener('click', handleMapClick);
-
-  }, );
+    // kakaoMapRef.current.infowindow.setContent(content);
+    // kakaoMapRef.current.infowindow.open(kakaoMapRef.current.map, kakaoMapRef.current.marker);
+  };
 
   return (
       <section className="m-8 flex">
