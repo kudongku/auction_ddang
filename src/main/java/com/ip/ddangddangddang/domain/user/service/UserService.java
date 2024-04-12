@@ -66,6 +66,12 @@ public class UserService {
         user.updateLocation(townService.findTownByNameOrElseThrow(requestDto.getAddress()));
     }
 
+    public User findUserOrElseThrow(Long id) {
+        return userRepository.findById(id).orElseThrow(
+            () -> new UserNotFoundException("회원이 존재하지 않습니다.")
+        );
+    }
+
     private void existsEmail(String email) {
         if (userRepository.existsByEmail(email)) {
             throw new UserEmailAlreadyExistException("동일한 이메일이 존재합니다.");
@@ -82,17 +88,6 @@ public class UserService {
         if (!password.equals(confirmPassword)) {
             throw new PasswordNotEqualsException("비밀번호가 일치하지 않습니다.");
         }
-    }
-
-    public User getUser(Long id) {
-        return userRepository.findById(id).orElseThrow(
-            () -> new UserNotFoundException("회원이 존재하지 않습니다."));
-    }
-
-    public User findUserOrElseThrow(Long id) {
-        return userRepository.findById(id).orElseThrow(
-            () -> new UserNotFoundException("회원이 존재하지 않습니다.")
-        );
     }
 
 }

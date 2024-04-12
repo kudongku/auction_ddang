@@ -34,7 +34,6 @@ public class S3Service implements FileUploadService{
         } catch (AmazonS3Exception e) {
             throw new NotValidBucketException("존재하지 않는 버킷입니다.");
         }
-
     }
 
     @Override
@@ -59,6 +58,4 @@ public class S3Service implements FileUploadService{
         URL presignedURL = amazonS3.generatePresignedUrl(generatePresignedUrlRequest);
         return presignedURL.toString();
     }
-
 }
-

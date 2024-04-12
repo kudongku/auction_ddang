@@ -18,9 +18,9 @@ import org.springframework.web.multipart.MultipartFile;
 @Service
 public class FileService {
 
+    private final FileRepository fileRepository;
     private final FileUploadService fileUploadService;
     private final UserService userService;
-    private final FileRepository fileRepository;
 
     @Transactional
     public Long upload(MultipartFile auctionImage, String objectName, Long userId) {

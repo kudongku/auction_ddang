@@ -5,10 +5,8 @@ import com.ip.ddangddangddang.domain.auction.service.AuctionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 
 @Component
-@Service
 @RequiredArgsConstructor
 public class AuctionEventHandler {
 

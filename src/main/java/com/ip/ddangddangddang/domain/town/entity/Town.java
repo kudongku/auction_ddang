@@ -27,7 +27,6 @@ public class Town {
     @Column(nullable = false)
     private String name;
 
-
     @JdbcTypeCode(SqlTypes.JSON)
     @Column(columnDefinition = "json")
     private List<Long> neighborIdList;
