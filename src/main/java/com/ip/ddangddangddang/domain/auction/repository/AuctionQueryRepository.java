@@ -1,21 +1,17 @@
 package com.ip.ddangddangddang.domain.auction.repository;
 
 import com.ip.ddangddangddang.domain.auction.entity.Auction;
-import org.springframework.data.domain.Page;
+import com.ip.ddangddangddang.domain.auction.entity.StatusEnum;
+import java.util.List;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 
 public interface AuctionQueryRepository {
 
-    Page<Auction> findAllByTitle(String title, Pageable pageable,
-        Long adjustedPageNumber);
+    Slice<Auction> findAllByFilters(List<Long> neighbor, StatusEnum status,
+        String title, Pageable pageable);
 
-    Page<Auction> findAllByTownIdAndOnSale(Long townId, Pageable pageable,
-        Long adjustedPageNumber);
+    Slice<Auction> findAuctionsByUserId(Long userId, Pageable pageable);
 
-    Page<Auction> findAuctionsByUserId(Long userId, Pageable pageable,
-        Long adjustedPageNumber);
-
-    Page<Auction> findBidsByUserId(Long userId, Pageable pageable,
-        Long adjustedPageNumber);
-
+    Slice<Auction> findBidsByUserId(Long userId, Pageable pageable);
 }
