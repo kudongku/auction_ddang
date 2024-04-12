@@ -5,6 +5,10 @@
 ---
 ## 🏛️ 기술 아키텍쳐
 
+https://miro.com/app/board/uXjVKaYgnJ4=/?share_link_id=629810146024
+
+같이 작업해봐요..!
+
 ---
 ## 👫🏼 Team
 |<img src="https://avatars.githubusercontent.com/u/151606621?v=4" width="150" height="150"/>|<img src="https://avatars.githubusercontent.com/u/97017924?v=4" width="150" height="150"/>|<img src="https://avatars.githubusercontent.com/u/148612321?v=4" width="150" height="150"/>|<img src="https://avatars.githubusercontent.com/u/120919984?v=4" width="150" height="150"/>|
