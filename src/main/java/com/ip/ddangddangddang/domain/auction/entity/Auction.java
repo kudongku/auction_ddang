@@ -3,7 +3,6 @@ package com.ip.ddangddangddang.domain.auction.entity;
 import com.ip.ddangddangddang.domain.auction.dto.request.AuctionRequestDto;
 import com.ip.ddangddangddang.domain.common.timestamp.Timestamp;
 import com.ip.ddangddangddang.domain.file.entity.File;
-import com.ip.ddangddangddang.domain.result.entity.Result;
 import com.ip.ddangddangddang.domain.user.entity.User;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -47,12 +46,15 @@ public class Auction extends Timestamp {
     @Column(nullable = false)
     private String content;
 
+    @Column
+    private Long price;
+
+    @Column
+    private Long buyerId;
+
     @Column(nullable = false, name = "status_enum")
     @Enumerated(EnumType.STRING)
     private StatusEnum statusEnum;
-
-    @Column
-    private LocalDateTime createdAt;
 
     @Column
     @Temporal(TemporalType.TIMESTAMP)
@@ -62,9 +64,6 @@ public class Auction extends Timestamp {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @OneToOne(mappedBy = "auction")
-    private Result result;
-
     @OneToOne
     @JoinColumn(name = "file_id")
     private File file;
@@ -73,8 +72,8 @@ public class Auction extends Timestamp {
         this.townId = user.getTown().getId();
         this.title = requestDto.getTitle();
         this.content = requestDto.getContent();
+        this.price = 0L;
         this.statusEnum = StatusEnum.ON_SALE;
-        this.createdAt = LocalDateTime.now();
         this.finishedAt = LocalDateTime.now().plusDays(1);
         this.user = user;
         this.file = file;
@@ -86,5 +85,10 @@ public class Auction extends Timestamp {
 
     public void updateStatusToComplete() {
         this.statusEnum = StatusEnum.COMPLETED;
+    }
+
+    public void updateBid(Long price, Long buyerId) {
+        this.price = price;
+        this.buyerId = buyerId;
     }
 }

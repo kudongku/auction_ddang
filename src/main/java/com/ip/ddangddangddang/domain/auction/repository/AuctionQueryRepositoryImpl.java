@@ -49,11 +49,14 @@ public class AuctionQueryRepositoryImpl implements AuctionQueryRepository {
         return new SliceImpl<>(result, pageable, hasNextPage(result, pageable.getPageSize()));
     }
 
-    @Override
+    @Override // Todo 해결해야해
     public Slice<Auction> findBidsByUserId(Long userId, Pageable pageable) {
 
         List<Auction> result = queryFactory.selectFrom(auction)
-            .where(auction.result.user.id.eq(userId))
+            .where(
+                auction.buyerId.isNotNull()
+                    .and(auction.buyerId.eq(userId))
+            )
             .offset(pageable.getOffset())
             .limit(pageable.getPageSize())
             .fetch();

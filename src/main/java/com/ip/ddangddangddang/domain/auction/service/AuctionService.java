@@ -8,7 +8,7 @@ import com.ip.ddangddangddang.domain.auction.entity.StatusEnum;
 import com.ip.ddangddangddang.domain.auction.repository.AuctionRepository;
 import com.ip.ddangddangddang.domain.file.entity.File;
 import com.ip.ddangddangddang.domain.file.service.FileService;
-import com.ip.ddangddangddang.domain.result.service.ResultService;
+import com.ip.ddangddangddang.domain.town.service.TownService;
 import com.ip.ddangddangddang.domain.user.entity.User;
 import com.ip.ddangddangddang.domain.user.service.UserService;
 import com.ip.ddangddangddang.global.exception.custom.CustomAuctionException;
@@ -32,13 +32,12 @@ public class AuctionService {
     private final AuctionRepository auctionRepository;
     private final UserService userService;
     private final FileService fileService;
-    private final ResultService resultService;
+    private final TownService townService;
     private final RedisTemplate<String, String> redisTemplate;
 
     @Transactional
-    public void createAuction(AuctionRequestDto requestDto,
-        Long userId) { // Todo fileId 곂칠때 duplicated error
-        User user = userService.getUser(userId);
+    public void createAuction(AuctionRequestDto requestDto, Long userId) { // Todo fileId 곂칠때 duplicated error
+        User user = userService.findUserOrElseThrow(userId);
         File file = fileService.findFileOrElseThrow(requestDto.getFileId());
 
         if (!file.getUser().equals(user)) {
@@ -83,7 +82,6 @@ public class AuctionService {
             Auction auction = findAuctionOrElseThrow(
                 auctionId);
             auction.updateStatusToHold();
-            resultService.createResult(auction);
         } else {
             throw new RuntimeException("redis 에러");
         }
@@ -92,14 +90,19 @@ public class AuctionService {
 
     @Transactional
     public void updateStatusToComplete(Long auctionId, Long userId) {
-        Auction auction = findAuctionOrElseThrow(
-            auctionId);
+        Auction auction = findAuctionOrElseThrow(auctionId);
 
         if (!auction.getUser().getId().equals(userId)) {
             throw new IllegalArgumentException("사용자가 불일치");
         }
 
         auction.updateStatusToComplete();
+    }
+
+    @Transactional
+    public void updateBid(Long auctionId, Long price, Long buyerId) {
+        Auction auction = findAuctionOrElseThrow(auctionId);
+        auction.updateBid(price, buyerId);
     }
 
     public Slice<AuctionListResponseDto> getAuctions(
@@ -137,10 +140,16 @@ public class AuctionService {
 //    }
 
     public AuctionResponseDto getAuction(Long auctionId) {
-        Auction auction = findAuctionOrElseThrow(
-            auctionId);
+        Auction auction = findAuctionOrElseThrow(auctionId);
 
-        return new AuctionResponseDto(auction);
+        String townName = townService.findNameById(auction.getTownId());
+
+        String buyerNickname = "";
+        if (auction.getBuyerId() != null) {
+            buyerNickname = userService.findUserOrElseThrow(auction.getBuyerId()).getNickname();
+        }
+
+        return new AuctionResponseDto(auction, townName, buyerNickname);
     }
 
     // TODO: 4/8/24 자신이 올린 옥션리스트 보기 getList
