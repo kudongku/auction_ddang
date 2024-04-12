@@ -1,6 +1,5 @@
 package com.ip.ddangddangddang.global.security;
 
-
 import com.ip.ddangddangddang.domain.user.entity.User;
 import com.ip.ddangddangddang.global.jwt.JwtUtil;
 import io.jsonwebtoken.Claims;

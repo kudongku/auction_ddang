@@ -1,6 +1,5 @@
 package com.ip.ddangddangddang.global.security;
 
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.ip.ddangddangddang.domain.user.dto.request.UserSigninRequestDto;

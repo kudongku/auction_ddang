@@ -1,13 +1,12 @@
 package com.ip.ddangddangddang.domain.town.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ip.ddangddangddang.domain.town.entity.Town;
 import com.ip.ddangddangddang.domain.town.repository.TownRepository;
 import com.ip.ddangddangddang.domain.town.townList.TownList;
 import com.ip.ddangddangddang.domain.town.townList.TownListRepository;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,10 +25,8 @@ public class TownService {
     private final TownRepository townRepository;
     private final TownListRepository townListRepository;
 
-    private final ObjectMapper objectMapper;
-
     @Transactional
-    public void createTown() throws JsonProcessingException {
+    public void createTown() {
         List<TownList> townList = townListRepository.findAll();
         List<Long> idList = new ArrayList<>();
 
@@ -79,4 +76,11 @@ public class TownService {
         return name;
     }
 
+    public String findNameById(Long townId) {
+        Town town = townRepository.findById(townId).orElseThrow(
+            () -> new NoSuchElementException("해당 동네가 없습니다.")
+        );
+
+        return town.getName();
+    }
 }

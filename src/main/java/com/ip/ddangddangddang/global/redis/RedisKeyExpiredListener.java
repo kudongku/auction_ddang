@@ -1,7 +1,6 @@
 package com.ip.ddangddangddang.global.redis;
 
 import com.ip.ddangddangddang.domain.auction.dto.request.AuctionKeyNotificationRequestDto;
-import com.ip.ddangddangddang.domain.auction.service.AuctionService;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.redis.connection.Message;
 import org.springframework.data.redis.connection.MessageListener;
