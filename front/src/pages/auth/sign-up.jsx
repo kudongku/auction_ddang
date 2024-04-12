@@ -5,12 +5,15 @@ import {useEffect, useState} from "react";
 const { kakao } = window;
 
 function SignUp() {
+
+  let addressTest = "서울시 강남구 서초동"
+
   const [formData, setFormData] = useState({
     email: "",
     nickname: "",
     password: "",
     passwordConfirm : "",
-    address : "서울시 강남구 서초동"
+    address : addressTest
   });
 
   const handleChange = (e) => {
@@ -19,7 +22,7 @@ function SignUp() {
   };
 
   const handleSubmit = async (e) => {
-    alert("!");
+    alert(formData.address);
     e.preventDefault();
     try {
       const response = await axios.post("http://localhost:5173/api/v1/users/signup", formData);
@@ -34,10 +37,59 @@ function SignUp() {
   useEffect(() => {
     const container = document.getElementById('map');
     const options = {
-      center  : new kakao.maps.LatLng(37.566826, 126.9786567),
+      center  : new kakao.maps.LatLng(37.566826, 126.9786567), // todo ip로 위도와 경도 받기
       level : 3
     }
     const map = new kakao.maps.Map(container, options);
+
+    const geocoder = new kakao.maps.services.Geocoder();
+    const marker = new kakao.maps.Marker();
+    const infowindow = new kakao.maps.InfoWindow({ zindex: 1 });
+
+    const searchAddrFromCoords = (coords, callback) => {
+      geocoder.coord2RegionCode(coords.getLng(), coords.getLat(), callback);
+    };
+
+    const searchDetailAddrFromCoords = (coords, callback) => {
+      geocoder.coord2Address(coords.getLng(), coords.getLat(), callback);
+    };
+
+    const displayCenterInfo = (result, status) => {
+      if (status === kakao.maps.services.Status.OK) {
+        const infoDiv = document.getElementById('centerAddr');
+        for (let i = 0; i < result.length; i++) {
+          if (result[i].region_type === 'H') {
+            infoDiv.innerHTML = result[i].address_name;
+            addressTest = result[i].address_name;
+            break;
+          }
+        }
+      }
+    };
+
+    const handleMapClick = (mouseEvent) => {
+      searchAddrFromCoords(mouseEvent.latLng, displayCenterInfo)
+      searchDetailAddrFromCoords(mouseEvent.latLng, (result, status) => {
+        if (status === kakao.maps.services.Status.OK) {
+          let detailAddr = !!result[0].road_address ? '<div>도로명주소 : ' + result[0].road_address.address_name + '</div>' : '';
+          detailAddr += '<div>지번 주소 : ' + result[0].address.address_name + '</div>';
+
+          const content = '<div class="bAddr">' +
+              '<span class="title">법정동 주소정보</span>' +
+              detailAddr +
+              '</div>';
+
+          marker.setPosition(mouseEvent.latLng);
+          marker.setMap(map);
+
+          infowindow.setContent(content);
+          infowindow.open(map, marker);
+        }
+      });
+    };
+
+    map.addListener('click', handleMapClick);
+
   }, []);
 
   return (
@@ -138,10 +190,10 @@ function SignUp() {
 
             <div className="map_wrap">
               <div className="hAddr">
-                <span className="title">주소정보</span>
-                <span id="centerAddr"></span>
+                <div className="title">주소정보</div>
+                <div id="centerAddr"></div>
               </div>
-              <div id="map" className={"mb-1 flex flex-col gap-6"} style={{ width: "auto", height: '100px', position: 'relative', overflow: 'hidden' }}></div>
+              <div id="map" className={"mb-1 flex flex-col gap-6"} style={{ width: "auto", height: '300px', position: 'relative', overflow: 'hidden' }}></div>
             </div>
 
             <Button className="mt-6" fullWidth  type={"submit"}>
