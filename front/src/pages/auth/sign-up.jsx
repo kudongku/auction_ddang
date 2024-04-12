@@ -1,7 +1,8 @@
 import {Input, Button, Typography} from "@material-tailwind/react";
 import { Link } from "react-router-dom";
 import axios from "axios";
-import {useState} from "react";
+import {useEffect, useState} from "react";
+const { kakao } = window;
 
 function SignUp() {
   const [formData, setFormData] = useState({
@@ -29,6 +30,15 @@ function SignUp() {
       // 여기서 등록 실패에 대한 처리를 할 수 있습니다.
     }
   };
+
+  useEffect(() => {
+    const container = document.getElementById('map');
+    const options = {
+      center  : new kakao.maps.LatLng(37.566826, 126.9786567),
+      level : 3
+    }
+    const map = new kakao.maps.Map(container, options);
+  }, []);
 
   return (
       <section className="m-8 flex">
@@ -126,12 +136,21 @@ function SignUp() {
               />
             </div>
 
+            <div className="map_wrap">
+              <div className="hAddr">
+                <span className="title">주소정보</span>
+                <span id="centerAddr"></span>
+              </div>
+              <div id="map" className={"mb-1 flex flex-col gap-6"} style={{ width: "auto", height: '100px', position: 'relative', overflow: 'hidden' }}></div>
+            </div>
+
             <Button className="mt-6" fullWidth  type={"submit"}>
               등록하기
             </Button>
           </form>
 
         </div>
+
       </section>
   );
 }
