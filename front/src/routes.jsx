@@ -52,7 +52,7 @@ export const routes = [
       {
         icon: <ServerStackIcon {...icon} />,
         name: "sign in",
-        path: "/auth/sign-in",
+        path: "/sign-in",
         element: <SignIn/>,
       },
       {
