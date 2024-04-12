@@ -5,8 +5,17 @@ import {useEffect, useState} from "react";
 const { kakao } = window;
 
 function SignUp() {
+  const [user_lat, setLat] = useState();
+  const [user_lon, setLon] = useState();
 
-  let addressTest = "서울시 강남구 서초동"
+  const res = axios.get('https://geolocation-db.com/json/')
+  .then((res) => {
+    setLat(res.data.latitude);
+    setLon(res.data.longitude);
+    console.log("data : ", res)
+  })
+
+  const [addressTest, setAddress] = useState();
 
   const [formData, setFormData] = useState({
     email: "",
@@ -37,7 +46,7 @@ function SignUp() {
   useEffect(() => {
     const container = document.getElementById('map');
     const options = {
-      center  : new kakao.maps.LatLng(37.566826, 126.9786567), // todo ip로 위도와 경도 받기
+      center  : new kakao.maps.LatLng(user_lat, user_lon), // todo ip로 위도와 경도 받기
       level : 3
     }
     const map = new kakao.maps.Map(container, options);
@@ -60,7 +69,7 @@ function SignUp() {
         for (let i = 0; i < result.length; i++) {
           if (result[i].region_type === 'H') {
             infoDiv.innerHTML = result[i].address_name;
-            addressTest = result[i].address_name;
+            setAddress(result[i].address_name);
             break;
           }
         }
@@ -90,7 +99,7 @@ function SignUp() {
 
     map.addListener('click', handleMapClick);
 
-  }, []);
+  }, );
 
   return (
       <section className="m-8 flex">
