@@ -48,9 +48,7 @@ public class TownService {
                 }
             }
 
-            String neighborIdList = objectMapper.writeValueAsString(idList);
-
-            Town town = new Town(name, neighborIdList);
+            Town town = new Town(name, idList);
             townRepository.save(town);
             idList.clear();
         }

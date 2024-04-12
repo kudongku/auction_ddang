@@ -1,6 +1,5 @@
 package com.ip.ddangddangddang.domain.town.townList;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -25,7 +24,7 @@ public class ExcelReader {
         List<TownList> townList = new ArrayList<>();
 
         try (FileInputStream file = new FileInputStream(
-            new File("src/main/resources/townlist.xlsx"))) {
+            ("src/main/resources/townlist.xlsx"))) {
             // 엑셀 파일 열기
             Workbook workbook = WorkbookFactory.create(file);
             int sheets = workbook.getNumberOfSheets();
