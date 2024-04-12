@@ -1,12 +1,11 @@
-import { Routes, Route } from "react-router-dom";
 import {
+  ArrowRightOnRectangleIcon,
   ChartPieIcon,
   UserIcon,
   UserPlusIcon,
-  ArrowRightOnRectangleIcon,
 } from "@heroicons/react/24/solid";
-import { Navbar, Footer } from "@/widgets/layout";
 import routes from "@/routes";
+import {Outlet} from "react-router-dom";
 
 export function Auth() {
   const navbarRoutes = [
@@ -32,18 +31,9 @@ export function Auth() {
     },
   ];
 
+  console.log(routes);
   return (
-    <div className="relative min-h-screen w-full">
-      <Routes>
-        {routes.map(
-          ({ layout, pages }) =>
-            layout === "auth" &&
-            pages.map(({ path, element }) => (
-              <Route exact path={path} element={element} />
-            ))
-        )}
-      </Routes>
-    </div>
+      <Outlet/>
   );
 }
 
