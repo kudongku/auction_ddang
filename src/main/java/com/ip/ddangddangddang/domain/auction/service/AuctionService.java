@@ -1,12 +1,10 @@
 package com.ip.ddangddangddang.domain.auction.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ip.ddangddangddang.domain.auction.dto.request.AuctionRequestDto;
 import com.ip.ddangddangddang.domain.auction.dto.response.AuctionListResponseDto;
 import com.ip.ddangddangddang.domain.auction.dto.response.AuctionResponseDto;
 import com.ip.ddangddangddang.domain.auction.entity.Auction;
+import com.ip.ddangddangddang.domain.auction.entity.StatusEnum;
 import com.ip.ddangddangddang.domain.auction.repository.AuctionRepository;
 import com.ip.ddangddangddang.domain.file.entity.File;
 import com.ip.ddangddangddang.domain.file.service.FileService;
@@ -14,14 +12,12 @@ import com.ip.ddangddangddang.domain.result.service.ResultService;
 import com.ip.ddangddangddang.domain.user.entity.User;
 import com.ip.ddangddangddang.domain.user.service.UserService;
 import com.ip.ddangddangddang.global.exception.custom.CustomAuctionException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
@@ -106,43 +102,39 @@ public class AuctionService {
         auction.updateStatusToComplete();
     }
 
-    public Page<AuctionListResponseDto> getAuctions(Long userId, Pageable pageable) {
+    public Slice<AuctionListResponseDto> getAuctions(
+        Long userId,
+        StatusEnum status,
+        String title,
+        Pageable pageable
+    ) {
         User user = userService.findUserOrElseThrow(userId);
-        String townList = user.getTown().getNeighborIdList();
+        List<Long> townList = user.getTown().getNeighborIdList();
 
-        ObjectMapper mapper = new ObjectMapper();
-        List<Long> neighbor;
-        try {
-            neighbor = mapper.readValue(townList, new TypeReference<List<Long>>() {
-            });
-        } catch (JsonProcessingException e) {
-            throw new IllegalArgumentException("JsonProcessingException exception");
-        }
+        return auctionRepository.findAllByFilters(townList, status, title, pageable)
+            .map(
+                auction -> new AuctionListResponseDto(
+                    auction.getId(),
+                    auction.getTitle(),
+                    auction.getStatusEnum(),
+                    auction.getFinishedAt()
+                )
+            );
 
-        List<Auction> response = new ArrayList<>();
-        for (Long townId : neighbor) {
-            Page<Auction> auctionList = auctionRepository.findAllByTownIdAndOnSale(townId,
-                pageable, pageLimit(pageable));
-            response.addAll(auctionList.getContent());
-        }
-        Page<Auction> allAuctions = new PageImpl<>(response, pageable, response.size());
-        return allAuctions.map(
-            auction -> new AuctionListResponseDto(auction.getId(), auction.getTitle(),
-                auction.getStatusEnum(), auction.getFinishedAt()));
     }
 
-    public Page<AuctionListResponseDto> getAuctionsByTitle(String title, Pageable pageable) {
-        if (title == null || title.isEmpty()) {
-            throw new IllegalArgumentException("제목을 찾을 수 없습니다.");
-        }
-
-        Long adjustedPageNumber = pageLimit(pageable);
-
-        return auctionRepository.findAllByTitle(title, pageable, adjustedPageNumber).map(
-            auction -> new AuctionListResponseDto(auction.getId(), auction.getTitle(),
-                auction.getStatusEnum(), auction.getFinishedAt())
-        );
-    }
+//    public Page<AuctionListResponseDto> getAuctionsByTitle(String title, Pageable pageable) {
+//        if (title == null || title.isEmpty()) {
+//            throw new IllegalArgumentException("제목을 찾을 수 없습니다.");
+//        }
+//
+//        Long adjustedPageNumber = pageLimit(pageable);
+//
+//        return auctionRepository.findAllByTitle(title, pageable, adjustedPageNumber).map(
+//            auction -> new AuctionListResponseDto(auction.getId(), auction.getTitle(),
+//                auction.getStatusEnum(), auction.getFinishedAt())
+//        );
+//    }
 
     public AuctionResponseDto getAuction(Long auctionId) {
         Auction auction = findAuctionOrElseThrow(
@@ -152,18 +144,24 @@ public class AuctionService {
     }
 
     // TODO: 4/8/24 자신이 올린 옥션리스트 보기 getList
-    public Page<AuctionListResponseDto> getMyAuctions(Long userId, Pageable pageable) {
-        Long adjustedPageNumber = pageLimit(pageable);
-        return auctionRepository.findAuctionsByUserId(userId, pageable, adjustedPageNumber).map(
-            auction -> new AuctionListResponseDto(auction.getId(), auction.getTitle(),
-                auction.getStatusEnum(), auction.getFinishedAt())
-        );
+    public Slice<AuctionListResponseDto> getMyAuctions(Long userId, Pageable pageable) {
+        return auctionRepository.findAuctionsByUserId(userId, pageable)
+            .map( // page에는 .map이 내장되어있음
+//                (Auction auction) -> {
+//                    return new AuctionListResponseDto(auction.getId(), auction.getTitle(), // (의미적)한 문장이면 return 생략
+//                        auction.getStatusEnum(), auction.getFinishedAt());
+//                }
+                auction -> new AuctionListResponseDto(
+                    auction.getId(),
+                    auction.getTitle(),
+                    auction.getStatusEnum(),
+                    auction.getFinishedAt())
+            );
     }
 
     // TODO: 4/8/24 자신이 입찰한(최고가를 부른 게시글) 게시글리스트 보기 getList
-    public Page<AuctionListResponseDto> getMyBids(Long userId, Pageable pageable) {
-        Long adjustedPageNumber = pageLimit(pageable);
-        return auctionRepository.findBidsByUserId(userId, pageable, adjustedPageNumber).map(
+    public Slice<AuctionListResponseDto> getMyBids(Long userId, Pageable pageable) {
+        return auctionRepository.findBidsByUserId(userId, pageable).map(
             auction -> new AuctionListResponseDto(auction.getId(), auction.getTitle(),
                 auction.getStatusEnum(), auction.getFinishedAt())
         );
