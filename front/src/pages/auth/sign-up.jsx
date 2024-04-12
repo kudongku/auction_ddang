@@ -1,7 +1,8 @@
-import {Input, Button, Typography} from "@material-tailwind/react";
-import { Link } from "react-router-dom";
+import {Button, Input, Typography} from "@material-tailwind/react";
 import axios from "axios";
 import {useEffect, useRef, useState} from "react";
+import {signup} from "@/api/auction.js";
+
 const { kakao } = window;
 
 function SignUp() {
@@ -40,7 +41,7 @@ function SignUp() {
     console.log(formData)
     e.preventDefault();
     try {
-      const response = await axios.post("http://localhost:5173/api/v1/users/signup", formData);
+      const response = signup(formData);
       console.log("Registered successfully!", response.data);
       // 여기서 성공적으로 등록되었음을 처리할 수 있습니다.
     } catch (error) {

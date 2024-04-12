@@ -20,7 +20,6 @@ function SignIn() {
         }).catch(function (error) {
       //호출 실패 시 에러처리 코드
     });
-
   };
   return (
       <section className="m-8 flex gap-4">
