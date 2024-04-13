@@ -26,13 +26,17 @@ public class File {
     @Column
     private String keyName;
 
+    @Column
+    private String filePath;
+
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
 
-    public File(String objectName, String keyName, User user) {
+    public File(String objectName, String keyName, String filePath, User user) {
         this.objectName = objectName;
         this.keyName = keyName;
+        this.filePath = filePath;
         this.user = user;
     }
 }

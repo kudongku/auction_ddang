@@ -13,12 +13,19 @@ public class AuctionListResponseDto {
     private String title;
     private StatusEnum status;
     private LocalDateTime finishedAt;
+    private String filePath;
 
-    public AuctionListResponseDto(Long auctionId, String title, StatusEnum status,
-        LocalDateTime finishedAt) {
+    public AuctionListResponseDto(
+        Long auctionId,
+        String title,
+        StatusEnum status,
+        LocalDateTime finishedAt,
+        String filePath
+    ) {
         this.auctionId = auctionId;
         this.title = title;
         this.status = status;
         this.finishedAt = finishedAt;
+        this.filePath = filePath;
     }
 }

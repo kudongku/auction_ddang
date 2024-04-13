@@ -36,7 +36,8 @@ public class AuctionService {
     private final RedisTemplate<String, String> redisTemplate;
 
     @Transactional
-    public void createAuction(AuctionRequestDto requestDto, Long userId) { // Todo fileId 곂칠때 duplicated error
+    public void createAuction(AuctionRequestDto requestDto,
+        Long userId) { // Todo fileId 곂칠때 duplicated error
         User user = userService.findUserOrElseThrow(userId);
         File file = fileService.findFileOrElseThrow(requestDto.getFileId());
 
@@ -120,7 +121,8 @@ public class AuctionService {
                     auction.getId(),
                     auction.getTitle(),
                     auction.getStatusEnum(),
-                    auction.getFinishedAt()
+                    auction.getFinishedAt(),
+                    auction.getFile().getFilePath()
                 )
             );
 
@@ -164,15 +166,22 @@ public class AuctionService {
                     auction.getId(),
                     auction.getTitle(),
                     auction.getStatusEnum(),
-                    auction.getFinishedAt())
+                    auction.getFinishedAt(),
+                    auction.getFile().getFilePath()
+                )
             );
     }
 
     // TODO: 4/8/24 자신이 입찰한(최고가를 부른 게시글) 게시글리스트 보기 getList
     public Slice<AuctionListResponseDto> getMyBids(Long userId, Pageable pageable) {
         return auctionRepository.findBidsByUserId(userId, pageable).map(
-            auction -> new AuctionListResponseDto(auction.getId(), auction.getTitle(),
-                auction.getStatusEnum(), auction.getFinishedAt())
+            auction -> new AuctionListResponseDto(
+                auction.getId(),
+                auction.getTitle(),
+                auction.getStatusEnum(),
+                auction.getFinishedAt(),
+                auction.getFile().getFilePath()
+            )
         );
     }
 
@@ -183,12 +192,12 @@ public class AuctionService {
         );
     }
 
-    public Long pageLimit(Pageable pageable) {
-        long adjustedPageNumber = pageable.getPageNumber() - 1;
-        if (adjustedPageNumber < 0) {
-            throw new IllegalArgumentException("페이지의 넘버는 0보다 커야합니다.");
-        }
-        return adjustedPageNumber;
-    }
-
+//    public Long pageLimit(Pageable pageable) {
+//        long adjustedPageNumber = pageable.getPageNumber() - 1;
+//        if (adjustedPageNumber < 0) {
+//            throw new IllegalArgumentException("페이지의 넘버는 0보다 커야합니다.");
+//        }
+//        return adjustedPageNumber;
+//    }
+    //todo 삭제하기
 }

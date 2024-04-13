@@ -32,14 +32,14 @@ public class FileService {
 
         String keyName = createKeyName(objectName);
 
-        try{
-            fileUploadService.upload(auctionImage, keyName);
-        }catch(IOException e){
+        String filePath;
+        try {
+            filePath = fileUploadService.upload(auctionImage, keyName);
+        } catch (IOException e) {
             throw new IllegalArgumentException();
         }
 
-
-        return fileRepository.save(new File(objectName, keyName, user)).getId();
+        return fileRepository.save(new File(objectName, keyName, filePath, user)).getId();
     }
 
     @Transactional
@@ -51,7 +51,7 @@ public class FileService {
     public FileReadResponseDto getPresignedURL(Long fileId, Long userId) {
         File file = findFileOrElseThrow(fileId);
 
-        if(!file.getUser().getId().equals(userId)){
+        if (!file.getUser().getId().equals(userId)) {
             throw new IllegalArgumentException("작성자만 삭제가 가능합니다.");
         }
 
@@ -59,9 +59,9 @@ public class FileService {
         return new FileReadResponseDto(file.getId(), preSignedUrl);
     }
 
-    public File findFileOrElseThrow(Long fileId){
+    public File findFileOrElseThrow(Long fileId) {
         return fileRepository.findById(fileId).orElseThrow(
-            ()-> new NullPointerException("없는 이미지 입니다.")
+            () -> new NullPointerException("없는 이미지 입니다.")
         );
     }
 

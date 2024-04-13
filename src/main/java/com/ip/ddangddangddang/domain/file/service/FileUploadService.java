@@ -5,7 +5,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 public interface FileUploadService {
 
-    void upload(MultipartFile auctionImage, String keyName) throws IOException;
+    String upload(MultipartFile auctionImage, String keyName) throws IOException;
 
     void delete(String keyName);
 

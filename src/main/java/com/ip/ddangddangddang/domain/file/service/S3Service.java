@@ -8,6 +8,8 @@ import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.ip.ddangddangddang.global.exception.custom.NotValidBucketException;
 import java.io.IOException;
 import java.net.URL;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -24,7 +26,7 @@ public class S3Service implements FileUploadService{
     private final AmazonS3 amazonS3;
 
     @Override
-    public void upload(MultipartFile auctionImage, String keyName) throws IOException {
+    public String upload(MultipartFile auctionImage, String keyName) throws IOException {
         ObjectMetadata objMeta = new ObjectMetadata();
         objMeta.setContentType(auctionImage.getContentType());
         objMeta.setContentLength(auctionImage.getInputStream().available());
@@ -34,6 +36,8 @@ public class S3Service implements FileUploadService{
         } catch (AmazonS3Exception e) {
             throw new NotValidBucketException("존재하지 않는 버킷입니다.");
         }
+
+        return URLDecoder.decode(amazonS3.getUrl(bucket, keyName).toString(), StandardCharsets.UTF_8);
     }
 
     @Override
