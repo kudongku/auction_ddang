@@ -5,61 +5,61 @@ import {
   ServerStackIcon,
   TableCellsIcon,
   UserCircleIcon,
-} from "@heroicons/react/24/solid";
-import {Home, Notifications, Profile, Tables} from "@/pages/dashboard";
-import SignIn from "@/pages/auth/sign-in.jsx";
-import SignUp from "@/pages/auth/sign-up.jsx";
+} from '@heroicons/react/24/solid';
+import { Home, Notifications, Profile, Tables } from '@/pages/dashboard';
+import SignIn from '@/pages/auth/SignIn.jsx';
+import SignUp from '@/pages/auth/SignUp.jsx';
 //import {SignIn, SignUp} from "@/pages/auth";
 
 const icon = {
-  className: "w-5 h-5 text-inherit",
+  className: 'w-5 h-5 text-inherit',
 };
 
 export const routes = [
   {
-    layout: "dashboard",
+    layout: 'dashboard',
     pages: [
       {
         icon: <HomeIcon {...icon} />,
-        name: "dashboard",
-        path: "/home",
-        element: <Home/>,
+        name: 'dashboard',
+        path: '/home',
+        element: <Home />,
       },
       {
         icon: <UserCircleIcon {...icon} />,
-        name: "profile",
-        path: "/profile",
-        element: <Profile/>,
+        name: 'profile',
+        path: '/profile',
+        element: <Profile />,
       },
       {
         icon: <TableCellsIcon {...icon} />,
-        name: "tables",
-        path: "/tables",
-        element: <Tables/>,
+        name: 'tables',
+        path: '/tables',
+        element: <Tables />,
       },
       {
         icon: <InformationCircleIcon {...icon} />,
-        name: "notifications",
-        path: "/notifications",
-        element: <Notifications/>,
+        name: 'notifications',
+        path: '/notifications',
+        element: <Notifications />,
       },
     ],
   },
   {
-    title: "auth pages",
-    layout: "auth",
+    title: 'auth pages',
+    layout: 'auth',
     pages: [
       {
         icon: <ServerStackIcon {...icon} />,
-        name: "sign in",
-        path: "/sign-in",
-        element: <SignIn/>,
+        name: 'sign in',
+        path: '/sign-in',
+        element: <SignIn />,
       },
       {
         icon: <RectangleStackIcon {...icon} />,
-        name: "sign up",
-        path: "/sign-up",
-        element: <SignUp/>,
+        name: 'sign up',
+        path: '/sign-up',
+        element: <SignUp />,
       },
     ],
   },
