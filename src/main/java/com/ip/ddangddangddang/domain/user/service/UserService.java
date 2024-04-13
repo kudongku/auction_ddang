@@ -6,10 +6,7 @@ import com.ip.ddangddangddang.domain.user.dto.request.UserSignupRequestDto;
 import com.ip.ddangddangddang.domain.user.dto.request.UserUpdateRequestDto;
 import com.ip.ddangddangddang.domain.user.entity.User;
 import com.ip.ddangddangddang.domain.user.repository.UserRepository;
-import com.ip.ddangddangddang.global.exception.custom.PasswordNotEqualsException;
-import com.ip.ddangddangddang.global.exception.custom.UserEmailAlreadyExistException;
-import com.ip.ddangddangddang.global.exception.custom.UserNotFoundException;
-import com.ip.ddangddangddang.global.exception.custom.UsernameAlreadyExistException;
+import com.ip.ddangddangddang.global.exception.custom.CustomUserException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -68,25 +65,25 @@ public class UserService {
 
     public User findUserOrElseThrow(Long id) {
         return userRepository.findById(id).orElseThrow(
-            () -> new UserNotFoundException("회원이 존재하지 않습니다.")
+            () -> new CustomUserException("회원이 존재하지 않습니다.")
         );
     }
 
     private void existsEmail(String email) {
         if (userRepository.existsByEmail(email)) {
-            throw new UserEmailAlreadyExistException("동일한 이메일이 존재합니다.");
+            throw new CustomUserException("동일한 이메일이 존재합니다.");
         }
     }
 
     private void existsNickname(String nickname) {
         if (userRepository.existsByNickname(nickname)) {
-            throw new UsernameAlreadyExistException("동일한 닉네임이 존재합니다.");
+            throw new CustomUserException("동일한 닉네임이 존재합니다.");
         }
     }
 
     private void validatePassword(String password, String confirmPassword) {
         if (!password.equals(confirmPassword)) {
-            throw new PasswordNotEqualsException("비밀번호가 일치하지 않습니다.");
+            throw new CustomUserException("비밀번호가 일치하지 않습니다.");
         }
     }
 
