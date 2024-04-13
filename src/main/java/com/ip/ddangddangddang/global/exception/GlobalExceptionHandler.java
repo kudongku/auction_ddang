@@ -92,8 +92,9 @@ public class GlobalExceptionHandler {
         final HttpStatus status,
         final String message
     ) {
-        return ResponseEntity.status(status.value())
-            .body(new ExceptionDto(message));
+        return ResponseEntity
+            .status(HttpStatus.OK)
+            .body(new ExceptionDto(status, message));
     }
 
 }
