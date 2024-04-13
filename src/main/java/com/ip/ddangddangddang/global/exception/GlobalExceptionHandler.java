@@ -1,22 +1,16 @@
 package com.ip.ddangddangddang.global.exception;
 
 import com.ip.ddangddangddang.domain.common.dto.ExceptionDto;
-import com.ip.ddangddangddang.global.exception.custom.CustomAuctionException;
-import com.ip.ddangddangddang.global.exception.custom.CustomBidException;
-import com.ip.ddangddangddang.global.exception.custom.CustomCommentException;
-import com.ip.ddangddangddang.global.exception.custom.CustomResultException;
-import com.ip.ddangddangddang.global.exception.custom.CustomTownException;
-import com.ip.ddangddangddang.global.exception.custom.CustomUserException;
-import com.ip.ddangddangddang.global.exception.custom.LockNotAcquiredException;
-import com.ip.ddangddangddang.global.exception.custom.TimeOutLockException;
+import com.ip.ddangddangddang.global.exception.custom.*;
 import jakarta.persistence.EntityNotFoundException;
-import java.util.Objects;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+
+import java.util.Objects;
 
 @Slf4j(topic = "GlobalExceptionHandler")
 @ControllerAdvice
@@ -83,7 +77,7 @@ public class GlobalExceptionHandler {
     ) {
         log.error("MethodArgumentNotValidException: ", e);
         return createResponse(
-            HttpStatus.BAD_REQUEST,
+            HttpStatus.OK,
             Objects.requireNonNull(e.getBindingResult().getFieldError()).getDefaultMessage()
         );
     }
