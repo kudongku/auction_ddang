@@ -50,14 +50,6 @@ function RequireAuth({ children }) {
 }
 
 function PublicRoute({ children }) {
-  const token = localStorage.getItem('authorizationToken');
-  let location = useLocation();
-
-  if (!token) {
-    // 사용자가 로그인하지 않았다면 로그인 페이지로 리다이렉트
-    return <Navigate to="/auth/sign-in" state={{ from: location }} replace />;
-  }
-
   return children;
 }
 
