@@ -38,9 +38,7 @@ function SignUp() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await signup(formData); // 회원가입 API 호출
-      console.log('response', response.data);
-      console.log('response.status', response.status);
+      const response = await signup(formData);
       if (response.status === 201) {
         navigate('/auth/sign-in');
         alert('환영해요! 로그인해주세요.');

@@ -63,7 +63,6 @@ export function Home() {
     })
       .then((response) => {
         if (page === 0) {
-          console.log(response.data.data.content);
           setAuctions(response.data.data.content);
         } else {
           setAuctions((prev) => [...prev, ...response.data.data.content]);
