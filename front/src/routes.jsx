@@ -9,7 +9,6 @@ import {
 import { Home, Notifications, Profile, Tables } from '@/pages/dashboard';
 import SignIn from '@/pages/auth/SignIn.jsx';
 import SignUp from '@/pages/auth/SignUp.jsx';
-//import {SignIn, SignUp} from "@/pages/auth";
 
 const icon = {
   className: 'w-5 h-5 text-inherit',

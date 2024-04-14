@@ -6,7 +6,6 @@ import {
   CardHeader,
   Typography,
 } from '@material-tailwind/react';
-import { getAuction } from '@/api/auction.js';
 
 export function ActionCard({
   auctionId,
@@ -18,13 +17,6 @@ export function ActionCard({
   footer,
 }) {
   const [remainingTime, setRemainingTime] = useState('');
-
-  useEffect(() => {
-    if (!auctionId) return;
-    getAuction(auctionId).then((response) => {
-      console.log('auction', response.data);
-    });
-  }, [auctionId]);
 
   useEffect(() => {
     const updateRemainingTime = () => {
@@ -41,8 +33,14 @@ export function ActionCard({
           setRemainingTime('경매 종료');
         }
       } else if (status === 'COMPLETED') {
-        const endDate = new Date(finishedAt).toLocaleString('ko-KR');
-        setRemainingTime(`종료 시각: ${endDate}`);
+        const endDate = new Date(finishedAt).toLocaleString('ko-KR', {
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric',
+          hour: 'numeric',
+          hour12: false,
+        });
+        setRemainingTime(`${endDate} 종료`);
       }
     };
 
