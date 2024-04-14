@@ -13,13 +13,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 
 @RequiredArgsConstructor
 @RequestMapping("/v1/users")
@@ -28,10 +21,13 @@ public class UserController {
 
     private final UserService userService;
 
+    @GetMapping("/{userId}")
+    public Response<UserResponse> getUser(@PathVariable Long userId) {
+        return Response.ok(userService.getUser(userId));
+    }
+
     @PostMapping("/signup") @ResponseStatus(HttpStatus.CREATED)
-    public void signup(
-        @Valid @RequestBody UserSignupRequestDto requestDto
-    ) {
+    public void signup(@Valid @RequestBody UserSignupRequestDto requestDto) {
         userService.signup(requestDto);
     }
 
@@ -44,9 +40,7 @@ public class UserController {
     }
 
     @DeleteMapping
-    public void deleteUser(
-        @AuthenticationPrincipal UserDetailsImpl userDetails
-    ) {
+    public void deleteUser(@AuthenticationPrincipal UserDetailsImpl userDetails) {
         userService.deleteUser(userDetails.getUserId());
     }
 
@@ -57,12 +51,4 @@ public class UserController {
     ) {
         userService.updateLocation(userDetails.getUserId(), requestDto);
     }
-
-    @GetMapping
-    public Response<UserResponse> getTownIdById(Long userId
-    ) {
-        return Response.ok(userService.getUser(userId));
-    }
-
-
 }
