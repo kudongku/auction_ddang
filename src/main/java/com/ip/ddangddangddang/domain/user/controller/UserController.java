@@ -1,15 +1,18 @@
 package com.ip.ddangddangddang.domain.user.controller;
 
 
+import com.ip.ddangddangddang.domain.common.dto.Response;
 import com.ip.ddangddangddang.domain.user.dto.request.UserLocationRequestDto;
 import com.ip.ddangddangddang.domain.user.dto.request.UserSignupRequestDto;
 import com.ip.ddangddangddang.domain.user.dto.request.UserUpdateRequestDto;
+import com.ip.ddangddangddang.domain.user.dto.response.UserResponse;
 import com.ip.ddangddangddang.domain.user.service.UserService;
 import com.ip.ddangddangddang.global.security.UserDetailsImpl;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -52,5 +55,12 @@ public class UserController {
     ) {
         userService.updateLocation(userDetails.getUserId(), requestDto);
     }
+
+    @GetMapping
+    public Response<UserResponse> getTownIdById(Long userId
+    ) {
+        return Response.ok(userService.getUser(userId));
+    }
+
 
 }
