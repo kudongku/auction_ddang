@@ -4,9 +4,11 @@ import com.ip.ddangddangddang.domain.town.service.TownService;
 import com.ip.ddangddangddang.domain.user.dto.request.UserLocationRequestDto;
 import com.ip.ddangddangddang.domain.user.dto.request.UserSignupRequestDto;
 import com.ip.ddangddangddang.domain.user.dto.request.UserUpdateRequestDto;
+import com.ip.ddangddangddang.domain.user.dto.response.UserResponse;
 import com.ip.ddangddangddang.domain.user.entity.User;
 import com.ip.ddangddangddang.domain.user.repository.UserRepository;
 import com.ip.ddangddangddang.global.exception.custom.CustomUserException;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -87,4 +89,10 @@ public class UserService {
         }
     }
 
+    public UserResponse getUser(Long userId) {
+        User user = userRepository.findById(userId)
+            .orElseThrow(() -> new EntityNotFoundException("유저가 없습니다."));
+        return new UserResponse(user);
+
+    }
 }

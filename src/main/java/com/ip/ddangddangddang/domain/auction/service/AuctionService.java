@@ -52,7 +52,7 @@ public class AuctionService {
         // redisKey = "auctionId:1";
 
         operations.set(redisKey, "1");
-        redisTemplate.expire(redisKey, 60, TimeUnit.SECONDS);
+        redisTemplate.expire(redisKey, 5, TimeUnit.HOURS);
 
         log.info("경매 등록, " + redisKey);
     }
