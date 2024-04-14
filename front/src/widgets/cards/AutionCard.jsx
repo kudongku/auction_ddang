@@ -53,7 +53,7 @@ export function ActionCard({
       <div className="flex justify-between">
         <CardHeader
           variant="gradient"
-          color={'blue-gray-100'}
+          color={'blue-gray'}
           floated={false}
           shadow={false}
           className="h-24 w-24 place-items-center"

@@ -6,8 +6,8 @@ import lombok.Getter;
 @Getter
 public class UserResponse {
 
-    private Long townId;
-    private String townName;
+    private final Long townId;
+    private final String townName;
 
     public UserResponse(User user) {
         this.townId = user.getTown().getId();

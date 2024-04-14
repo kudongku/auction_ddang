@@ -2,13 +2,16 @@ import React, { useEffect, useRef, useState } from 'react';
 import { getAuctions } from '@/api/auction.js';
 import ActionCard from '@/widgets/cards/AutionCard.jsx';
 import { LoadingSpinner } from '@/common/LoadingSpinner.jsx';
+import { useSearch } from '@/context/search-context.jsx';
 
 export function Home() {
   const [auctions, setAuctions] = useState([]);
   const [page, setPage] = useState(0);
   const [statusFilter, setStatusFilter] = useState('');
+  const { search, setSearch } = useSearch();
   const [isLoading, setIsLoading] = useState(false);
   const loader = useRef(null);
+  const debounceTimer = useRef(null);
 
   const handleObserver = (entities) => {
     const target = entities[0];
@@ -31,16 +34,36 @@ export function Home() {
     };
   }, []);
 
+  // Search에 대한 Debouncing 처리
   useEffect(() => {
+    if (debounceTimer.current) {
+      clearTimeout(debounceTimer.current);
+    }
+    debounceTimer.current = setTimeout(() => {
+      fetchAuctions();
+    }, 500);
+
+    return () => {
+      if (debounceTimer.current) {
+        clearTimeout(debounceTimer.current);
+      }
+    };
+  }, [search]);
+
+  useEffect(() => {
+    fetchAuctions();
+  }, [statusFilter, page]);
+
+  const fetchAuctions = () => {
     setIsLoading(true);
     getAuctions({
       status: statusFilter,
-      title: '', // 여기에 Search 넣어야함
+      title: search || null,
       page,
-      size: 10,
     })
       .then((response) => {
         if (page === 0) {
+          console.log(response.data.data.content);
           setAuctions(response.data.data.content);
         } else {
           setAuctions((prev) => [...prev, ...response.data.data.content]);
@@ -52,11 +75,12 @@ export function Home() {
       .finally(() => {
         setIsLoading(false);
       });
-  }, [page, statusFilter]);
+  };
 
   useEffect(() => {
+    setPage(0);
     setAuctions([]);
-  }, [statusFilter]);
+  }, [statusFilter, search]);
 
   return (
     <div className="mt-2">

@@ -19,10 +19,25 @@ import {
   UserCircleIcon,
 } from '@heroicons/react/24/solid';
 import { setOpenConfigurator, useMaterialTailwindController } from '@/context';
+import { useSearch } from '@/context/search-context.jsx';
+import { useEffect, useState } from 'react';
+import { getUserByUserId } from '@/api/user.js';
 
 export function DashboardNavbar() {
+  const { search, setSearch } = useSearch();
   const [controller, dispatch] = useMaterialTailwindController();
   const { fixedNavbar, openSidenav } = controller;
+  const [townName, setTownName] = useState('');
+
+  useEffect(() => {
+    getUserByUserId()
+      .then((response) => {
+        setTownName(response.data.data.townName);
+      })
+      .catch((error) => {
+        console.error('Failed to fetch user:', error);
+      });
+  }, []);
 
   return (
     <Navbar
@@ -38,12 +53,17 @@ export function DashboardNavbar() {
       <div className="flex flex-col-reverse justify-between gap-4 md:flex-row md:items-center">
         <div className="flex capitalize">
           <Typography variant="small" color="blue-gray" className="font-normal">
-            현재 위치 : <span className="font-black opacity-90">서울</span>
+            현재 위치 :{' '}
+            <span className="font-black opacity-90">{townName}</span>
           </Typography>
         </div>
         <div className="flex items-center">
           <div className="mr-auto md:mr-4 md:w-56">
-            <Input label="Search" />
+            <Input
+              label="Search"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
           </div>
           <Link to="/auth/sign-in">
             {localStorage.getItem('authorizationToken') ? (
