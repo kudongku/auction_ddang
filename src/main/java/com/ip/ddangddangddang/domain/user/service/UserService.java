@@ -92,7 +92,9 @@ public class UserService {
     public UserResponse getUser(Long userId) {
         User user = userRepository.findById(userId)
             .orElseThrow(() -> new EntityNotFoundException("유저가 없습니다."));
-        return new UserResponse(user);
+        return new UserResponse(
+            user.getTown().getId(),
+            user.getTown().getName());
 
     }
 }
