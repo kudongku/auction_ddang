@@ -7,8 +7,10 @@ import lombok.Getter;
 public class UserResponse {
 
     private Long townId;
+    private String townName;
 
     public UserResponse(User user) {
         this.townId = user.getTown().getId();
+        this.townName = user.getTown().getName();
     }
 }
