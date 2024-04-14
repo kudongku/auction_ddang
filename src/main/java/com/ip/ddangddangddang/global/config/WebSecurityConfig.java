@@ -32,7 +32,6 @@ public class WebSecurityConfig {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
-
     // AuthenticationManager = 인증 처리하는 스프링 시큐리티 빈
     // 핵심 컴포넌트 중 하나
     // AuthenticationConfiguration 객체 = 스프링 시큐리티의 인증 구성을 위해 제공됨
@@ -41,7 +40,6 @@ public class WebSecurityConfig {
         throws Exception {
         return configuration.getAuthenticationManager();
     }
-
 
     // 로그인, jwt생성
     @Bean

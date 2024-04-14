@@ -1,7 +1,7 @@
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import { Auth, Dashboard } from '@/layouts';
-import SignIn from '@/pages/auth/sign-in.jsx';
-import SignUp from '@/pages/auth/sign-up.jsx';
+import SignIn from '@/pages/auth/SignIn.jsx';
+import SignUp from '@/pages/auth/SignUp.jsx';
 
 function App() {
   return (
@@ -33,6 +33,10 @@ function App() {
         />
       </Route>
       <Route path="*" element={<Navigate to="/dashboard/home" replace />} />
+      <Route
+        path="*"
+        element={<Navigate to="/dashboard/home-reference" replace />}
+      />
     </Routes>
   );
 }

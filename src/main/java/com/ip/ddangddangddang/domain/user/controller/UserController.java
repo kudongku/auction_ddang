@@ -10,7 +10,9 @@ import com.ip.ddangddangddang.domain.user.service.UserService;
 import com.ip.ddangddangddang.global.security.UserDetailsImpl;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -26,7 +28,7 @@ public class UserController {
 
     private final UserService userService;
 
-    @PostMapping("/signup")
+    @PostMapping("/signup") @ResponseStatus(HttpStatus.CREATED)
     public void signup(
         @Valid @RequestBody UserSignupRequestDto requestDto
     ) {

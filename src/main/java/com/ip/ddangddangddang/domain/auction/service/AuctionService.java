@@ -122,7 +122,8 @@ public class AuctionService {
                     auction.getTitle(),
                     auction.getStatusEnum(),
                     auction.getFinishedAt(),
-                    auction.getFile().getFilePath()
+                    auction.getFile().getFilePath(),
+                    auction.getPrice()
                 )
             );
 
@@ -167,7 +168,8 @@ public class AuctionService {
                     auction.getTitle(),
                     auction.getStatusEnum(),
                     auction.getFinishedAt(),
-                    auction.getFile().getFilePath()
+                    auction.getFile().getFilePath(),
+                    auction.getPrice()
                 )
             );
     }
@@ -180,7 +182,8 @@ public class AuctionService {
                 auction.getTitle(),
                 auction.getStatusEnum(),
                 auction.getFinishedAt(),
-                auction.getFile().getFilePath()
+                auction.getFile().getFilePath(),
+                auction.getPrice()
             )
         );
     }
