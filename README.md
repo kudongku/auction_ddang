@@ -2,12 +2,13 @@
 
 # 🛒 [땅땅땅] 우리동네 경매서비스
 
+<img width="598" alt="스크린샷 2024-04-15 12 31 40" src="https://github.com/IP-I-s-Protocol/DDang/assets/148612321/130dd804-1a60-4536-8c5f-abfa8dd5be71">
+
+
 ---
 ## 🏛️ 기술 아키텍쳐
 
-https://miro.com/app/board/uXjVKaYgnJ4=/?share_link_id=629810146024
-
-같이 작업해봐요..!
+<img width="514" alt="스크린샷 2024-04-15 12 34 23" src="https://github.com/IP-I-s-Protocol/DDang/assets/148612321/5a1818f3-19bc-41ac-9a38-5f63ae12a925">
 
 ---
 ## 👫🏼 Team
