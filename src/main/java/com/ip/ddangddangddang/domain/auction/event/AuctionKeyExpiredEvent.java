@@ -1,10 +1,10 @@
-package com.ip.ddangddangddang.domain.auction.dto.request;
+package com.ip.ddangddangddang.domain.auction.event;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class AuctionKeyNotificationRequestDto {
+public class AuctionKeyExpiredEvent {
     private String message;
 }
