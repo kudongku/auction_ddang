@@ -49,7 +49,7 @@ public class BidService {
     }
 
     private void validatePrice(Long auctionPrice, Long bidPrice) {
-        if (auctionPrice > bidPrice) {
+        if (auctionPrice >= bidPrice) {
             throw new CustomBidException("현재 가격보다 높은 가격을 입력해주세요.");
         }
     }
