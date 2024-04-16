@@ -16,6 +16,8 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -100,12 +102,14 @@ public class AuctionService {
         auction.updateStatusToComplete();
     }
 
+    @CacheEvict(value = "auctions")
     @Transactional
     public void updateBid(Long auctionId, Long price, Long buyerId) {
         Auction auction = findAuctionOrElseThrow(auctionId);
         auction.updateBid(price, buyerId);
     }
 
+    @Cacheable(value = "auction", key = "#id", cacheManager = "cacheManager")
     public Slice<AuctionListResponseDto> getAuctions(
         Long userId,
         StatusEnum status,
