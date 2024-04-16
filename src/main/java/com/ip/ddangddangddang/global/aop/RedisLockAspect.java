@@ -1,6 +1,5 @@
 package com.ip.ddangddangddang.global.aop;
 
-import com.ip.ddangddangddang.global.exception.custom.LockNotAcquiredException;
 import com.ip.ddangddangddang.global.exception.custom.TimeOutLockException;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -36,17 +35,7 @@ public class RedisLockAspect {
                 throw new TimeOutLockException("Lock 획득 실패");
             }
 
-            Object result = joinPoint.proceed();
-
-            if (lock.isHeldByCurrentThread()) {
-                lock.unlock();
-                log.info("UnLock 획득 성공");
-            } else {
-                log.info("Lock 해제 실패");
-                throw new LockNotAcquiredException("다른 유저가 접근 중에 있으니 다시 시도해주세요.");
-
-            }
-            return result;
+            return joinPoint.proceed();
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             throw new TimeOutLockException("Lock 획득 시 Interrupt 발생");
