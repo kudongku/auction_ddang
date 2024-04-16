@@ -11,17 +11,14 @@ import com.ip.ddangddangddang.global.exception.custom.CustomBidException;
 import java.util.concurrent.TimeUnit;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
 @Service
 public class BidService {
 
     private final BidRepository bidRepository;
     private final AuctionService auctionService;
 
-    @Transactional
     @DistributedLock(value = "bidLock", waitTime = 50, leaseTime = 50, timeUnit = TimeUnit.MINUTES)
     public void createBid(Long auctionId, BidRequestDto requestDto, Long userId) {
         Auction auction = auctionService.findAuctionOrElseThrow(auctionId);
