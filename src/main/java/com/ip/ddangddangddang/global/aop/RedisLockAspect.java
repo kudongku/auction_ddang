@@ -50,6 +50,8 @@ public class RedisLockAspect {
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             throw new TimeOutLockException("Lock 획득 시 Interrupt 발생");
+        } finally {
+            lock.unlock();
         }
     }
 
