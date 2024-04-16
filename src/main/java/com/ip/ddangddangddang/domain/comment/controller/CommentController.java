@@ -3,6 +3,7 @@ package com.ip.ddangddangddang.domain.comment.controller;
 import com.ip.ddangddangddang.domain.comment.dto.request.CommentCreateRequestDto;
 import com.ip.ddangddangddang.domain.comment.dto.response.CommentReadResponseDto;
 import com.ip.ddangddangddang.domain.comment.service.CommentService;
+import com.ip.ddangddangddang.domain.common.dto.Response;
 import com.ip.ddangddangddang.global.security.UserDetailsImpl;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -31,11 +32,11 @@ public class CommentController {
     }
 
     @GetMapping
-    public List<CommentReadResponseDto> getComments(
+    public Response<List<CommentReadResponseDto>> getComments(
         @PathVariable Long auctionId,
         @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
-        return commentService.getComments(auctionId, userDetails.getUserId());
+        return Response.ok(commentService.getComments(auctionId, userDetails.getUserId()));
     }
 
 }
