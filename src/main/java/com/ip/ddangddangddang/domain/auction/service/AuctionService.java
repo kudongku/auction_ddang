@@ -110,7 +110,7 @@ public class AuctionService {
         auction.updateBid(price, buyerId);
     }
 
-//    @Cacheable(value = "auction", key = "#p1", condition="#p1!=null", cacheManager = "cacheManager")
+    @Cacheable(value = "auction", key = "#userId", cacheManager = "cacheManager")
     public CustomSlice getAuctions(
         Long userId,
         StatusEnum status,
@@ -148,7 +148,7 @@ public class AuctionService {
 //        );
 //    }
 
-    @Cacheable(value = "auction", key = "#p0", condition="#p0!=null", cacheManager = "cacheManager")
+    @Cacheable(value = "auction", key = "#auctionId", cacheManager = "cacheManager")
     public AuctionResponseDto getAuction(Long auctionId) {
         Auction auction = findAuctionOrElseThrow(auctionId);
 

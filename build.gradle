@@ -80,8 +80,8 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-mail'
     implementation 'com.amazonaws:aws-java-sdk-ses:1.12.3'
 
+    // 역직렬화
     implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.13.3'
-
 }
 
 tasks.named('test') {
