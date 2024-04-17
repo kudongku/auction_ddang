@@ -6,6 +6,7 @@ import {
   CardHeader,
   Typography,
 } from '@material-tailwind/react';
+import {useNavigate} from "react-router-dom";
 
 export function ActionCard({
   auctionId,
@@ -16,6 +17,7 @@ export function ActionCard({
   finishedAt,
   footer,
 }) {
+  const navigate = useNavigate();
   const [remainingTime, setRemainingTime] = useState('');
 
   useEffect(() => {
@@ -49,7 +51,12 @@ export function ActionCard({
   }, [status, finishedAt]);
 
   return (
-    <Card className="border border-blue-gray-100 shadow-sm">
+    <Card
+        className="border border-blue-gray-100 shadow-sm"
+        onClick={() => {
+          navigate(`/dashboard/auction/${auctionId}`);
+        }}
+    >
       <div className="flex justify-between">
         <CardHeader
           variant="gradient"
