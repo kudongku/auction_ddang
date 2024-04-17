@@ -18,21 +18,16 @@ public class AuctionQueryRepositoryImpl implements AuctionQueryRepository {
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public Slice<Auction> findAllByFilters(List<Long> neighbor,
-        StatusEnum status, String title, Pageable pageable
+    public List<Auction> findAllByFilters(List<Long> neighbor,
+        StatusEnum status, String title
     ) {
-
-        List<Auction> result = queryFactory.selectFrom(auction)
+        return queryFactory.selectFrom(auction)
             .where(auction.townId.in(neighbor),
                 eqStatusAndContainsTitle(status, title))//.in : List안에 있는 것 중에 찾는 것
 //            .where(auction.townId.in(neighbor)
 //                .and(eqStatusAndContainsTitle(status, title))) -> 이렇게도 가능
-            .offset(pageable.getOffset())
-            .limit(pageable.getPageSize())
             .orderBy(auction.createdAt.desc())
             .fetch();
-
-        return new SliceImpl<>(result, pageable, hasNextPage(result, pageable.getPageSize()));
 
     }
 
