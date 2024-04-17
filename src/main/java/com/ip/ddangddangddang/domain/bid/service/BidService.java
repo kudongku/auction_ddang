@@ -1,8 +1,11 @@
 package com.ip.ddangddangddang.domain.bid.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ip.ddangddangddang.domain.auction.entity.Auction;
 import com.ip.ddangddangddang.domain.auction.entity.StatusEnum;
 import com.ip.ddangddangddang.domain.auction.service.AuctionService;
+import com.ip.ddangddangddang.domain.bid.dto.event.BidEvent;
 import com.ip.ddangddangddang.domain.bid.dto.request.BidRequestDto;
 import com.ip.ddangddangddang.domain.bid.entity.Bid;
 import com.ip.ddangddangddang.domain.bid.repository.BidRepository;
@@ -18,9 +21,12 @@ public class BidService {
 
     private final BidRepository bidRepository;
     private final AuctionService auctionService;
+    private final BidEventPublisher bidEventPublisher;
+    private final ObjectMapper objectMapper;
 
     @DistributedLock(value = "bidLock", waitTime = 50, leaseTime = 50, timeUnit = TimeUnit.MINUTES)
-    public void createBid(Long auctionId, BidRequestDto requestDto, Long userId) {
+    public void createBid(Long auctionId, BidRequestDto requestDto, Long userId)
+        throws JsonProcessingException {
         Auction auction = auctionService.findAuctionOrElseThrow(auctionId);
         validateAuctionStatus(auction);
 
@@ -30,7 +36,14 @@ public class BidService {
         validatePrice(auction.getPrice(), requestDto.getPrice());
         auctionService.updateBid(auctionId, requestDto.getPrice(), userId);
 
-        bidRepository.save(new Bid(auctionId, userId, requestDto.getPrice()));
+        Bid savedBid = bidRepository.save(new Bid(auctionId, userId, requestDto.getPrice()));
+
+        BidEvent bidEvent = new BidEvent(
+            savedBid.getId(),
+            savedBid.getAuctionId(),
+            savedBid.getUserId(),
+            savedBid.getPrice());
+        bidEventPublisher.publishEvent(auctionId, objectMapper.writeValueAsString(bidEvent));
     }
 
     private void validateAuctionStatus(Auction auction) {
