@@ -1,5 +1,6 @@
 package com.ip.ddangddangddang.domain.bid.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.ip.ddangddangddang.domain.bid.dto.request.BidRequestDto;
 import com.ip.ddangddangddang.domain.bid.service.BidService;
 import com.ip.ddangddangddang.global.security.UserDetailsImpl;
@@ -24,7 +25,7 @@ public class BidController {
         @PathVariable Long auctionId,
         @Valid @RequestBody BidRequestDto requestDto,
         @AuthenticationPrincipal UserDetailsImpl userDetails
-    ) {
+    ) throws JsonProcessingException {
         bidService.createBid(auctionId, requestDto, userDetails.getUserId());
     }
 
