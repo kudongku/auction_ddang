@@ -4,6 +4,7 @@ package com.ip.ddangddangddang.domain.auction.controller;
 import com.ip.ddangddangddang.domain.auction.dto.request.AuctionRequestDto;
 import com.ip.ddangddangddang.domain.auction.dto.response.AuctionListResponseDto;
 import com.ip.ddangddangddang.domain.auction.dto.response.AuctionResponseDto;
+import com.ip.ddangddangddang.domain.auction.dto.response.CustomSlice;
 import com.ip.ddangddangddang.domain.auction.entity.StatusEnum;
 import com.ip.ddangddangddang.domain.auction.service.AuctionService;
 import com.ip.ddangddangddang.domain.common.dto.Response;
@@ -48,14 +49,14 @@ public class AuctionController {
     }
 
     @GetMapping
-    public Response<Slice<AuctionListResponseDto>> getAuctions(
+    public Response<CustomSlice> getAuctions(
         @AuthenticationPrincipal UserDetailsImpl userDetails,
         @RequestParam(defaultValue = "0") int page,
         @RequestParam(defaultValue = "10") int size,
         @RequestParam(required = false) StatusEnum status,
         @RequestParam(required = false) String title
     ) {
-        Slice<AuctionListResponseDto> auctions = auctionService.getAuctions(userDetails.getUserId(),
+        CustomSlice auctions = auctionService.getAuctions(userDetails.getUserId(),
             status, title, PageRequest.of(page, size));
         return Response.ok(auctions);
     }

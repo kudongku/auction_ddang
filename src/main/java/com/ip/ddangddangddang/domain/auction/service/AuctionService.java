@@ -3,6 +3,7 @@ package com.ip.ddangddangddang.domain.auction.service;
 import com.ip.ddangddangddang.domain.auction.dto.request.AuctionRequestDto;
 import com.ip.ddangddangddang.domain.auction.dto.response.AuctionListResponseDto;
 import com.ip.ddangddangddang.domain.auction.dto.response.AuctionResponseDto;
+import com.ip.ddangddangddang.domain.auction.dto.response.CustomSlice;
 import com.ip.ddangddangddang.domain.auction.entity.Auction;
 import com.ip.ddangddangddang.domain.auction.entity.StatusEnum;
 import com.ip.ddangddangddang.domain.auction.repository.AuctionRepository;
@@ -109,8 +110,8 @@ public class AuctionService {
         auction.updateBid(price, buyerId);
     }
 
-    @Cacheable(value = "auction", key = "#id", cacheManager = "cacheManager")
-    public Slice<AuctionListResponseDto> getAuctions(
+//    @Cacheable(value = "auction", key = "#p1", condition="#p1!=null", cacheManager = "cacheManager")
+    public CustomSlice getAuctions(
         Long userId,
         StatusEnum status,
         String title,
@@ -119,7 +120,7 @@ public class AuctionService {
         User user = userService.findUserOrElseThrow(userId);
         List<Long> townList = user.getTown().getNeighborIdList();
 
-        return auctionRepository.findAllByFilters(townList, status, title, pageable)
+        Slice<AuctionListResponseDto> slice = auctionRepository.findAllByFilters(townList, status, title, pageable)
             .map(
                 auction -> new AuctionListResponseDto(
                     auction.getId(),
@@ -131,6 +132,7 @@ public class AuctionService {
                 )
             );
 
+        return new CustomSlice(slice);
     }
 
 //    public Page<AuctionListResponseDto> getAuctionsByTitle(String title, Pageable pageable) {
@@ -146,6 +148,7 @@ public class AuctionService {
 //        );
 //    }
 
+    @Cacheable(value = "auction", key = "#p0", condition="#p0!=null", cacheManager = "cacheManager")
     public AuctionResponseDto getAuction(Long auctionId) {
         Auction auction = findAuctionOrElseThrow(auctionId);
 
