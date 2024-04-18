@@ -13,7 +13,6 @@ export function AuctionDetails() {
     .then((response) => {
       setAuctionResponseDto(response.data);
     })
-    console.log(auctionResponseDto)
   }
 
   useEffect(() => {
@@ -22,14 +21,11 @@ export function AuctionDetails() {
 
   const submitBid = async (event) => {
     const bidPrice = event.target[0].value;
-    alert(bidPrice)
     try {
-      const response = await createBid(auctionId.auctionId, bidPrice);
-      console.log(response)
+      await createBid(auctionId.auctionId, bidPrice);
     }catch (error){
       console.log(error)
     }
-    alert("!!")
   }
 
   return (

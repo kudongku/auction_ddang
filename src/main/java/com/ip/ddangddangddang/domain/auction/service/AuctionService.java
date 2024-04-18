@@ -159,7 +159,7 @@ public class AuctionService {
             buyerNickname = userService.findUserOrElseThrow(auction.getBuyerId()).getNickname();
         }
 
-        return new AuctionResponseDto(auction, townName, buyerNickname);
+        return new AuctionResponseDto(auction, townName, buyerNickname, auction.getFile().getFilePath());
     }
 
     // TODO: 4/8/24 자신이 올린 옥션리스트 보기 getList
