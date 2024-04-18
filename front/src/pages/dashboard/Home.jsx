@@ -111,13 +111,13 @@ export function Home() {
   return (
       <div className="mt-2">
         <div className="mb-4 flex gap-2 text-[14px] font-semibold">
-          {['전체', '진행 중', '진행 예정', '완료'].map((label, index) => {
+          {['전체', '경매 중', '경매 마감', '경매 완료'].map((label, index) => {
             const status =
-                label === '진행 중'
+                label === '경매 중'
                     ? 'ON_SALE'
-                    : label === '진행 예정'
+                    : label === '경매 마감'
                         ? 'HOLD'
-                        : label === '완료'
+                        : label === '경매 완료'
                             ? 'COMPLETED'
                             : '';
             return (
