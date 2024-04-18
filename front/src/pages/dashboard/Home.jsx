@@ -141,7 +141,7 @@ export function Home() {
               onClick={()=>{
                 navigate(`/dashboard/createAuction`);
               }}
-              className={`rounded-full px-4 py-2 text-white bg-red-600 hover:opacity-90'}`}
+              className={`rounded-md px-4 py-2 text-white bg-red-600 hover:opacity-90'}`}
           >
             경매올리기
           </button>
@@ -156,6 +156,7 @@ export function Home() {
                   title={auction.title}
                   filePath={auction.filePath}
                   finishedAt={auction.finishedAt}
+                  value={auction.price}
                   footer={true}
               />
           ))}
