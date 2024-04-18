@@ -98,9 +98,9 @@ export function ActionCard({
 export default ActionCard;
 
 const statusLabels = {
-  ON_SALE: '진행 중',
-  HOLD: '진행 예정',
-  COMPLETED: '완료',
+  ON_SALE: '경매 중',
+  HOLD: '경매 마감',
+  COMPLETED: '경매 완료',
 };
 
 const statusColors = {
