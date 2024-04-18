@@ -38,7 +38,9 @@ public class AuctionResponseDto {
 
     private String buyerNickname;
 
-    public AuctionResponseDto(Auction auction, String townName, String buyerNickname) {
+    private String filePath;
+
+    public AuctionResponseDto(Auction auction, String townName, String buyerNickname, String filePath) {
         this.id = auction.getId();
         this.townName = townName;
         this.title = auction.getTitle();
@@ -48,6 +50,7 @@ public class AuctionResponseDto {
         this.finishedAt = auction.getFinishedAt();
         this.sellerNickname = auction.getUser().getNickname();
         this.buyerNickname = buyerNickname;
+        this.filePath = filePath;
     }
 
 }

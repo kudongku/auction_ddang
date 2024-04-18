@@ -3,8 +3,10 @@ import {getAuctions} from '@/api/auction.js';
 import ActionCard from '@/widgets/cards/AutionCard.jsx';
 import {LoadingSpinner} from '@/common/LoadingSpinner.jsx';
 import {useSearch} from '@/context/search-context.jsx';
+import {useNavigate} from "react-router-dom";
 
 export function Home() {
+  const navigate = useNavigate();
   const [auctions, setAuctions] = useState([]);
   const [statusFilter, setStatusFilter] = useState('');
   const {search, setSearch} = useSearch();
@@ -135,6 +137,14 @@ export function Home() {
                 </button>
             );
           })}
+          <button
+              onClick={()=>{
+                navigate(`/dashboard/createAuction`);
+              }}
+              className={`rounded-full px-4 py-2 text-white bg-red-600 hover:opacity-90'}`}
+          >
+            경매올리기
+          </button>
         </div>
         <div className="mb-12 flex flex-col gap-x-6 gap-y-10 md:grid-cols-2">
           {isLoading && <LoadingSpinner/>}

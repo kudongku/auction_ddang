@@ -6,8 +6,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 public class BidRequestDto {
 
     @Positive(message = "음수나, 공백이 올 수 없습니다.")

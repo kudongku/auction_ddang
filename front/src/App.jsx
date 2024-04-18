@@ -34,7 +34,7 @@ function App() {
       </Route>
       <Route path="*" element={<Navigate to="/dashboard/home" replace />} />
       <Route
-        path="*"
+        path="home-reference"
         element={<Navigate to="/dashboard/home-reference" replace />}
       />
     </Routes>

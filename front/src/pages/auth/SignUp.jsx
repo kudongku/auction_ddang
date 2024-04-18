@@ -81,19 +81,6 @@ function SignUp() {
         }
       }
     });
-    //   searchDetailAddrFromCoords(mouseEvent.latLng, (result, status) => {
-    //     if (status === kakao.maps.services.Status.OK) {
-    //       let detailAddr = !!result[0].road_address ? '<div>도로명주소 : ' + result[0].road_address.address_name + '</div>' : '';
-    //       detailAddr += '<div>지번 주소 : ' + result[0].address.address_name + '</div>';
-    //
-    //       const content = '<div class="bAddr">' +
-    //           '<span class="title">법정동 주소정보</span>' +
-    //           detailAddr +
-    //           '</div>';
-    //
-    //
-    //     }
-    //   });
   };
 
   const searchAddrFromCoords = (coords, callback) => {
@@ -104,9 +91,6 @@ function SignUp() {
     );
     kakaoMapRef.current.marker.setPosition(coords);
     kakaoMapRef.current.marker.setMap(kakaoMapRef.current.map);
-
-    // kakaoMapRef.current.infowindow.setContent(content);
-    // kakaoMapRef.current.infowindow.open(kakaoMapRef.current.map, kakaoMapRef.current.marker);
   };
 
   return (
