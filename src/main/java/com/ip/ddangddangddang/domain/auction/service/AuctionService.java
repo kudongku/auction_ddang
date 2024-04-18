@@ -110,7 +110,7 @@ public class AuctionService {
         auction.updateBid(price, buyerId);
     }
 
-    @Cacheable(value = "auction", key = "#userId", cacheManager = "cacheManager")
+    @Cacheable(value = "auction", cacheManager = "cacheManager")
     public List<AuctionListResponseDto> getAuctions(
         Long userId,
         StatusEnum status,
