@@ -2,8 +2,10 @@ import { Button, Input, Typography } from '@material-tailwind/react';
 import { useState } from 'react';
 import { createAuction } from '@/api/auction.js'; // 경매 생성 API 함수
 import { uploadImage } from "@/api/file.js";
+import {useNavigate} from "react-router-dom";
 
 function CreateAuction() {
+  const navigate = useNavigate();
   const [title, setTitle] = useState('');
   const [image, setImage] = useState(null);
   const [description, setDescription] = useState('');
@@ -29,7 +31,7 @@ function CreateAuction() {
       formData.append('content', description);
 
       await createAuction(formData);
-
+      navigate(`/dashboard/home`);
       // 경매 생성 후 필요한 작업 수행
       // 예: 경매 목록 페이지로 이동
     } catch (error) {
