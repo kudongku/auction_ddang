@@ -9,6 +9,7 @@ import {
 import { Home, Notifications, Profile, Tables, AuctionDetails } from '@/pages/dashboard';
 import SignIn from '@/pages/auth/SignIn.jsx';
 import SignUp from '@/pages/auth/SignUp.jsx';
+import HomeReference from "@/pages/dashboard/home-reference.jsx";
 
 const icon = {
   className: 'w-5 h-5 text-inherit',
@@ -23,6 +24,12 @@ export const routes = [
         name: 'dashboard',
         path: '/home',
         element: <Home />,
+      },
+      {
+        icon: <HomeIcon {...icon} />,
+        name: 'dashboard',
+        path: '/home-reference',
+        element: <HomeReference />,
       },
       {
         icon: <UserCircleIcon {...icon} />,

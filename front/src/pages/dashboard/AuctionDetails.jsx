@@ -20,6 +20,7 @@ export function AuctionDetails() {
   }, [])
 
   const submitBid = async (event) => {
+    event.preventDefault();
     const bidPrice = event.target[0].value;
     try {
       await createBid(auctionId.auctionId, bidPrice);
