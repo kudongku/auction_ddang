@@ -1,12 +1,13 @@
 import React, {useEffect, useState} from "react";
 import {getAuction} from '@/api/auction.js'
 import {createBid} from '@/api/bid.js'
-import {Link, useParams} from "react-router-dom";
-import {Button, Input, Typography} from "@material-tailwind/react";
+import {useNavigate, useParams} from "react-router-dom";
+import {Button, Input} from "@material-tailwind/react";
 
 export function AuctionDetails() {
   const auctionId = useParams();
   const [auctionResponseDto, setAuctionResponseDto] = useState([]);
+  const navigate = useNavigate();
 
   const getAuctionDto = () => {
     getAuction(auctionId.auctionId)
@@ -23,14 +24,23 @@ export function AuctionDetails() {
     event.preventDefault();
     const bidPrice = event.target[0].value;
     try {
-      await createBid(auctionId.auctionId, bidPrice);
-    }catch (error){
+      const response = await createBid(auctionId.auctionId, bidPrice)
+
+      if(response.data.status == "BAD_REQUEST"){
+        alert(response.data.message)
+      }
+      else{
+        document.querySelector('#bid-price').textContent = bidPrice;
+        alert("입찰이 완료되었습니다.")
+      }
+
+    } catch (error) {
       console.log(error)
     }
   }
 
   return (
-      <div >
+      <div>
         <div className="border border-blue-gray-100 shadow-sm">
           <h1 className="font-extrabold text-4xl">
             {auctionResponseDto.title}
@@ -39,7 +49,8 @@ export function AuctionDetails() {
               src={auctionResponseDto.filePath}
               className="h-full w-full object-cover"
           />
-          <span className="float-right">{auctionResponseDto.sellerNickname}</span><br/>
+          <span
+              className="float-right">{auctionResponseDto.sellerNickname}</span><br/>
           <span className="font-bold">{auctionResponseDto.content}</span><br/>
 
         </div>
@@ -48,9 +59,9 @@ export function AuctionDetails() {
         <br/>
 
         <div className="border border-blue-gray-100 shadow-sm">
-          현재 입찰가 : {auctionResponseDto.price}
+          현재 입찰가 :
+          <span id={"bid-price"}>{auctionResponseDto.price}</span>
         </div>
-
 
 
         <form
