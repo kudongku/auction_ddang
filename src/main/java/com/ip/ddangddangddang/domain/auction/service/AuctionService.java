@@ -3,7 +3,6 @@ package com.ip.ddangddangddang.domain.auction.service;
 import com.ip.ddangddangddang.domain.auction.dto.request.AuctionRequestDto;
 import com.ip.ddangddangddang.domain.auction.dto.response.AuctionListResponseDto;
 import com.ip.ddangddangddang.domain.auction.dto.response.AuctionResponseDto;
-import com.ip.ddangddangddang.domain.auction.dto.response.CustomSlice;
 import com.ip.ddangddangddang.domain.auction.entity.Auction;
 import com.ip.ddangddangddang.domain.auction.entity.StatusEnum;
 import com.ip.ddangddangddang.domain.auction.repository.AuctionRepository;
@@ -15,6 +14,7 @@ import com.ip.ddangddangddang.domain.user.service.UserService;
 import com.ip.ddangddangddang.global.exception.custom.CustomAuctionException;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheEvict;
@@ -103,7 +103,7 @@ public class AuctionService {
         auction.updateStatusToComplete();
     }
 
-    @CacheEvict(value = "auctions")
+//    @CacheEvict(value = "auctions")
     @Transactional
     public void updateBid(Long auctionId, Long price, Long buyerId) {
         Auction auction = findAuctionOrElseThrow(auctionId);
@@ -111,18 +111,18 @@ public class AuctionService {
     }
 
     @Cacheable(value = "auction", key = "#userId", cacheManager = "cacheManager")
-    public CustomSlice getAuctions(
+    public List<AuctionListResponseDto> getAuctions(
         Long userId,
         StatusEnum status,
-        String title,
-        Pageable pageable
+        String title
     ) {
         User user = userService.findUserOrElseThrow(userId);
         List<Long> townList = user.getTown().getNeighborIdList();
 
-        Slice<AuctionListResponseDto> slice = auctionRepository.findAllByFilters(townList, status, title, pageable)
-            .map(
-                auction -> new AuctionListResponseDto(
+        return auctionRepository.findAllByFilters(townList, status,
+                title).stream()
+            .map(auction ->
+                new AuctionListResponseDto(
                     auction.getId(),
                     auction.getTitle(),
                     auction.getStatusEnum(),
@@ -130,9 +130,7 @@ public class AuctionService {
                     auction.getFile().getFilePath(),
                     auction.getPrice()
                 )
-            );
-
-        return new CustomSlice(slice);
+            ).collect(Collectors.toList());
     }
 
 //    public Page<AuctionListResponseDto> getAuctionsByTitle(String title, Pageable pageable) {
@@ -148,7 +146,7 @@ public class AuctionService {
 //        );
 //    }
 
-    @Cacheable(value = "auction", key = "#auctionId", cacheManager = "cacheManager")
+//    @Cacheable(value = "auction", key = "#auctionId", cacheManager = "cacheManager")
     public AuctionResponseDto getAuction(Long auctionId) {
         Auction auction = findAuctionOrElseThrow(auctionId);
 
@@ -164,7 +162,8 @@ public class AuctionService {
 
     // TODO: 4/8/24 자신이 올린 옥션리스트 보기 getList
     public Slice<AuctionListResponseDto> getMyAuctions(Long userId, Pageable pageable) {
-        return auctionRepository.findAuctionsByUserId(userId, pageable)
+        return auctionRepository.
+            findAuctionsByUserId(userId, pageable)
             .map( // page에는 .map이 내장되어있음
 //                (Auction auction) -> {
 //                    return new AuctionListResponseDto(auction.getId(), auction.getTitle(), // (의미적)한 문장이면 return 생략

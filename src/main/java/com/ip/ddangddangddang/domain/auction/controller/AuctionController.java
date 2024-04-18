@@ -4,14 +4,13 @@ package com.ip.ddangddangddang.domain.auction.controller;
 import com.ip.ddangddangddang.domain.auction.dto.request.AuctionRequestDto;
 import com.ip.ddangddangddang.domain.auction.dto.response.AuctionListResponseDto;
 import com.ip.ddangddangddang.domain.auction.dto.response.AuctionResponseDto;
-import com.ip.ddangddangddang.domain.auction.dto.response.CustomSlice;
 import com.ip.ddangddangddang.domain.auction.entity.StatusEnum;
 import com.ip.ddangddangddang.domain.auction.service.AuctionService;
 import com.ip.ddangddangddang.domain.common.dto.Response;
 import com.ip.ddangddangddang.global.security.UserDetailsImpl;
 import jakarta.validation.Valid;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -49,15 +48,13 @@ public class AuctionController {
     }
 
     @GetMapping
-    public Response<CustomSlice> getAuctions(
+    public Response<List<AuctionListResponseDto>> getAuctions(
         @AuthenticationPrincipal UserDetailsImpl userDetails,
-        @RequestParam(defaultValue = "0") int page,
-        @RequestParam(defaultValue = "10") int size,
         @RequestParam(required = false) StatusEnum status,
         @RequestParam(required = false) String title
     ) {
-        CustomSlice auctions = auctionService.getAuctions(userDetails.getUserId(),
-            status, title, PageRequest.of(page, size));
+        List<AuctionListResponseDto> auctions = auctionService.getAuctions(userDetails.getUserId(),
+            status, title);
         return Response.ok(auctions);
     }
 
