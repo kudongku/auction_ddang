@@ -33,7 +33,7 @@ export function Home() {
       threshold: 0,
     };
     const observer = new IntersectionObserver(handleObserver, option);
-    if (loader.current) {
+    if (loader.current && hasNextPage) {
       observer.observe(loader.current);
     }
 
@@ -71,6 +71,9 @@ export function Home() {
 
   const fetchAuctions = (page) => {
     setIsLoading(true);
+    if (page === 0) {
+      setAuctions([]);
+    }
     getAuctions({
       status: statusFilter,
       title: search || null,
@@ -78,11 +81,11 @@ export function Home() {
       pageSize
     })
     .then((response) => {
-      if (response.data.data.length === 0) {
+      if (response.data.length === 0) {
         //만약 다음페이지가 없으면 false
         setHasNextPage(false);
       } else {
-        setAuctions((prevAuctions) => [...prevAuctions, ...response.data.data]);
+        setAuctions(response.data.data);
       }
       // if (page === 0) {
       //   setAuctions(response.data.data.content);
@@ -154,3 +157,4 @@ export function Home() {
 }
 
 export default Home;
+
