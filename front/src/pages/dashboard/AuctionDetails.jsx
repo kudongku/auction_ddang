@@ -1,15 +1,39 @@
 import React, {useEffect, useState} from "react";
 import {getAuction} from '@/api/auction.js'
 import {createBid} from '@/api/bid.js'
-import {useNavigate, useParams} from "react-router-dom";
+import {useParams} from "react-router-dom";
 import {Button, Input} from "@material-tailwind/react";
 import {createComment, getComments} from "@/api/comment.js";
 
 export function AuctionDetails() {
   const auctionId = useParams();
   const [auctionResponseDto, setAuctionResponseDto] = useState([]);
-  const navigate = useNavigate();
   const [comments, setComments] = useState([])
+  const [events, setEvents] = useState([]);
+
+  useEffect(() => {
+    console.log("event 실행")
+    const eventSource = new EventSource(`http://localhost:8081/stream/auctions/${auctionId.auctionId}`);
+    console.log(eventSource)
+
+    eventSource.onmessage = (event) => {
+      // 서버로부터 받은 데이터 처리
+      const eventData = JSON.parse(event.data);
+      console.log(eventData)
+      document.querySelector('#bid-price').textContent = eventData.price;
+      setEvents(prevEvents => [...prevEvents, eventData]);
+    };
+
+    eventSource.onerror = (error) => {
+      console.error('SSE Error:', error);
+      eventSource.close();
+    };
+
+    return () => {
+      eventSource.close(); // 컴포넌트가 unmount될 때 EventSource 연결 해제
+    };
+  }, [auctionId]);
+
 
   const getAuctionDto = () => {
     getAuction(auctionId.auctionId)
@@ -150,7 +174,8 @@ export function AuctionDetails() {
                   댓글달기
                 </Button>
               </form>
-              <div className="relative flex flex-col bg-clip-border rounded-xl bg-white text-gray-700 shadow-md">
+              <div
+                  className="relative flex flex-col bg-clip-border rounded-xl bg-white text-gray-700 shadow-md">
                 <table className="w-full min-w-[640px] table-auto">
                   <thead>
                   <tr>

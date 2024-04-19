@@ -4,7 +4,9 @@ import com.ip.ddangddangddang.domain.user.repository.UserRepository;
 import com.ip.ddangddangddang.global.jwt.JwtUtil;
 import com.ip.ddangddangddang.global.security.JwtAuthenticationFilter;
 import com.ip.ddangddangddang.global.security.JwtAuthorizationFilter;
+import java.util.Arrays;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,12 +22,18 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
-import java.util.Arrays;
-
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class WebSecurityConfig {
+
+    @Value("${spring.main.url}")
+    private String mainUrl;
+    @Value("${spring.sse.url}")
+    private String sseUrl;
+    @Value("${spring.front.url}")
+    private String frontUrl;
+
 
     private final JwtUtil jwtUtil;
     private final AuthenticationConfiguration authenticationConfiguration;
@@ -67,15 +75,16 @@ public class WebSecurityConfig {
         );
 
         http.authorizeHttpRequests((authorizeHttpRequests) ->
-            authorizeHttpRequests
-                // 정적 리소스(예: CSS, JavaScript, 이미지 파일 등)는 보안 검사를 거치지 않고 누구나 접근할 수 있도록 허용
-                .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll() // resources 접근 허용 설정
-                .requestMatchers("/**").permitAll() // 메인 페이지 요청 허가
+                authorizeHttpRequests
+                    // 정적 리소스(예: CSS, JavaScript, 이미지 파일 등)는 보안 검사를 거치지 않고 누구나 접근할 수 있도록 허용
+                    .requestMatchers(PathRequest.toStaticResources().atCommonLocations())
+                    .permitAll() // resources 접근 허용 설정
+                    .requestMatchers("/**").permitAll() // 메인 페이지 요청 허가
 //                .requestMatchers("/login").permitAll() // 메인 페이지 요청 허가
 //                .requestMatchers("/signup").permitAll() // 메인 페이지 요청 허가
 //                .requestMatchers("/v1/users/signin").permitAll() // 회원가입,로그인 요청 모두 접근 허가
 //                .requestMatchers("/v1/users/signup").permitAll()
-                .anyRequest().authenticated() // 그 외 모든 요청 인증처리
+                    .anyRequest().authenticated() // 그 외 모든 요청 인증처리
         );
 
         //필터 관리
@@ -90,17 +99,20 @@ public class WebSecurityConfig {
     @Bean
     public CorsFilter corsFilter() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList("http://localhost:8080", "http://localhost:5173"));
+        configuration.setAllowedOrigins(Arrays.asList(mainUrl,frontUrl, sseUrl));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(Arrays.asList("authorization", "content-type", "x-auth-token"));
         configuration.setAllowCredentials(true);
         configuration.setMaxAge(3600L);
 
-        configuration.setExposedHeaders(Arrays.asList("Access-Control-Allow-Headers", "Authorization, x-xsrf-token, Access-Control-Allow-Headers, Origin, Accept, X-Requested-With, " +
+        configuration.setExposedHeaders(Arrays.asList("Access-Control-Allow-Headers",
+            "Authorization, x-xsrf-token, Access-Control-Allow-Headers, Origin, Accept, X-Requested-With, "
+                +
                 "Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers"));
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
+        source.registerCorsConfiguration("/stream/auctions/**", configuration);
 
         return new CorsFilter(source);
     }
