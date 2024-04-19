@@ -12,6 +12,7 @@ import com.ip.ddangddangddang.domain.town.service.TownService;
 import com.ip.ddangddangddang.domain.user.entity.User;
 import com.ip.ddangddangddang.domain.user.service.UserService;
 import com.ip.ddangddangddang.global.exception.custom.CustomAuctionException;
+import com.ip.ddangddangddang.global.mail.MailService;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
@@ -38,6 +39,7 @@ public class AuctionService {
     private final UserService userService;
     private final FileService fileService;
     private final TownService townService;
+    private final MailService mailService;
     private final RedisTemplate<String, String> redisTemplate;
     private final CacheManager cacheManager;
 
@@ -91,6 +93,14 @@ public class AuctionService {
             auction.updateStatusToHold();
 
             Objects.requireNonNull(cacheManager.getCache("auction")).evict(auctionId);
+
+            mailService.sendMail(
+                auction.getUser().getEmail(),
+                auction.getUser().getNickname(),
+                auction.getBuyerId(),
+                auction.getTitle(),
+                auction.getPrice()
+            );
 
         } else {
             throw new RuntimeException("redis 에러");
