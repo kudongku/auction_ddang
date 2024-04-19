@@ -6,6 +6,7 @@ import com.ip.ddangddangddang.global.security.JwtAuthenticationFilter;
 import com.ip.ddangddangddang.global.security.JwtAuthorizationFilter;
 import java.util.Arrays;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -25,6 +26,14 @@ import org.springframework.web.filter.CorsFilter;
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class WebSecurityConfig {
+
+    @Value("${spring.main.url}")
+    private String mainUrl;
+    @Value("${spring.sse.url}")
+    private String sseUrl;
+    @Value("${spring.front.url}")
+    private String frontUrl;
+
 
     private final JwtUtil jwtUtil;
     private final AuthenticationConfiguration authenticationConfiguration;
@@ -90,16 +99,9 @@ public class WebSecurityConfig {
     @Bean
     public CorsFilter corsFilter() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(
-            Arrays.asList(
-                "http://localhost:8080",
-                "http://localhost:5173",
-                "http://localhost:8081"
-            )
-        );
+        configuration.setAllowedOrigins(Arrays.asList(mainUrl,frontUrl, sseUrl));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        configuration.setAllowedHeaders(
-            Arrays.asList("authorization", "content-type", "x-auth-token"));
+        configuration.setAllowedHeaders(Arrays.asList("authorization", "content-type", "x-auth-token"));
         configuration.setAllowCredentials(true);
         configuration.setMaxAge(3600L);
 
