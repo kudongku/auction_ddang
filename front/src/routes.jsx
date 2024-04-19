@@ -7,7 +7,7 @@ import {
   UserCircleIcon,
 } from '@heroicons/react/24/solid';
 import {
-  AuctionDetails, CreateAuction,
+  AuctionDetails,
   Home,
   Notifications,
   Profile,
@@ -16,6 +16,7 @@ import {
 import SignIn from '@/pages/auth/SignIn.jsx';
 import SignUp from '@/pages/auth/SignUp.jsx';
 import HomeReference from "@/pages/dashboard/home-reference.jsx";
+import CreateAuction from "@/pages/dashboard/CreateAuction.jsx";
 
 const icon = {
   className: 'w-5 h-5 text-inherit',
@@ -33,7 +34,7 @@ export const routes = [
       },
       {
         icon: <HomeIcon {...icon} />,
-        name: 'dashboard',
+        name: 'dashboard2',
         path: '/home-reference',
         element: <HomeReference/>,
       },

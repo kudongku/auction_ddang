@@ -118,6 +118,22 @@ function SignUp() {
           className="mx-auto mb-2 mt-8 w-80 max-w-screen-lg lg:w-1/2"
           onSubmit={handleSubmit}
         >
+          <div className="map_wrap">
+            <div className="hAddr">
+              <div className="title">주소정보</div>
+              <div id="centerAddr"></div>
+            </div>
+            <div
+                id="map"
+                className={'mb-1 flex flex-col gap-6'}
+                style={{
+                  width: 'auto',
+                  height: '300px',
+                  position: 'relative',
+                  overflow: 'hidden',
+                }}
+            ></div>
+          </div>
           <div className="mb-1 flex flex-col gap-6">
             <Typography
               variant="small"
@@ -202,23 +218,6 @@ function SignUp() {
               value={formData.passwordConfirm}
               onChange={handleChange}
             />
-          </div>
-
-          <div className="map_wrap">
-            <div className="hAddr">
-              <div className="title">주소정보</div>
-              <div id="centerAddr"></div>
-            </div>
-            <div
-              id="map"
-              className={'mb-1 flex flex-col gap-6'}
-              style={{
-                width: 'auto',
-                height: '300px',
-                position: 'relative',
-                overflow: 'hidden',
-              }}
-            ></div>
           </div>
 
           <Button className="mt-6" fullWidth type={'submit'}>
