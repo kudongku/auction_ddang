@@ -1,5 +1,6 @@
 package com.ip.ddangddangddang.domain.auction.service;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -16,7 +17,6 @@ import com.ip.ddangddangddang.domain.town.service.TownService;
 import com.ip.ddangddangddang.domain.user.service.UserService;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -82,7 +82,7 @@ class AuctionServiceTest implements AuctionServiceTestValues {
             given(userService.findUserOrElseThrow(anyLong())).willReturn(TEST_USER1);
             given(fileService.findFileOrElseThrow(anyLong())).willReturn(TEST_FILE1);
             //when, then
-            Assertions.assertThrows(IllegalArgumentException.class,
+            assertThrows(IllegalArgumentException.class,
                 () -> auctionService.createAuction(auctionRequestDto, TEST_USER1_ID));
 
         }
@@ -109,7 +109,7 @@ class AuctionServiceTest implements AuctionServiceTestValues {
             given(auctionRepository.findById(anyLong())).willReturn(
                 Optional.ofNullable(TEST_AUCTION1));
             //when, then
-            Assertions.assertThrows(IllegalArgumentException.class,
+            assertThrows(IllegalArgumentException.class,
                 () -> auctionService.deleteAuction(TEST_AUCTION1_ID, TEST_USER2_ID));
         }
     }
@@ -126,5 +126,23 @@ class AuctionServiceTest implements AuctionServiceTestValues {
 //            //then
 //        }
 //    }
+
+    @Nested
+    @DisplayName("옥션 상태 completed로 변경 테스트")
+    public class AuctionStatusCompleteTest {
+
+        @Test
+        void 옥션_상태_COMPLETED로_변경_실패_테스트() {
+            //given
+            given(auctionRepository.findById(anyLong())).willReturn(
+                Optional.ofNullable(TEST_AUCTION1));
+            //when, then
+            assertThrows(IllegalArgumentException.class,
+                () -> auctionService.updateStatusToComplete(TEST_AUCTION1_ID, TEST_USER2_ID));
+
+        }
+    }
+
+    @N
 
 }
