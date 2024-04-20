@@ -1,5 +1,6 @@
 package com.ip.ddangddangddang.domain.file.service;
 
+import com.ip.ddangddangddang.domain.file.dto.response.FileCreateResponseDto;
 import com.ip.ddangddangddang.domain.file.dto.response.FileReadResponseDto;
 import com.ip.ddangddangddang.domain.file.entity.File;
 import com.ip.ddangddangddang.domain.file.repository.FileRepository;
@@ -23,7 +24,7 @@ public class FileService {
     private final UserService userService;
 
     @Transactional
-    public Long upload(MultipartFile auctionImage, String objectName, Long userId) {
+    public FileCreateResponseDto upload(MultipartFile auctionImage, String objectName, Long userId) {
         User user = userService.findUserOrElseThrow(userId);
 
         if (auctionImage.isEmpty()) {
@@ -39,7 +40,9 @@ public class FileService {
             throw new IllegalArgumentException();
         }
 
-        return fileRepository.save(new File(objectName, keyName, filePath, user)).getId();
+        Long fileId = fileRepository.save(new File(objectName, keyName, filePath, user)).getId();
+
+        return new FileCreateResponseDto(fileId);
     }
 
     @Transactional
