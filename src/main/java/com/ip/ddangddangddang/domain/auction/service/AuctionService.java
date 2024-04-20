@@ -12,11 +12,14 @@ import com.ip.ddangddangddang.domain.town.service.TownService;
 import com.ip.ddangddangddang.domain.user.entity.User;
 import com.ip.ddangddangddang.domain.user.service.UserService;
 import com.ip.ddangddangddang.global.exception.custom.CustomAuctionException;
+import com.ip.ddangddangddang.global.mail.MailService;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Pageable;
@@ -36,7 +39,9 @@ public class AuctionService {
     private final UserService userService;
     private final FileService fileService;
     private final TownService townService;
+    private final MailService mailService;
     private final RedisTemplate<String, String> redisTemplate;
+    private final CacheManager cacheManager;
 
     @Transactional
     public void createAuction(AuctionRequestDto requestDto,
@@ -86,12 +91,23 @@ public class AuctionService {
             Auction auction = findAuctionOrElseThrow(
                 auctionId);
             auction.updateStatusToHold();
+
+            Objects.requireNonNull(cacheManager.getCache("auction")).evict(auctionId);
+
+            mailService.sendMail(
+                auction.getUser().getEmail(),
+                auction.getUser().getNickname(),
+                auction.getBuyerId(),
+                auction.getTitle(),
+                auction.getPrice()
+            );
+
         } else {
             throw new RuntimeException("redis 에러");
         }
 
     }
-
+    @CacheEvict(value = "auction", key = "#auctionId", cacheManager = "cacheManager")
     @Transactional
     public void updateStatusToComplete(Long auctionId, Long userId) {
         Auction auction = findAuctionOrElseThrow(auctionId);
@@ -103,14 +119,14 @@ public class AuctionService {
         auction.updateStatusToComplete();
     }
 
-//    @CacheEvict(value = "auctions")
+    @CacheEvict(value = "auction", key = "#auctionId", cacheManager = "cacheManager")
     @Transactional
     public void updateBid(Long auctionId, Long price, Long buyerId) {
         Auction auction = findAuctionOrElseThrow(auctionId);
         auction.updateBid(price, buyerId);
     }
 
-    @Cacheable(value = "auction", cacheManager = "cacheManager")
+    @Cacheable(value = "auctions", cacheManager = "cacheManager")
     public List<AuctionListResponseDto> getAuctions(
         Long userId,
         StatusEnum status,
@@ -146,7 +162,7 @@ public class AuctionService {
 //        );
 //    }
 
-//    @Cacheable(value = "auction", key = "#auctionId", cacheManager = "cacheManager")
+    @Cacheable(value = "auction", key = "#auctionId", cacheManager = "cacheManager")
     public AuctionResponseDto getAuction(Long auctionId) {
         Auction auction = findAuctionOrElseThrow(auctionId);
 
