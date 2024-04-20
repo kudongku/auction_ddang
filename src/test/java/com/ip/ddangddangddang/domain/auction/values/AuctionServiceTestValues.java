@@ -8,6 +8,10 @@ import com.ip.ddangddangddang.domain.town.entity.Town;
 import com.ip.ddangddangddang.domain.user.entity.User;
 import java.time.LocalDateTime;
 import java.util.List;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.SliceImpl;
 
 public interface AuctionServiceTestValues {
 
@@ -182,5 +186,14 @@ public interface AuctionServiceTestValues {
     String TEST_MESSAGE_STARTS_WITH_AUCTION_ID = "auctionId:";
     String TEST_MESSAGE_NOT_STARTS_WITH_AUCTION_ID = "wrongAuctionId:";
 
+    //page
+    Pageable TEST_PAGEABLE = PageRequest.of(1, 1);
+    Slice<Auction> TEST_SLICE = new SliceImpl<>(List.of(TEST_AUCTION1, TEST_AUCTION2),
+        TEST_PAGEABLE, hasNextPage(List.of(TEST_AUCTION1, TEST_AUCTION2),
+        TEST_PAGEABLE.getPageSize()));
+
+    static boolean hasNextPage(List<Auction> result, int pageSize) {
+        return result.size() > pageSize;
+    }
 
 }

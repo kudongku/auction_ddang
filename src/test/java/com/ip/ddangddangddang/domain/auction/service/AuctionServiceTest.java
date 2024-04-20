@@ -242,4 +242,33 @@ class AuctionServiceTest implements AuctionServiceTestValues {
         }
     }
 
+    @Nested
+    @DisplayName("자신이 올린 옥션 리스트")
+    public class AuctionsGetByMe {
+
+        @Test
+        void 자신이_올린_옥션_전체_조회_성공_테스트() {
+            //given
+            given(auctionRepository.findAuctionsByUserId(anyLong(), any())).willReturn(TEST_SLICE);
+            //when
+            List<AuctionListResponseDto> auctionListResponseDtoList = auctionService.getMyAuctions(
+                TEST_USER1_ID, TEST_PAGEABLE).stream().toList();
+            //then
+            assertEquals(TEST_USER_NICKNAME, auctionListResponseDtoList.get(0).getNickname());
+        }
+
+    }
+
+    @Nested
+    @DisplayName("자신이 입찰한 게시글 리스트")
+    public class AuctionsBoughtByMe {
+
+        @Test
+        void 자신이_입찰한_옥션_전체_조회_성공_테스트() {
+            //given
+
+            //when
+            //then
+        }
+    }
 }
