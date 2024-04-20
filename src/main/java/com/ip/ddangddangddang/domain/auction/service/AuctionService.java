@@ -48,8 +48,12 @@ public class AuctionService {
     @Transactional
     public void createAuction(AuctionRequestDto requestDto,
         Long userId) { // Todo fileId 곂칠때 duplicated error
-        User user = userService.findUserOrElseThrow(userId);
-        File file = fileService.findFileOrElseThrow(requestDto.getFileId());
+        User user = userService.getUserById(userId)
+            .orElseThrow(() -> new IllegalArgumentException(
+                "회원이 존재하지 않습니다.")); //  없는게 정상 로직일 수 있다 -> 없는게 정상로직일 때 옵셔널로 받아오고 있어야하는 로직은 orelsethrow를 써도 된다. 없을 게 정상로직으로 추가될 수 있으니 확장성 측면에서 옵셔널로 받는게 좋다
+        File file = fileService.getFileById(
+            requestDto.getFileId()).orElseThrow(() -> new IllegalArgumentException(
+            "없는 이미지 입니다.")); // 이상황에서는 있는게 정상이니 orelsdthrow해도 되지만 확장성을 위해
 
         if (!file.getUser().equals(user)) {
             throw new IllegalArgumentException("파일에 대한 권한이 없습니다.");
@@ -141,7 +145,8 @@ public class AuctionService {
         StatusEnum status,
         String title
     ) {
-        User user = userService.findUserOrElseThrow(userId);
+        User user = userService.getUserById(userId)
+            .orElseThrow(() -> new IllegalArgumentException("회원이 존재하지 않습니다."));
         List<Long> townList = user.getTown().getNeighborIdList();
 
         return auctionRepository.findAllByFilters(townList, status,
@@ -227,7 +232,7 @@ public class AuctionService {
     // todo : 가져다 쓰는 건 getAuction에 검증로직은 해당 서비스에 다시 리팩토링 필요
     private Auction validatedAuction(
         Long auctionId) {
-        return auctionRepository.findById(auctionId).orElseThrow(
+        return getAuctionById(auctionId).orElseThrow(
             () -> new CustomAuctionException("게시글이 존재하지 않습니다.")
         );
     }

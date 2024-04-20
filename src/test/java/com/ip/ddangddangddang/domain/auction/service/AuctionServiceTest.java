@@ -66,8 +66,8 @@ class AuctionServiceTest implements AuctionServiceTestValues {
         void 옥션_생성_성공_테스트() {
             //given
             AuctionRequestDto auctionRequestDto = TEST_AUCTION_REQUEST_DTO1;
-            given(userService.findUserOrElseThrow(anyLong())).willReturn(TEST_USER1);
-            given(fileService.findFileOrElseThrow(anyLong())).willReturn(TEST_FILE1);
+            given(userService.getUserById(anyLong())).willReturn(Optional.ofNullable(TEST_USER1));
+            given(fileService.getFileById(anyLong())).willReturn(Optional.ofNullable(TEST_FILE1));
             given(auctionRepository.save(any(Auction.class))).willReturn(TEST_AUCTION1);
             given(redisTemplate.opsForValue()).willReturn(valueOperations);
             //when
@@ -83,8 +83,8 @@ class AuctionServiceTest implements AuctionServiceTestValues {
         void 옥션_생성_실패_테스트_파일에_대한_권한_없음() {
             //given
             AuctionRequestDto auctionRequestDto = TEST_AUCTION_REQUEST_DTO1;
-            given(userService.findUserOrElseThrow(anyLong())).willReturn(TEST_USER1);
-            given(fileService.findFileOrElseThrow(anyLong())).willReturn(TEST_FILE2);
+            given(userService.getUserById(anyLong())).willReturn(Optional.ofNullable(TEST_USER1));
+            given(fileService.getFileById(anyLong())).willReturn(Optional.ofNullable(TEST_FILE2));
             //when, then
             assertThrows(IllegalArgumentException.class,
                 () -> auctionService.createAuction(auctionRequestDto, TEST_USER1_ID));
@@ -195,7 +195,7 @@ class AuctionServiceTest implements AuctionServiceTestValues {
         @Test
         void 옥션_전체_조회_성공_테스트() {
             //given
-            given(userService.findUserOrElseThrow(anyLong())).willReturn(TEST_USER1);
+            given(userService.getUserById(anyLong())).willReturn(Optional.ofNullable(TEST_USER1));
             given(auctionRepository.findAllByFilters(any(), any(), any())).willReturn(
                 List.of(TEST_AUCTION1, TEST_AUCTION2));
             //when
