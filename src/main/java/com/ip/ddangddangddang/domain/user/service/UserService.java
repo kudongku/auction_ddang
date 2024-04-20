@@ -51,23 +51,23 @@ public class UserService {
 
         String password = passwordEncoder.encode(requestDto.getPassword());
 
-        User user = findUserOrElseThrow(userId);
+        User user = getUserByIdOrElseThrow(userId);
         user.updateUser(nickname, password);
     }
 
     @Transactional
     public void deleteUser(Long userId) {
-        userRepository.delete(findUserOrElseThrow(userId));
+        userRepository.delete(getUserByIdOrElseThrow(userId));
     }
 
     @Transactional
     public void updateLocation(Long userId, UserLocationRequestDto requestDto) {
-        User user = findUserOrElseThrow(userId);
+        User user = getUserByIdOrElseThrow(userId);
         user.updateLocation(townService.findTownByNameOrElseThrow(requestDto.getAddress()));
     }
 
     // 굳이 하고 싶을 때 이런 식으로 하나 더 만들어도 된다.
-    public User findUserOrElseThrow(Long userId) {
+    public User getUserByIdOrElseThrow(Long userId) {
         return getUserById(userId).orElseThrow(
             () -> new IllegalArgumentException("회원이 존재하지 않습니다."));
     }

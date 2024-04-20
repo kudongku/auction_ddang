@@ -26,7 +26,7 @@ public class CommentService {
 
     @Transactional
     public void createComment(Long auctionId, CommentCreateRequestDto requestDto, Long userId) {
-        User user = userService.findUserOrElseThrow(userId);
+        User user = userService.getUserByIdOrElseThrow(userId);
         Optional<Auction> foundAuction = auctionService.getAuctionById(auctionId);
         Auction auction = validatedAuction(foundAuction);
 
