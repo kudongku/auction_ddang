@@ -29,6 +29,10 @@ public class BidService {
     public void createBid(Long auctionId, BidRequestDto requestDto, Long userId)
         throws JsonProcessingException {
         Optional<Auction> foundAuction = auctionService.getAuctionById(auctionId);
+//        validate를 많이 생성하지 않아도 될 때는 아래와 같이 if문으로 간단히 처리
+//        if(foundAuction.isEmpty()) {
+//            ~예외처리문~
+//        }
         Auction auction = validatedAuction(foundAuction);
         validateAuctionStatus(auction);
 
@@ -60,12 +64,14 @@ public class BidService {
         }
     }
 
+    // 검증만 하는 것 - validate
     private void validatePrice(Long auctionPrice, Long bidPrice) {
         if (auctionPrice >= bidPrice) {
             throw new CustomBidException("현재 가격보다 높은 가격을 입력해주세요.");
         }
     }
 
+    // 객체를 받아서 예외처리를 하는 곳 - validated
     private Auction validatedAuction(Optional<Auction> auction) {
         return auction.orElseThrow(() -> new IllegalArgumentException("게시글이 존재하지 않습니다."));
     }
