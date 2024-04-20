@@ -60,11 +60,7 @@ public class AuctionQueryRepositoryImpl implements AuctionQueryRepository {
     }
 
     private boolean hasNextPage(List<Auction> result, int pageSize) {
-        if (result.size() > pageSize) {
-            result.remove(pageSize);
-            return true;
-        }
-        return false;
+        return result.size() > pageSize;
     }
 
     private BooleanExpression eqStatus(StatusEnum status) {

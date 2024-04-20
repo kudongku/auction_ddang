@@ -16,6 +16,7 @@ import com.ip.ddangddangddang.global.exception.custom.CustomAuctionException;
 import com.ip.ddangddangddang.global.mail.MailService;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -68,7 +69,7 @@ public class AuctionService {
 
     @Transactional
     public void deleteAuction(Long auctionId, Long userId) {
-        Auction auction = findAuctionOrElseThrow(
+        Auction auction = validatedAuction(
             auctionId);
 
         if (!userId.equals(auction.getUser().getId())) {
@@ -89,7 +90,7 @@ public class AuctionService {
             // Long.parseLong(message.split(" ")[1]) = 1L, Long
             Long auctionId = Long.parseLong(message.split(":")[1]);
             log.info("경매 기한 만료, " + message);
-            Auction auction = findAuctionOrElseThrow(
+            Auction auction = validatedAuction(
                 auctionId);
             auction.updateStatusToHold();
 
@@ -112,7 +113,7 @@ public class AuctionService {
     @CacheEvict(value = "auction", key = "#auctionId", cacheManager = "cacheManager")
     @Transactional
     public AuctionUpdateResponseDto updateStatusToComplete(Long auctionId, Long userId) {
-        Auction auction = findAuctionOrElseThrow(auctionId);
+        Auction auction = validatedAuction(auctionId);
 
         if (!auction.getUser().getId().equals(userId)) {
             throw new IllegalArgumentException("사용자가 불일치");
@@ -127,7 +128,7 @@ public class AuctionService {
     @CacheEvict(value = "auction", key = "#auctionId", cacheManager = "cacheManager")
     @Transactional
     public AuctionUpdateResponseDto updateBid(Long auctionId, Long price, Long buyerId) {
-        Auction auction = findAuctionOrElseThrow(auctionId);
+        Auction auction = validatedAuction(auctionId);
         auction.updateBid(price, buyerId);
         return new AuctionUpdateResponseDto(auction.getId(), auction.getTownId(),
             auction.getTitle(), auction.getContent(), auction.getPrice(), auction.getBuyerId(),
@@ -150,6 +151,7 @@ public class AuctionService {
                     auction.getId(),
                     auction.getTitle(),
                     auction.getStatusEnum(),
+                    auction.getUser().getNickname(),
                     auction.getFinishedAt(),
                     auction.getFile().getFilePath(),
                     auction.getPrice()
@@ -172,7 +174,7 @@ public class AuctionService {
 
     @Cacheable(value = "auction", key = "#auctionId", cacheManager = "cacheManager")
     public AuctionResponseDto getAuction(Long auctionId) {
-        Auction auction = findAuctionOrElseThrow(auctionId);
+        Auction auction = validatedAuction(auctionId);
 
         String townName = townService.findNameByIdOrElseThrow(auction.getTownId());
 
@@ -198,6 +200,7 @@ public class AuctionService {
                     auction.getId(),
                     auction.getTitle(),
                     auction.getStatusEnum(),
+                    auction.getUser().getNickname(),
                     auction.getFinishedAt(),
                     auction.getFile().getFilePath(),
                     auction.getPrice()
@@ -212,6 +215,7 @@ public class AuctionService {
                 auction.getId(),
                 auction.getTitle(),
                 auction.getStatusEnum(),
+                auction.getUser().getNickname(),
                 auction.getFinishedAt(),
                 auction.getFile().getFilePath(),
                 auction.getPrice()
@@ -221,11 +225,15 @@ public class AuctionService {
 
     // todo : OrElseThrow는 private - 다른 서비스에서 필요하지 않음 - 추가로 findAuctionOrElseThrow이게 아니라 validatedAuction이라고 합니다.
     // todo : 가져다 쓰는 건 getAuction에 검증로직은 해당 서비스에 다시 리팩토링 필요
-    public Auction findAuctionOrElseThrow(
+    private Auction validatedAuction(
         Long auctionId) {
         return auctionRepository.findById(auctionId).orElseThrow(
             () -> new CustomAuctionException("게시글이 존재하지 않습니다.")
         );
+    }
+
+    public Optional<Auction> getAuctionById(Long auctionId) {
+        return auctionRepository.findById(auctionId);
     }
 
 //    public Long pageLimit(Pageable pageable) {
