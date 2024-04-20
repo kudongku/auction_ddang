@@ -7,6 +7,7 @@ import com.ip.ddangddangddang.domain.user.entity.User;
 import com.ip.ddangddangddang.domain.user.service.UserService;
 import com.ip.ddangddangddang.global.exception.custom.EmptyImageException;
 import java.io.IOException;
+import java.util.Optional;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -24,7 +25,7 @@ public class FileService {
 
     @Transactional
     public Long upload(MultipartFile auctionImage, String objectName, Long userId) {
-        User user = userService.findUserOrElseThrow(userId);
+        User user = userService.getUserByIdOrElseThrow(userId);
 
         if (auctionImage.isEmpty()) {
             throw new EmptyImageException("이미지가 존재하지 않습니다.");
@@ -63,6 +64,10 @@ public class FileService {
         return fileRepository.findById(fileId).orElseThrow(
             () -> new NullPointerException("없는 이미지 입니다.")
         );
+    }
+
+    public Optional<File> getFileById(Long fileId) {
+        return fileRepository.findById(fileId);
     }
 
     private String createKeyName(String objectName) {

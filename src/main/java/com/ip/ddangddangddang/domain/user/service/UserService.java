@@ -9,6 +9,7 @@ import com.ip.ddangddangddang.domain.user.entity.User;
 import com.ip.ddangddangddang.domain.user.repository.UserRepository;
 import com.ip.ddangddangddang.global.exception.custom.CustomUserException;
 import jakarta.persistence.EntityNotFoundException;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -50,25 +51,29 @@ public class UserService {
 
         String password = passwordEncoder.encode(requestDto.getPassword());
 
-        User user = findUserOrElseThrow(userId);
+        User user = getUserByIdOrElseThrow(userId);
         user.updateUser(nickname, password);
     }
 
     @Transactional
     public void deleteUser(Long userId) {
-        userRepository.delete(findUserOrElseThrow(userId));
+        userRepository.delete(getUserByIdOrElseThrow(userId));
     }
 
     @Transactional
     public void updateLocation(Long userId, UserLocationRequestDto requestDto) {
-        User user = findUserOrElseThrow(userId);
+        User user = getUserByIdOrElseThrow(userId);
         user.updateLocation(townService.findTownByNameOrElseThrow(requestDto.getAddress()));
     }
 
-    public User findUserOrElseThrow(Long id) {
-        return userRepository.findById(id).orElseThrow(
-            () -> new CustomUserException("회원이 존재하지 않습니다.")
-        );
+    // 굳이 하고 싶을 때 이런 식으로 하나 더 만들어도 된다.
+    public User getUserByIdOrElseThrow(Long userId) {
+        return getUserById(userId).orElseThrow(
+            () -> new IllegalArgumentException("회원이 존재하지 않습니다."));
+    }
+
+    public Optional<User> getUserById(Long userId) {
+        return userRepository.findById(userId);
     }
 
     private void existsEmail(String email) {
