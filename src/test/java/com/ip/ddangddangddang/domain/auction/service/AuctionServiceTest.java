@@ -58,9 +58,6 @@ class AuctionServiceTest implements AuctionServiceTestValues {
     @Mock
     private ValueOperations<String, String> valueOperations;
 
-    //given
-    //when
-    //then
     @Nested
     @DisplayName("옥션 생성 테스크")
     public class AuctionCreateTest {
@@ -249,7 +246,8 @@ class AuctionServiceTest implements AuctionServiceTestValues {
         @Test
         void 자신이_올린_옥션_전체_조회_성공_테스트() {
             //given
-            given(auctionRepository.findAuctionsByUserId(anyLong(), any())).willReturn(TEST_SLICE);
+            given(auctionRepository.findAuctionsByUserId(anyLong(), any())).willReturn(
+                TEST_SLICE_AUCTION_WRITTEN_BY_ME);
             //when
             List<AuctionListResponseDto> auctionListResponseDtoList = auctionService.getMyAuctions(
                 TEST_USER1_ID, TEST_PAGEABLE).stream().toList();
@@ -266,9 +264,32 @@ class AuctionServiceTest implements AuctionServiceTestValues {
         @Test
         void 자신이_입찰한_옥션_전체_조회_성공_테스트() {
             //given
-
+            given(auctionRepository.findBidsByBuyerId(anyLong(), any())).willReturn(
+                TEST_SLICE_AUCTION_BID_BY_ME);
             //when
+            List<AuctionListResponseDto> auctionListResponseDtoList = auctionService.getMyBids(
+                TEST_USER1_ID, TEST_PAGEABLE).stream().toList();
             //then
+            assertEquals(TEST_USER_NICKNAME, auctionListResponseDtoList.get(0).getNickname());
+            assertEquals(StatusEnum.HOLD, auctionListResponseDtoList.get(0).getStatus());
+        }
+    }
+
+    @Nested
+    @DisplayName("아이디로 옥션 조회 테스트")
+    public class AuctionFindTest {
+
+        @Test
+        void 아이디로_옥션_조회_테스트() {
+            //given
+            given(auctionRepository.findById(anyLong())).willReturn(
+                Optional.ofNullable(TEST_AUCTION1));
+            //when
+            Auction auction = auctionService.getAuctionById(TEST_TOWN1_AUCTION1_ID).orElse(null);
+            //then
+            assert TEST_AUCTION1 != null;
+            assert auction != null;
+            assertEquals(TEST_AUCTION1.getId(), auction.getId());
         }
     }
 }

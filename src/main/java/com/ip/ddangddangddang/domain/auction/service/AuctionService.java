@@ -210,7 +210,7 @@ public class AuctionService {
 
     // TODO: 4/8/24 자신이 입찰한(최고가를 부른 게시글) 게시글리스트 보기 getList
     public Slice<AuctionListResponseDto> getMyBids(Long userId, Pageable pageable) {
-        return auctionRepository.findBidsByUserId(userId, pageable).map(
+        return auctionRepository.findBidsByBuyerId(userId, pageable).map(
             auction -> new AuctionListResponseDto(
                 auction.getId(),
                 auction.getTitle(),

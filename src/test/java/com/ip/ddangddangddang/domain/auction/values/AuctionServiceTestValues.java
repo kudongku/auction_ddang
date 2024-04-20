@@ -178,6 +178,32 @@ public interface AuctionServiceTestValues {
         .file(TEST_FILE2)
         .build();
 
+    Auction TEST_BID_AUCTION1 = Auction.builder()
+        .id(TEST_TOWN1_AUCTION1_ID)
+        .townId(TEST_TOWN1_ID)
+        .title(TEST_AUCTION_TITLE)
+        .content(TEST_AUCTION_CONTENT)
+        .price(TEST_AUCTION_PRICE)
+        .buyerId(TEST_USER1_ID)
+        .statusEnum(StatusEnum.HOLD)
+        .finishedAt(TEST_LOCAL_DATETIME_TOMORROW)
+        .user(TEST_USER2)
+        .file(TEST_FILE1)
+        .build();
+
+    Auction TEST_BID_AUCTION2 = Auction.builder()
+        .id(TEST_TOWN2_AUCTION2_ID)
+        .townId(TEST_TOWN1_ID)
+        .title(TEST_AUCTION_TITLE)
+        .content(TEST_AUCTION_CONTENT)
+        .price(TEST_AUCTION_PRICE)
+        .buyerId(TEST_USER1_ID)
+        .statusEnum(StatusEnum.HOLD)
+        .finishedAt(TEST_LOCAL_DATETIME_TOMORROW)
+        .user(TEST_USER2)
+        .file(TEST_FILE1)
+        .build();
+
     //dto
     AuctionRequestDto TEST_AUCTION_REQUEST_DTO1 = new AuctionRequestDto(TEST_AUCTION_TITLE,
         TEST_AUCTION_CONTENT, TEST_FILE1_ID);
@@ -188,8 +214,14 @@ public interface AuctionServiceTestValues {
 
     //page
     Pageable TEST_PAGEABLE = PageRequest.of(1, 1);
-    Slice<Auction> TEST_SLICE = new SliceImpl<>(List.of(TEST_AUCTION1, TEST_AUCTION2),
+    Slice<Auction> TEST_SLICE_AUCTION_WRITTEN_BY_ME = new SliceImpl<>(
+        List.of(TEST_AUCTION1, TEST_AUCTION2),
         TEST_PAGEABLE, hasNextPage(List.of(TEST_AUCTION1, TEST_AUCTION2),
+        TEST_PAGEABLE.getPageSize()));
+
+    Slice<Auction> TEST_SLICE_AUCTION_BID_BY_ME = new SliceImpl<>(
+        List.of(TEST_BID_AUCTION1, TEST_BID_AUCTION2),
+        TEST_PAGEABLE, hasNextPage(List.of(TEST_BID_AUCTION1, TEST_BID_AUCTION2),
         TEST_PAGEABLE.getPageSize()));
 
     static boolean hasNextPage(List<Auction> result, int pageSize) {
