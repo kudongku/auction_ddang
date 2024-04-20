@@ -45,7 +45,7 @@ public class AuctionQueryRepositoryImpl implements AuctionQueryRepository {
     }
 
     @Override // Todo 해결해야해
-    public Slice<Auction> findBidsByUserId(Long userId, Pageable pageable) {
+    public Slice<Auction> findBidsByBuyerId(Long userId, Pageable pageable) {
 
         List<Auction> result = queryFactory.selectFrom(auction)
             .where(
