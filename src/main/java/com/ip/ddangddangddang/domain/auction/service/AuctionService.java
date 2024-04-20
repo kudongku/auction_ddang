@@ -12,7 +12,11 @@ import com.ip.ddangddangddang.domain.file.service.FileService;
 import com.ip.ddangddangddang.domain.town.service.TownService;
 import com.ip.ddangddangddang.domain.user.entity.User;
 import com.ip.ddangddangddang.domain.user.service.UserService;
-import com.ip.ddangddangddang.global.exception.custom.CustomAuctionException;
+import com.ip.ddangddangddang.global.exception.custom.AuctionNotFoundException;
+import com.ip.ddangddangddang.global.exception.custom.FileNotFoundException;
+import com.ip.ddangddangddang.global.exception.custom.UserHasNotAuthorityToAuctionException;
+import com.ip.ddangddangddang.global.exception.custom.UserHasNotAuthorityToFileException;
+import com.ip.ddangddangddang.global.exception.custom.UserNotFoundException;
 import com.ip.ddangddangddang.global.mail.MailService;
 import java.util.List;
 import java.util.Objects;
@@ -49,14 +53,14 @@ public class AuctionService {
     public void createAuction(AuctionRequestDto requestDto,
         Long userId) { // Todo fileId 곂칠때 duplicated error
         User user = userService.getUserById(userId)
-            .orElseThrow(() -> new IllegalArgumentException(
+            .orElseThrow(() -> new UserNotFoundException(
                 "회원이 존재하지 않습니다.")); //  없는게 정상 로직일 수 있다 -> 없는게 정상로직일 때 옵셔널로 받아오고 있어야하는 로직은 orelsethrow를 써도 된다. 없을 게 정상로직으로 추가될 수 있으니 확장성 측면에서 옵셔널로 받는게 좋다
         File file = fileService.getFileById(
-            requestDto.getFileId()).orElseThrow(() -> new IllegalArgumentException(
-            "없는 이미지 입니다.")); // 이상황에서는 있는게 정상이니 orelsdthrow해도 되지만 확장성을 위해
+            requestDto.getFileId()).orElseThrow(() -> new FileNotFoundException(
+            "없는 이미지 입니다."));
 
         if (!file.getUser().equals(user)) {
-            throw new IllegalArgumentException("파일에 대한 권한이 없습니다.");
+            throw new UserHasNotAuthorityToFileException("파일에 대한 권한이 없습니다.");
         }
 
         Auction auction = auctionRepository.save(new Auction(requestDto, user, file));
@@ -77,7 +81,7 @@ public class AuctionService {
             auctionId);
 
         if (!userId.equals(auction.getUser().getId())) {
-            throw new IllegalArgumentException("작성자가 아닙니다.");
+            throw new UserHasNotAuthorityToAuctionException("작성자가 아닙니다.");
         }
 
         fileService.delete(auction.getFile());
@@ -120,7 +124,7 @@ public class AuctionService {
         Auction auction = validatedAuction(auctionId);
 
         if (!auction.getUser().getId().equals(userId)) {
-            throw new IllegalArgumentException("사용자가 불일치");
+            throw new UserHasNotAuthorityToAuctionException("사용자가 불일치");
         }
 
         auction.updateStatusToComplete();
@@ -146,7 +150,7 @@ public class AuctionService {
         String title
     ) {
         User user = userService.getUserById(userId)
-            .orElseThrow(() -> new IllegalArgumentException("회원이 존재하지 않습니다."));
+            .orElseThrow(() -> new UserNotFoundException("회원이 존재하지 않습니다."));
         List<Long> townList = user.getTown().getNeighborIdList();
 
         return auctionRepository.findAllByFilters(townList, status,
@@ -185,7 +189,7 @@ public class AuctionService {
 
         String buyerNickname = "";
         if (auction.getBuyerId() != null) {
-            buyerNickname = userService.findUserOrElseThrow(auction.getBuyerId()).getNickname();
+            buyerNickname = userService.getUserByIdOrElseThrow(auction.getBuyerId()).getNickname();
         }
 
         return new AuctionResponseDto(auction, townName, buyerNickname,
@@ -233,7 +237,7 @@ public class AuctionService {
     private Auction validatedAuction(
         Long auctionId) {
         return getAuctionById(auctionId).orElseThrow(
-            () -> new CustomAuctionException("게시글이 존재하지 않습니다.")
+            () -> new AuctionNotFoundException("게시글이 존재하지 않습니다.")
         );
     }
 
