@@ -1,5 +1,6 @@
 package com.ip.ddangddangddang.domain.auction.service;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -9,12 +10,17 @@ import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.times;
 
 import com.ip.ddangddangddang.domain.auction.dto.request.AuctionRequestDto;
+import com.ip.ddangddangddang.domain.auction.dto.response.AuctionListResponseDto;
+import com.ip.ddangddangddang.domain.auction.dto.response.AuctionUpdateResponseDto;
 import com.ip.ddangddangddang.domain.auction.entity.Auction;
+import com.ip.ddangddangddang.domain.auction.entity.StatusEnum;
 import com.ip.ddangddangddang.domain.auction.repository.AuctionRepository;
 import com.ip.ddangddangddang.domain.auction.values.AuctionServiceTestValues;
 import com.ip.ddangddangddang.domain.file.service.FileService;
 import com.ip.ddangddangddang.domain.town.service.TownService;
 import com.ip.ddangddangddang.domain.user.service.UserService;
+import com.ip.ddangddangddang.global.exception.custom.CustomAuctionException;
+import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import org.junit.jupiter.api.DisplayName;
@@ -80,7 +86,7 @@ class AuctionServiceTest implements AuctionServiceTestValues {
             //given
             AuctionRequestDto auctionRequestDto = TEST_AUCTION_REQUEST_DTO1;
             given(userService.findUserOrElseThrow(anyLong())).willReturn(TEST_USER1);
-            given(fileService.findFileOrElseThrow(anyLong())).willReturn(TEST_FILE1);
+            given(fileService.findFileOrElseThrow(anyLong())).willReturn(TEST_FILE2);
             //when, then
             assertThrows(IllegalArgumentException.class,
                 () -> auctionService.createAuction(auctionRequestDto, TEST_USER1_ID));
@@ -98,7 +104,7 @@ class AuctionServiceTest implements AuctionServiceTestValues {
             given(auctionRepository.findById(anyLong())).willReturn(
                 Optional.ofNullable(TEST_AUCTION1)); // findById 반환타입 optional이라 이렇게 써야 함
             //when
-            auctionService.deleteAuction(TEST_AUCTION1_ID, TEST_USER1_ID);
+            auctionService.deleteAuction(TEST_TOWN1_AUCTION1_ID, TEST_USER1_ID);
             //then
             then(auctionRepository).should(times(1)).delete(any(Auction.class));
         }
@@ -110,7 +116,7 @@ class AuctionServiceTest implements AuctionServiceTestValues {
                 Optional.ofNullable(TEST_AUCTION1));
             //when, then
             assertThrows(IllegalArgumentException.class,
-                () -> auctionService.deleteAuction(TEST_AUCTION1_ID, TEST_USER2_ID));
+                () -> auctionService.deleteAuction(TEST_TOWN1_AUCTION1_ID, TEST_USER2_ID));
         }
     }
 
@@ -132,17 +138,77 @@ class AuctionServiceTest implements AuctionServiceTestValues {
     public class AuctionStatusCompleteTest {
 
         @Test
+        void 옥션_상태_COMPLETED로_변경_성공_테스트() {
+            //given
+            given(auctionRepository.findById(anyLong())).willReturn(
+                Optional.ofNullable(TEST_AUCTION1));
+            //when
+            AuctionUpdateResponseDto auctionUpdateResponseDto = auctionService.updateStatusToComplete(
+                TEST_TOWN1_AUCTION1_ID, TEST_USER1_ID);
+            //then
+            assertEquals(StatusEnum.COMPLETED, auctionUpdateResponseDto.getStatusEnum());
+        }
+
+        @Test
         void 옥션_상태_COMPLETED로_변경_실패_테스트() {
             //given
             given(auctionRepository.findById(anyLong())).willReturn(
                 Optional.ofNullable(TEST_AUCTION1));
             //when, then
             assertThrows(IllegalArgumentException.class,
-                () -> auctionService.updateStatusToComplete(TEST_AUCTION1_ID, TEST_USER2_ID));
+                () -> auctionService.updateStatusToComplete(TEST_TOWN1_AUCTION1_ID, TEST_USER2_ID));
 
         }
     }
 
-    @N
+    @Nested
+    @DisplayName("옥션의 입찰가 업데이트 테스트")
+    public class AuctionUpdateBidTest {
+
+        @Test
+        void 옥션_입찰가_업데이트_성공_테스트() {
+            //given
+            given(auctionRepository.findById(anyLong())).willReturn(
+                Optional.ofNullable(TEST_AUCTION1));
+            //when
+            AuctionUpdateResponseDto auctionUpdateResponseDto = auctionService.updateBid(
+                TEST_TOWN1_AUCTION1_ID, TEST_AUCTION_UPDATE_PRICE, TEST_ANOTHER_USER1_ID);
+            //then
+            assertEquals(TEST_AUCTION_UPDATE_PRICE, auctionUpdateResponseDto.getPrice());
+            assertEquals(TEST_ANOTHER_USER1_ID, auctionUpdateResponseDto.getBuyerId());
+        }
+
+        @Test
+        void 옥션_입찰가_업데이트_실패_테스트_게시글이_존재_X() {
+            //given
+            given(auctionRepository.findById(anyLong())).willReturn(
+                Optional.empty());
+            //when, then
+            assertThrows(CustomAuctionException.class,
+                () -> auctionService.updateBid(TEST_TOWN1_AUCTION1_ID, TEST_AUCTION_UPDATE_PRICE,
+                    TEST_ANOTHER_USER1_ID));
+        }
+    }
+
+    @Nested
+    @DisplayName("옥션 전체 조회 테스트")
+    public class AuctionsGetAllTest {
+
+        @Test
+        void 옥션_전체_조회_성공_테스트() {
+            //given
+            given(userService.findUserOrElseThrow(anyLong())).willReturn(TEST_USER1);
+            given(auctionRepository.findAllByFilters(any(), any(), any())).willReturn(
+                List.of(TEST_AUCTION1, TEST_AUCTION2));
+            //when
+            List<AuctionListResponseDto> auctionListResponseDtoList = auctionService.getAuctions(
+                TEST_USER1_ID, StatusEnum.ON_SALE, null); // assertTrue
+            //then
+            assertEquals(StatusEnum.ON_SALE, auctionListResponseDtoList.get(0).getStatus());
+            assertEquals(StatusEnum.ON_SALE, auctionListResponseDtoList.get(1).getStatus());
+
+        }
+
+    }
 
 }

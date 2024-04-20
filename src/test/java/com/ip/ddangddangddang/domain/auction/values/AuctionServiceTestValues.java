@@ -36,6 +36,8 @@ public interface AuctionServiceTestValues {
     Long TEST_USER3_ID = 3L;
     Long TEST_USER4_ID = 4L;
 
+    Long TEST_ANOTHER_USER1_ID = 5L; // 원래 통일하게 맞춰야하는데 바꿔야할 게 많아서 추가 유저 아이디입니다.
+
     String TEST_USER_EMAIL = "testUserEmail";
     String TEST_USER_NICKNAME = "testUserNickname";
     String TEST_USER_PASSWORD = "testPassword";
@@ -85,7 +87,7 @@ public interface AuctionServiceTestValues {
         .objectName(TEST_OBJECT_NAME)
         .keyName(TEST_KEY_NAME)
         .filePath(TEST_FILE_PATH)
-        .user(TEST_USER2)
+        .user(TEST_USER1)
         .build();
 
     File TEST_FILE2 = File.builder()
@@ -97,18 +99,21 @@ public interface AuctionServiceTestValues {
         .build();
 
     //auction
-    Long TEST_AUCTION1_ID = 1L;
-    Long TEST_AUCTION2_ID = 2L;
+    Long TEST_TOWN1_AUCTION1_ID = 1L;
+    Long TEST_TOWN2_AUCTION2_ID = 2L;
+    Long TEST_TOWN3_AUCTION1_ID = 3L;
+    Long TEST_TOWN4_AUCTION2_ID = 4L;
     String TEST_AUCTION_TITLE = "testTitle";
     String TEST_AUCTION_CONTENT = "testContent";
     Long TEST_AUCTION_PRICE = 100L;
+    Long TEST_AUCTION_UPDATE_PRICE = 200L;
     Long TEST_AUCTION_BUYER_ID = 2L;
 
     LocalDateTime TEST_LOCAL_DATETIME_TODAY = LocalDateTime.parse("2024-03-01T00:00:00");
     LocalDateTime TEST_LOCAL_DATETIME_TOMORROW = LocalDateTime.parse("2024-03-02T00:00:00");
 
     Auction TEST_AUCTION1 = Auction.builder()
-        .id(TEST_AUCTION1_ID)
+        .id(TEST_TOWN1_AUCTION1_ID)
         .townId(TEST_TOWN1_ID)
         .title(TEST_AUCTION_TITLE)
         .content(TEST_AUCTION_CONTENT)
@@ -121,7 +126,34 @@ public interface AuctionServiceTestValues {
         .build();
 
     Auction TEST_AUCTION2 = Auction.builder()
-        .id(TEST_AUCTION2_ID)
+        .id(TEST_TOWN1_AUCTION1_ID)
+        .townId(TEST_TOWN1_ID)
+        .title(TEST_AUCTION_TITLE)
+        .content(TEST_AUCTION_CONTENT)
+        .price(TEST_AUCTION_PRICE)
+        .buyerId(TEST_USER2_ID)
+        .statusEnum(StatusEnum.ON_SALE)
+        .finishedAt(TEST_LOCAL_DATETIME_TOMORROW)
+        .user(TEST_USER1)
+        .file(TEST_FILE1)
+        .build();
+
+
+    Auction TEST_ANOTHER_TOWN_AUCTION1 = Auction.builder()
+        .id(TEST_TOWN3_AUCTION1_ID)
+        .townId(TEST_ANOTHER_TOWN1_ID)
+        .title(TEST_AUCTION_TITLE)
+        .content(TEST_AUCTION_CONTENT)
+        .price(TEST_AUCTION_PRICE)
+        .buyerId(TEST_USER4_ID)
+        .statusEnum(StatusEnum.ON_SALE)
+        .finishedAt(TEST_LOCAL_DATETIME_TOMORROW)
+        .user(TEST_USER3)
+        .file(TEST_FILE2)
+        .build();
+
+    Auction TEST_ANOTHER_TOWN_AUCTION2 = Auction.builder()
+        .id(TEST_TOWN3_AUCTION1_ID)
         .townId(TEST_ANOTHER_TOWN1_ID)
         .title(TEST_AUCTION_TITLE)
         .content(TEST_AUCTION_CONTENT)
