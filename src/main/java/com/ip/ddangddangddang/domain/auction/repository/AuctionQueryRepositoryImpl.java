@@ -45,7 +45,7 @@ public class AuctionQueryRepositoryImpl implements AuctionQueryRepository {
     }
 
     @Override // Todo 해결해야해
-    public Slice<Auction> findBidsByUserId(Long userId, Pageable pageable) {
+    public Slice<Auction> findBidsByBuyerId(Long userId, Pageable pageable) {
 
         List<Auction> result = queryFactory.selectFrom(auction)
             .where(
@@ -60,11 +60,7 @@ public class AuctionQueryRepositoryImpl implements AuctionQueryRepository {
     }
 
     private boolean hasNextPage(List<Auction> result, int pageSize) {
-        if (result.size() > pageSize) {
-            result.remove(pageSize);
-            return true;
-        }
-        return false;
+        return result.size() > pageSize;
     }
 
     private BooleanExpression eqStatus(StatusEnum status) {

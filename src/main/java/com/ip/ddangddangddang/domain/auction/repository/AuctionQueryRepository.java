@@ -13,6 +13,6 @@ public interface AuctionQueryRepository {
 
     Slice<Auction> findAuctionsByUserId(Long userId, Pageable pageable);
 
-    Slice<Auction> findBidsByUserId(Long userId, Pageable pageable);
+    Slice<Auction> findBidsByBuyerId(Long userId, Pageable pageable);
 
 }

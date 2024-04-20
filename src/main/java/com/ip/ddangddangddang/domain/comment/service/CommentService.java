@@ -10,6 +10,7 @@ import com.ip.ddangddangddang.domain.user.entity.User;
 import com.ip.ddangddangddang.domain.user.service.UserService;
 import com.ip.ddangddangddang.global.exception.custom.CustomUserException;
 import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,7 +27,8 @@ public class CommentService {
     @Transactional
     public void createComment(Long auctionId, CommentCreateRequestDto requestDto, Long userId) {
         User user = userService.findUserOrElseThrow(userId);
-        Auction auction = auctionService.findAuctionOrElseThrow(auctionId);
+        Optional<Auction> foundAuction = auctionService.getAuctionById(auctionId);
+        Auction auction = validatedAuction(foundAuction);
 
         Long sellerId = auction.getUser().getId();
         Long buyerId = auction.getBuyerId();
@@ -37,7 +39,8 @@ public class CommentService {
     }
 
     public List<CommentReadResponseDto> getComments(Long auctionId, Long userId) {
-        Auction auction = auctionService.findAuctionOrElseThrow(auctionId);
+        Optional<Auction> foundAuction = auctionService.getAuctionById(auctionId);
+        Auction auction = validatedAuction(foundAuction);
 
         Long sellerId = auction.getUser().getId();
         Long buyerId = auction.getBuyerId();
@@ -62,6 +65,10 @@ public class CommentService {
             && !isBuyerOfAuction(buyerId, userId)) {
             throw new CustomUserException("댓글 권한이 없습니다.");
         }
+    }
+
+    private Auction validatedAuction(Optional<Auction> auction) {
+        return auction.orElseThrow(() -> new IllegalArgumentException("게시글이 존재하지 않습니다."));
     }
 
 }

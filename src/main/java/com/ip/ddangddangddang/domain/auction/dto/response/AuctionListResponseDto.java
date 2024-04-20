@@ -17,10 +17,11 @@ public class AuctionListResponseDto {
     private Long auctionId;
     private String title;
     private StatusEnum status;
+    private String nickname;
 
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
-    @JsonFormat(shape= JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm")
     private LocalDateTime finishedAt;
     private String filePath;
     private Long price;
@@ -29,6 +30,7 @@ public class AuctionListResponseDto {
         Long auctionId,
         String title,
         StatusEnum status,
+        String nickname,
         LocalDateTime finishedAt,
         String filePath,
         Long price
@@ -36,6 +38,7 @@ public class AuctionListResponseDto {
         this.auctionId = auctionId;
         this.title = title;
         this.status = status;
+        this.nickname = nickname;
         this.finishedAt = finishedAt;
         this.filePath = filePath;
         this.price = price;
