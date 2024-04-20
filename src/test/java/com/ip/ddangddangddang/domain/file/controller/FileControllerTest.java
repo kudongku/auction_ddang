@@ -1,5 +1,13 @@
 package com.ip.ddangddangddang.domain.file.controller;
 
+import static com.ip.ddangddangddang.domain.file.values.FileValues.FILE_CREATE_REQUEST_DTO;
+import static com.ip.ddangddangddang.domain.file.values.FileValues.FILE_CREATE_RESPONSE_DTO;
+import static com.ip.ddangddangddang.domain.file.values.FileValues.FILE_ID;
+import static com.ip.ddangddangddang.domain.file.values.FileValues.FILE_READ_RESPONSE_DTO;
+import static com.ip.ddangddangddang.domain.file.values.FileValues.MOCK_MULTIPART_FILE;
+import static com.ip.ddangddangddang.domain.file.values.FileValues.OBJECT_NAME;
+import static com.ip.ddangddangddang.domain.file.values.FileValues.USER_DETAILS;
+import static com.ip.ddangddangddang.domain.file.values.FileValues.USER_ID;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -7,18 +15,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ip.ddangddangddang.domain.file.dto.request.FileCreateRequestDto;
-import com.ip.ddangddangddang.domain.file.dto.response.FileCreateResponseDto;
-import com.ip.ddangddangddang.domain.file.dto.response.FileReadResponseDto;
 import com.ip.ddangddangddang.domain.file.service.FileService;
-import com.ip.ddangddangddang.domain.town.entity.Town;
-import com.ip.ddangddangddang.domain.user.entity.User;
 import com.ip.ddangddangddang.global.config.WebSecurityConfig;
-import com.ip.ddangddangddang.global.security.UserDetailsImpl;
 import com.ip.ddangddangddang.mvc.MockSpringSecurityFilter;
 import java.nio.charset.StandardCharsets;
 import java.security.Principal;
-import java.util.ArrayList;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -70,39 +71,27 @@ class FileControllerTest {
     }
 
     private void mockUserSetup() {
-        Town town = new Town("test", new ArrayList<>());
-        User user = new User(0L, "test@test.com", "testNick", "testPw", town);
-        UserDetailsImpl testUserDetails = new UserDetailsImpl(user);
         mockPrincipal = new UsernamePasswordAuthenticationToken(
-            testUserDetails,
+            USER_DETAILS,
             "",
-            testUserDetails.getAuthorities()
+            USER_DETAILS.getAuthorities()
         );
     }
 
     @Test
     @DisplayName("이미지 업로드 테스트")
     public void testUploadImage() throws Exception {
+        String requestDtoJson = objectMapper.writeValueAsString(FILE_CREATE_REQUEST_DTO);
 
-        FileCreateRequestDto requestDto = new FileCreateRequestDto("imageName");
-        MockMultipartFile auctionImage = new MockMultipartFile(
-            "auctionImage",
-            "test.jpg",
-            MediaType.IMAGE_PNG_VALUE,
-            "test data".getBytes()
-        );
-
-        String requestDtoJson = objectMapper.writeValueAsString(requestDto);
-
-        when(fileService.upload(auctionImage, requestDto.getImageName(), 0L)).thenReturn(
-            new FileCreateResponseDto(0L));
+        when(fileService.upload(MOCK_MULTIPART_FILE, OBJECT_NAME, 0L))
+            .thenReturn(FILE_CREATE_RESPONSE_DTO);
 
         // when - then
         mockMvc.perform(
                 MockMvcRequestBuilders.multipart("/v1/auctions/files")
-                    .file(auctionImage)
+                    .file(MOCK_MULTIPART_FILE)
                     .file(new MockMultipartFile(
-                        "requestDto",
+                        OBJECT_NAME,
                         "",
                         "application/json",
                         requestDtoJson.getBytes(StandardCharsets.UTF_8))
@@ -119,13 +108,10 @@ class FileControllerTest {
     @Test
     @DisplayName("preSignedUrl 테스트")
     public void testGetPresignedUrl() throws Exception {
-        Long fileId = 0L;
-        String expectedUrl = "http://example.com/signed-url";
+        when(fileService.getPresignedURL(FILE_ID, USER_ID))
+            .thenReturn(FILE_READ_RESPONSE_DTO);
 
-        when(fileService.getPresignedURL(fileId, 0L)).thenReturn(
-            new FileReadResponseDto(fileId, expectedUrl));
-
-        mockMvc.perform(get("/v1/auctions/files/{fileId}", fileId)
+        mockMvc.perform(get("/v1/auctions/files/{fileId}", FILE_ID)
                 .principal(mockPrincipal)
             )
             .andExpect(status().isOk())
