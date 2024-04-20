@@ -76,7 +76,7 @@ public class TownService {
         return name;
     }
 
-    public String findNameById(Long townId) {
+    public String findNameByIdOrElseThrow(Long townId) {
         Town town = townRepository.findById(townId).orElseThrow(
             () -> new NoSuchElementException("해당 동네가 없습니다.")
         );

@@ -174,7 +174,7 @@ public class AuctionService {
     public AuctionResponseDto getAuction(Long auctionId) {
         Auction auction = findAuctionOrElseThrow(auctionId);
 
-        String townName = townService.findNameById(auction.getTownId());
+        String townName = townService.findNameByIdOrElseThrow(auction.getTownId());
 
         String buyerNickname = "";
         if (auction.getBuyerId() != null) {
@@ -219,6 +219,8 @@ public class AuctionService {
         );
     }
 
+    // todo : OrElseThrow는 private - 다른 서비스에서 필요하지 않음 - 추가로 findAuctionOrElseThrow이게 아니라 validatedAuction이라고 합니다.
+    // todo : 가져다 쓰는 건 getAuction에 검증로직은 해당 서비스에 다시 리팩토링 필요
     public Auction findAuctionOrElseThrow(
         Long auctionId) {
         return auctionRepository.findById(auctionId).orElseThrow(

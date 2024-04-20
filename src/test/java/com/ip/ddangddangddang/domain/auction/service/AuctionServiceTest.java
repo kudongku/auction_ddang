@@ -11,6 +11,7 @@ import static org.mockito.Mockito.times;
 
 import com.ip.ddangddangddang.domain.auction.dto.request.AuctionRequestDto;
 import com.ip.ddangddangddang.domain.auction.dto.response.AuctionListResponseDto;
+import com.ip.ddangddangddang.domain.auction.dto.response.AuctionResponseDto;
 import com.ip.ddangddangddang.domain.auction.dto.response.AuctionUpdateResponseDto;
 import com.ip.ddangddangddang.domain.auction.entity.Auction;
 import com.ip.ddangddangddang.domain.auction.entity.StatusEnum;
@@ -82,7 +83,7 @@ class AuctionServiceTest implements AuctionServiceTestValues {
 
         // 유저 없음과 파일 없음은 userService에서 테스트해야한다.
         @Test
-        void 옥션_생성_실패_테스트_파일_없음() {
+        void 옥션_생성_실패_테스트_파일에_대한_권한_없음() {
             //given
             AuctionRequestDto auctionRequestDto = TEST_AUCTION_REQUEST_DTO1;
             given(userService.findUserOrElseThrow(anyLong())).willReturn(TEST_USER1);
@@ -209,6 +210,36 @@ class AuctionServiceTest implements AuctionServiceTestValues {
 
         }
 
+    }
+
+    @Nested
+    @DisplayName("옥션 상세 조회 테스트")
+    public class AuctionGetTest {
+
+        @Test
+        void 옥션_상세_조회_성공_테스트() {
+            //given
+            given(auctionRepository.findById(anyLong())).willReturn(
+                Optional.ofNullable(TEST_AUCTION1));
+            given(townService.findNameByIdOrElseThrow(anyLong())).willReturn(TEST_TOWN1_NAME);
+            given(userService.findUserOrElseThrow(any())).willReturn(TEST_BUYER_USER1);
+            //when
+            AuctionResponseDto auctionResponseDto = auctionService.getAuction(
+                TEST_TOWN1_AUCTION1_ID);
+            //then
+            assertEquals(TEST_BUYER_USER_NICKNAME, auctionResponseDto.getBuyerNickname());
+
+        }
+
+        @Test
+        void 옥션_상세_조회_실패_테스트_게시글_존재X() {
+            //given
+            given(auctionRepository.findById(anyLong())).willReturn(
+                Optional.empty());
+            //when, then
+            assertThrows(CustomAuctionException.class,
+                () -> auctionService.getAuction(TEST_TOWN1_AUCTION1_ID));
+        }
     }
 
 }

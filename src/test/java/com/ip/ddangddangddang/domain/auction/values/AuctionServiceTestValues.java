@@ -40,6 +40,7 @@ public interface AuctionServiceTestValues {
 
     String TEST_USER_EMAIL = "testUserEmail";
     String TEST_USER_NICKNAME = "testUserNickname";
+    String TEST_BUYER_USER_NICKNAME = "testBuyerNickname";
     String TEST_USER_PASSWORD = "testPassword";
     String TEST_USER_ENCRYPTED_PASSWORD = "testEncryptedPassword";
 
@@ -73,6 +74,14 @@ public interface AuctionServiceTestValues {
         .nickname(TEST_USER_NICKNAME)
         .password(TEST_USER_ENCRYPTED_PASSWORD)
         .town(TEST_ANOTHER_TOWN2)
+        .build();
+
+    User TEST_BUYER_USER1 = User.builder()
+        .id(TEST_ANOTHER_USER1_ID)
+        .email(TEST_USER_EMAIL)
+        .nickname(TEST_BUYER_USER_NICKNAME)
+        .password(TEST_USER_ENCRYPTED_PASSWORD)
+        .town(TEST_TOWN1)
         .build();
 
     //file
@@ -118,7 +127,7 @@ public interface AuctionServiceTestValues {
         .title(TEST_AUCTION_TITLE)
         .content(TEST_AUCTION_CONTENT)
         .price(TEST_AUCTION_PRICE)
-        .buyerId(TEST_USER2_ID)
+        .buyerId(TEST_ANOTHER_USER1_ID)
         .statusEnum(StatusEnum.ON_SALE)
         .finishedAt(TEST_LOCAL_DATETIME_TOMORROW)
         .user(TEST_USER1)
@@ -131,7 +140,7 @@ public interface AuctionServiceTestValues {
         .title(TEST_AUCTION_TITLE)
         .content(TEST_AUCTION_CONTENT)
         .price(TEST_AUCTION_PRICE)
-        .buyerId(TEST_USER2_ID)
+        .buyerId(TEST_ANOTHER_USER1_ID)
         .statusEnum(StatusEnum.ON_SALE)
         .finishedAt(TEST_LOCAL_DATETIME_TOMORROW)
         .user(TEST_USER1)
