@@ -3,6 +3,7 @@ package com.ip.ddangddangddang.domain.auction.service;
 import com.ip.ddangddangddang.domain.auction.dto.request.AuctionRequestDto;
 import com.ip.ddangddangddang.domain.auction.dto.response.AuctionListResponseDto;
 import com.ip.ddangddangddang.domain.auction.dto.response.AuctionResponseDto;
+import com.ip.ddangddangddang.domain.auction.dto.response.AuctionUpdateResponseDto;
 import com.ip.ddangddangddang.domain.auction.entity.Auction;
 import com.ip.ddangddangddang.domain.auction.entity.StatusEnum;
 import com.ip.ddangddangddang.domain.auction.repository.AuctionRepository;
@@ -107,9 +108,10 @@ public class AuctionService {
         }
 
     }
+
     @CacheEvict(value = "auction", key = "#auctionId", cacheManager = "cacheManager")
     @Transactional
-    public void updateStatusToComplete(Long auctionId, Long userId) {
+    public AuctionUpdateResponseDto updateStatusToComplete(Long auctionId, Long userId) {
         Auction auction = findAuctionOrElseThrow(auctionId);
 
         if (!auction.getUser().getId().equals(userId)) {
@@ -117,13 +119,19 @@ public class AuctionService {
         }
 
         auction.updateStatusToComplete();
+        return new AuctionUpdateResponseDto(auction.getId(), auction.getTownId(),
+            auction.getTitle(), auction.getContent(), auction.getPrice(), auction.getBuyerId(),
+            auction.getStatusEnum(), auction.getFinishedAt());
     }
 
     @CacheEvict(value = "auction", key = "#auctionId", cacheManager = "cacheManager")
     @Transactional
-    public void updateBid(Long auctionId, Long price, Long buyerId) {
+    public AuctionUpdateResponseDto updateBid(Long auctionId, Long price, Long buyerId) {
         Auction auction = findAuctionOrElseThrow(auctionId);
         auction.updateBid(price, buyerId);
+        return new AuctionUpdateResponseDto(auction.getId(), auction.getTownId(),
+            auction.getTitle(), auction.getContent(), auction.getPrice(), auction.getBuyerId(),
+            auction.getStatusEnum(), auction.getFinishedAt());
     }
 
     @Cacheable(value = "auctions", cacheManager = "cacheManager")
@@ -173,7 +181,8 @@ public class AuctionService {
             buyerNickname = userService.findUserOrElseThrow(auction.getBuyerId()).getNickname();
         }
 
-        return new AuctionResponseDto(auction, townName, buyerNickname, auction.getFile().getFilePath());
+        return new AuctionResponseDto(auction, townName, buyerNickname,
+            auction.getFile().getFilePath());
     }
 
     // TODO: 4/8/24 자신이 올린 옥션리스트 보기 getList
