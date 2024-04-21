@@ -7,8 +7,8 @@ import com.ip.ddangddangddang.domain.user.dto.request.UserUpdateRequestDto;
 import com.ip.ddangddangddang.domain.user.dto.response.UserResponse;
 import com.ip.ddangddangddang.domain.user.entity.User;
 import com.ip.ddangddangddang.domain.user.repository.UserRepository;
+import com.ip.ddangddangddang.global.exception.custom.CustomTownException;
 import com.ip.ddangddangddang.global.exception.custom.CustomUserException;
-import jakarta.persistence.EntityNotFoundException;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -63,13 +63,15 @@ public class UserService {
     @Transactional
     public void updateLocation(Long userId, UserLocationRequestDto requestDto) {
         User user = getUserByIdOrElseThrow(userId);
-        user.updateLocation(townService.findTownByNameOrElseThrow(requestDto.getAddress()));
+        user.updateLocation(townService.findTownByName(requestDto.getAddress()).orElseThrow(
+            () -> new CustomTownException("해당 동네가 없습니다.")
+        ));
     }
 
     // 굳이 하고 싶을 때 이런 식으로 하나 더 만들어도 된다.
     public User getUserByIdOrElseThrow(Long userId) {
         return getUserById(userId).orElseThrow(
-            () -> new IllegalArgumentException("회원이 존재하지 않습니다."));
+            () -> new CustomUserException("회원이 존재하지 않습니다."));
     }
 
     public Optional<User> getUserById(Long userId) {
@@ -96,7 +98,7 @@ public class UserService {
 
     public UserResponse getUser(Long userId) {
         User user = userRepository.findById(userId)
-            .orElseThrow(() -> new EntityNotFoundException("유저가 없습니다."));
+            .orElseThrow(() -> new CustomUserException("회원이 존재하지 않습니다."));
         return new UserResponse(
             user.getTown().getId(),
             user.getTown().getName());

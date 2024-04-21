@@ -7,6 +7,7 @@ import com.ip.ddangddangddang.domain.town.townList.TownListRepository;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -56,6 +57,10 @@ public class TownService {
         return townRepository.findByName(address).orElseThrow(
             () -> new IllegalArgumentException("해당 동네가 없습니다.")
         );
+    }
+
+    public Optional<Town> findTownByName(String address) {
+        return townRepository.findByName(address);
     }
 
     public String getTownName(TownList t) {
