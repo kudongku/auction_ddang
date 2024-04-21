@@ -5,7 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.when;
+import static org.mockito.BDDMockito.given;
 
 import com.ip.ddangddangddang.domain.file.dto.response.FileCreateResponseDto;
 import com.ip.ddangddangddang.domain.file.dto.response.FileReadResponseDto;
@@ -46,9 +46,12 @@ class FileServiceTest implements FileValues {
         @Test
         @DisplayName("upload 성공시")
         public void testUpload_success() throws IOException {
-            when(userService.findUserOrElseThrow(USER_ID)).thenReturn(USER);
-            when(fileUploadService.upload(any(), anyString())).thenReturn(FILE_PATH);
-            when(fileRepository.save(any(File.class))).thenReturn(FILE);
+            given(userService.findUserOrElseThrow(USER_ID))
+                .willReturn(USER);
+            given(fileUploadService.upload(any(), anyString()))
+                .willReturn(FILE_PATH);
+            given(fileRepository.save(any(File.class)))
+                .willReturn(FILE);
 
             FileCreateResponseDto responseDto = fileService.upload(MOCK_MULTIPART_FILE, OBJECT_NAME,
                 USER_ID);
@@ -59,12 +62,27 @@ class FileServiceTest implements FileValues {
 
         @Test
         @DisplayName("upload시 empty fileImage로 실패시")
-        public void testUpload_fail() {
-            when(userService.findUserOrElseThrow(USER_ID)).thenReturn(USER);
+        public void testUpload_EmptyImageException() {
+            given(userService.findUserOrElseThrow(USER_ID))
+                .willReturn(USER);
 
             assertThrows(
                 EmptyImageException.class,
                 () -> fileService.upload(MOCK_MULTIPART_FILE_EMPTY, OBJECT_NAME, USER_ID)
+            );
+        }
+
+        @Test
+        @DisplayName("upload시 empty fileImage로 실패시")
+        public void testUpload_IllegalArgumentException() throws IOException {
+            given(userService.findUserOrElseThrow(USER_ID))
+                .willReturn(USER);
+            given(fileUploadService.upload(any(), anyString()))
+                .willThrow(IOException.class);
+
+            assertThrows(
+                IllegalArgumentException.class,
+                () -> fileService.upload(MOCK_MULTIPART_FILE, OBJECT_NAME, USER_ID)
             );
         }
     }
@@ -82,10 +100,10 @@ class FileServiceTest implements FileValues {
         @Test
         @DisplayName("미리 서명 URL 성공")
         public void testGetPresignedURL_success() {
-            when(fileRepository.findById(FILE_ID))
-                .thenReturn(java.util.Optional.of(FILE));
-            when(fileUploadService.getPresignedURL(KEY_NAME))
-                .thenReturn(FILE_PATH);
+            given(fileRepository.findById(FILE_ID))
+                .willReturn(java.util.Optional.of(FILE));
+            given(fileUploadService.getPresignedURL(KEY_NAME))
+                .willReturn(FILE_PATH);
 
             // Act
             FileReadResponseDto response = fileService.getPresignedURL(FILE_ID, USER_ID);
@@ -99,8 +117,8 @@ class FileServiceTest implements FileValues {
         @Test
         @DisplayName("작성자가 아닐 경우")
         public void testGetPresignedURL_fail() {
-            when(fileRepository.findById(FILE_ID))
-                .thenReturn(java.util.Optional.of(FILE));
+            given(fileRepository.findById(FILE_ID))
+                .willReturn(java.util.Optional.of(FILE));
 
             assertThrows(
                 IllegalArgumentException.class,
@@ -110,23 +128,39 @@ class FileServiceTest implements FileValues {
 
     }
 
-    @Test
+    @Nested
     @DisplayName("getFileOrElseThrow")
-    public void testGetFileOrElseThrow() {
-        when(fileRepository.findById(FILE_ID))
-            .thenReturn(null);
+    public class testGetFileOrElseThrow {
+        @Test
+        @DisplayName("성공")
+        public void testGetFileOrElseThrow_success() {
+            given(fileRepository.findById(FILE_ID))
+                .willReturn(null);
 
-        assertThrows(
-            NullPointerException.class,
-            ()-> fileService.findFileOrElseThrow(FILE_ID)
-        );
+            assertThrows(
+                NullPointerException.class,
+                () -> fileService.findFileOrElseThrow(FILE_ID)
+            );
+        }
+
+        @Test
+        @DisplayName("실패")
+        public void testGetFileOrElseThrow_NullPointerException() {
+            given(fileRepository.findById(FILE_ID))
+                .willReturn(Optional.empty());
+
+            assertThrows(
+                NullPointerException.class,
+                () -> fileService.findFileOrElseThrow(FILE_ID)
+            );
+        }
     }
 
     @Test
     @DisplayName("getFile")
     public void testGetFile() {
-        when(fileRepository.findById(FILE_ID))
-            .thenReturn(java.util.Optional.of(FILE));
+        given(fileRepository.findById(FILE_ID))
+            .willReturn(java.util.Optional.of(FILE));
 
         Optional<File> optionalFile = fileService.getFileById(FILE_ID);
 
