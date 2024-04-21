@@ -7,6 +7,7 @@ import com.ip.ddangddangddang.domain.file.entity.File;
 import com.ip.ddangddangddang.domain.town.entity.Town;
 import com.ip.ddangddangddang.domain.user.entity.User;
 import com.ip.ddangddangddang.global.security.UserDetailsImpl;
+import java.net.URL;
 import java.util.ArrayList;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
@@ -57,4 +58,7 @@ public interface FileValues {
     FileCreateResponseDto FILE_CREATE_RESPONSE_DTO = new FileCreateResponseDto(FILE_ID);
     FileReadResponseDto FILE_READ_RESPONSE_DTO = new FileReadResponseDto(FILE_ID, PRESIGNED_URL);
     File FILE = new File(FILE_ID, OBJECT_NAME, KEY_NAME, FILE_PATH, USER);
+
+    // s3
+    String BUCKET = "S3Bucket";
 }
