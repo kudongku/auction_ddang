@@ -23,10 +23,6 @@ class BidEventPublisherTest implements BidServiceTestValues {
     private BidEventPublisher bidEventPublisher;
     @Mock
     private RedisTemplate<String, Object> redisTemplate;
-    //    @Captor
-//    private
-//    @Captor
-//    private
     private final ArgumentCaptor<String> topicCaptor = ArgumentCaptor.forClass(String.class);
     private final ArgumentCaptor<String> eventCaptor = ArgumentCaptor.forClass(String.class);
 
