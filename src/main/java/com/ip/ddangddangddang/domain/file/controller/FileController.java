@@ -1,5 +1,6 @@
 package com.ip.ddangddangddang.domain.file.controller;
 
+import com.ip.ddangddangddang.domain.common.dto.Response;
 import com.ip.ddangddangddang.domain.file.dto.request.FileCreateRequestDto;
 import com.ip.ddangddangddang.domain.file.dto.response.FileCreateResponseDto;
 import com.ip.ddangddangddang.domain.file.dto.response.FileReadResponseDto;
@@ -24,26 +25,29 @@ public class FileController {
     private final FileService fileService;
 
     @PostMapping
-    public FileCreateResponseDto uploadImage(
+    public Response<FileCreateResponseDto> uploadImage(
         @RequestPart("auctionImage") MultipartFile auctionImage,
         @Valid @RequestPart("requestDto") FileCreateRequestDto imageRequestDto,
         @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
-        Long fileId = fileService.upload(
+        FileCreateResponseDto fileCreateResponseDto = fileService.upload(
             auctionImage,
             imageRequestDto.getImageName(),
             userDetails.getUserId()
         );
-
-        return new FileCreateResponseDto(fileId);
+        return Response.ok(fileCreateResponseDto);
     }
 
     @GetMapping("/{fileId}")
-    public FileReadResponseDto getPreSignedUrl(
+    public Response<FileReadResponseDto> getPreSignedUrl(
         @PathVariable Long fileId,
         @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
-        return fileService.getPresignedURL(fileId, userDetails.getUserId());
+        FileReadResponseDto fileReadResponseDto = fileService.getPresignedURL(
+            fileId,
+            userDetails.getUserId()
+        );
+        return Response.ok(fileReadResponseDto);
     }
 
 }
