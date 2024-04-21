@@ -57,7 +57,7 @@ class S3ServiceTest implements FileValues {
 
         @Test
         @DisplayName("업로드 실패")
-        void upload_NotValidBucketException() throws IOException {
+        void upload_NotValidBucketException()  {
             given(
                 amazonS3.putObject(any(), any(), any(InputStream.class), any(ObjectMetadata.class)))
                 .willThrow(AmazonS3Exception.class);
