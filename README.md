@@ -8,7 +8,7 @@
 ---
 ## 🏛️ 기술 아키텍쳐
 
-<img width="514" alt="스크린샷 2024-04-15 12 34 23" src="https://github.com/IP-I-s-Protocol/DDang/assets/148612321/5a1818f3-19bc-41ac-9a38-5f63ae12a925">
+<img width="950" alt="팀플 아키텍처 - 거의 최종" src="https://github.com/IP-I-s-Protocol/DDang/assets/151606621/06daf0f6-163a-44f3-8c9c-58e0933782b3">
 
 ---
 ## 👫🏼 Team
