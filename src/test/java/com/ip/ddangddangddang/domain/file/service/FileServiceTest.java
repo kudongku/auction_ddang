@@ -46,7 +46,7 @@ class FileServiceTest implements FileValues {
         @Test
         @DisplayName("upload 성공시")
         public void testUpload_success() throws IOException {
-            given(userService.findUserOrElseThrow(USER_ID))
+            given(userService.getUserByIdOrElseThrow(USER_ID))
                 .willReturn(USER);
             given(fileUploadService.upload(any(), anyString()))
                 .willReturn(FILE_PATH);
@@ -63,7 +63,7 @@ class FileServiceTest implements FileValues {
         @Test
         @DisplayName("upload시 empty fileImage로 실패시")
         public void testUpload_EmptyImageException() {
-            given(userService.findUserOrElseThrow(USER_ID))
+            given(userService.getUserByIdOrElseThrow(USER_ID))
                 .willReturn(USER);
 
             assertThrows(
@@ -75,7 +75,7 @@ class FileServiceTest implements FileValues {
         @Test
         @DisplayName("upload시 empty fileImage로 실패시")
         public void testUpload_IllegalArgumentException() throws IOException {
-            given(userService.findUserOrElseThrow(USER_ID))
+            given(userService.getUserByIdOrElseThrow(USER_ID))
                 .willReturn(USER);
             given(fileUploadService.upload(any(), anyString()))
                 .willThrow(IOException.class);
