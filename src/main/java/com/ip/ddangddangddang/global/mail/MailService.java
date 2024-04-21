@@ -41,8 +41,9 @@ public class MailService {
         sendEmail(sellerEmail, title, content);
     }
 
-    private void sendSellerBuyerNotification(String sellerEmail, String sellerNickname, Long buyerId, String t, Long price) {
-        User buyer = userService.findUserOrElseThrow(buyerId);
+    private void sendSellerBuyerNotification(String sellerEmail, String sellerNickname,
+        Long buyerId, String t, Long price) {
+        User buyer = userService.getUserByIdOrElseThrow(buyerId);
 
         String sellerTitle = "땅땅땅! [" + t + "] 게시글의 경매가 종료되었습니다!";
         String sellerContent =

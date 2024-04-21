@@ -20,7 +20,11 @@ import com.ip.ddangddangddang.domain.auction.values.AuctionServiceTestValues;
 import com.ip.ddangddangddang.domain.file.service.FileService;
 import com.ip.ddangddangddang.domain.town.service.TownService;
 import com.ip.ddangddangddang.domain.user.service.UserService;
-import com.ip.ddangddangddang.global.exception.custom.CustomAuctionException;
+import com.ip.ddangddangddang.global.exception.custom.AuctionNotFoundException;
+import com.ip.ddangddangddang.global.exception.custom.FileNotFoundException;
+import com.ip.ddangddangddang.global.exception.custom.UserHasNotAuthorityToAuctionException;
+import com.ip.ddangddangddang.global.exception.custom.UserHasNotAuthorityToFileException;
+import com.ip.ddangddangddang.global.exception.custom.UserNotFoundException;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
@@ -78,7 +82,6 @@ class AuctionServiceTest implements AuctionServiceTestValues {
                 .expire(anyString(), anyLong(), any(TimeUnit.class));
         }
 
-        // 유저 없음과 파일 없음은 userService에서 테스트해야한다.
         @Test
         void 옥션_생성_실패_테스트_파일에_대한_권한_없음() {
             //given
@@ -86,9 +89,32 @@ class AuctionServiceTest implements AuctionServiceTestValues {
             given(userService.getUserById(anyLong())).willReturn(Optional.ofNullable(TEST_USER1));
             given(fileService.getFileById(anyLong())).willReturn(Optional.ofNullable(TEST_FILE2));
             //when, then
-            assertThrows(IllegalArgumentException.class,
+            assertThrows(UserHasNotAuthorityToFileException.class,
                 () -> auctionService.createAuction(auctionRequestDto, TEST_USER1_ID));
 
+        }
+
+        //todo
+        @Test
+        void 옥션_생성_실패_테스트_유저가_존재하지_않음() {
+            //given
+            AuctionRequestDto auctionRequestDto = TEST_AUCTION_REQUEST_DTO1;
+            given(userService.getUserById(anyLong())).willReturn(Optional.empty());
+            //when, then
+            assertThrows(UserNotFoundException.class,
+                () -> auctionService.createAuction(auctionRequestDto, TEST_USER1_ID));
+        }
+
+        //todo
+        @Test
+        void 옥션_생성_실패_테스트_이미지가_없음() {
+            //given
+            AuctionRequestDto auctionRequestDto = TEST_AUCTION_REQUEST_DTO1;
+            given(userService.getUserById(anyLong())).willReturn(Optional.ofNullable(TEST_USER1));
+            given(fileService.getFileById(anyLong())).willReturn(Optional.empty());
+            //when, then
+            assertThrows(FileNotFoundException.class,
+                () -> auctionService.createAuction(auctionRequestDto, TEST_USER1_ID));
         }
     }
 
@@ -113,7 +139,7 @@ class AuctionServiceTest implements AuctionServiceTestValues {
             given(auctionRepository.findById(anyLong())).willReturn(
                 Optional.ofNullable(TEST_AUCTION1));
             //when, then
-            assertThrows(IllegalArgumentException.class,
+            assertThrows(UserHasNotAuthorityToAuctionException.class,
                 () -> auctionService.deleteAuction(TEST_TOWN1_AUCTION1_ID, TEST_USER2_ID));
         }
     }
@@ -148,15 +174,26 @@ class AuctionServiceTest implements AuctionServiceTestValues {
         }
 
         @Test
-        void 옥션_상태_COMPLETED로_변경_실패_테스트() {
+        void 옥션_상태_COMPLETED로_변경_실패_테스트_옥션_없음() {
+            //given
+            given(auctionRepository.findById(anyLong())).willReturn(Optional.empty());
+            //when, then
+            assertThrows(AuctionNotFoundException.class,
+                () -> auctionService.updateStatusToComplete(TEST_TOWN1_AUCTION1_ID, TEST_USER2_ID));
+
+        }
+
+        @Test
+        void 옥션_상태_COMPLETED로_변경_실패_테스트_사용자가_불일치() {
             //given
             given(auctionRepository.findById(anyLong())).willReturn(
                 Optional.ofNullable(TEST_AUCTION1));
             //when, then
-            assertThrows(IllegalArgumentException.class,
+            assertThrows(UserHasNotAuthorityToAuctionException.class,
                 () -> auctionService.updateStatusToComplete(TEST_TOWN1_AUCTION1_ID, TEST_USER2_ID));
 
         }
+
     }
 
     @Nested
@@ -182,7 +219,7 @@ class AuctionServiceTest implements AuctionServiceTestValues {
             given(auctionRepository.findById(anyLong())).willReturn(
                 Optional.empty());
             //when, then
-            assertThrows(CustomAuctionException.class,
+            assertThrows(AuctionNotFoundException.class,
                 () -> auctionService.updateBid(TEST_TOWN1_AUCTION1_ID, TEST_AUCTION_UPDATE_PRICE,
                     TEST_ANOTHER_USER1_ID));
         }
@@ -207,6 +244,16 @@ class AuctionServiceTest implements AuctionServiceTestValues {
 
         }
 
+        //todo
+        @Test
+        void 옥션_전체_조회_실패_테스트_유저가_없음() {
+            //given
+            given(userService.getUserById(anyLong())).willReturn(Optional.empty());
+            //when,then
+            assertThrows(UserNotFoundException.class,
+                () -> auctionService.getAuctions(TEST_USER1_ID, StatusEnum.ON_SALE, null));
+        }
+
     }
 
     @Nested
@@ -219,7 +266,7 @@ class AuctionServiceTest implements AuctionServiceTestValues {
             given(auctionRepository.findById(anyLong())).willReturn(
                 Optional.ofNullable(TEST_AUCTION1));
             given(townService.findNameByIdOrElseThrow(anyLong())).willReturn(TEST_TOWN1_NAME);
-            given(userService.findUserOrElseThrow(any())).willReturn(TEST_BUYER_USER1);
+            given(userService.getUserByIdOrElseThrow(any())).willReturn(TEST_BUYER_USER1);
             //when
             AuctionResponseDto auctionResponseDto = auctionService.getAuction(
                 TEST_TOWN1_AUCTION1_ID);
@@ -234,7 +281,7 @@ class AuctionServiceTest implements AuctionServiceTestValues {
             given(auctionRepository.findById(anyLong())).willReturn(
                 Optional.empty());
             //when, then
-            assertThrows(CustomAuctionException.class,
+            assertThrows(AuctionNotFoundException.class,
                 () -> auctionService.getAuction(TEST_TOWN1_AUCTION1_ID));
         }
     }
@@ -280,7 +327,7 @@ class AuctionServiceTest implements AuctionServiceTestValues {
     public class AuctionFindTest {
 
         @Test
-        void 아이디로_옥션_조회_테스트() {
+        void 아이디로_옥션_조회_성공_테스트() {
             //given
             given(auctionRepository.findById(anyLong())).willReturn(
                 Optional.ofNullable(TEST_AUCTION1));
