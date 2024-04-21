@@ -123,4 +123,8 @@ public interface BidServiceTestValues {
     BidRequestDto TEST_PROPER_REQUEST_DTO = new BidRequestDto(TEST_PRICE1);
     BidRequestDto TEST_SAME_PRICE_REQUEST_DTO = new BidRequestDto(TEST_PRICE2);
 
+    //eventPublisher
+    String TEST_TOPIC = "auction-price:" + TEST_AUCTION1_ID;
+    String TEST_EVENT = "{\"id\":1,\"auctionId\":1,\"userId\":1,\"price\":100}";
+
 }
