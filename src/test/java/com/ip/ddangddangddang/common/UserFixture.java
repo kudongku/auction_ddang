@@ -16,7 +16,7 @@ public interface UserFixture extends TownFixture{
     Long TEST_ANOTHER_USER1_ID = 5L; // 원래 통일하게 맞춰야하는데 바꿔야할 게 많아서 추가 유저 아이디입니다.
     Long TEST_NON_EXISTENT_USER_ID = 10L; // 존재하지 않는 유저 아이디
 
-    String TEST_USER_EMAIL = "testUserEmail";
+    String TEST_USER_EMAIL = "testUserEmail@test.com";
     String TEST_USER_NICKNAME = "testUserNickname";
     String TEST_USER_NICKNAME_UPDATED = "testUserNicknameUpdated";
     String TEST_BUYER_USER_NICKNAME = "testBuyerNickname";
@@ -107,6 +107,9 @@ public interface UserFixture extends TownFixture{
         .address(TEST_NON_EXISTENT_TOWN_NAME)
         .build();
 
-    UserResponse userResponse = new UserResponse(TEST_TOWN1_ID, TEST_TOWN1_NAME);
+    UserResponse TEST_USER_RESPONSE = UserResponse.builder()
+        .townId(TEST_USER1_ID)
+        .townName(TEST_TOWN1_NAME)
+        .build();
 
 }
