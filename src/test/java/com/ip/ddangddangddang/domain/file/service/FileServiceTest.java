@@ -64,9 +64,6 @@ class FileServiceTest implements FileValues {
         @Test
         @DisplayName("upload시 empty fileImage로 실패시")
         public void testUpload_EmptyImageException() {
-            given(userService.getUserByIdOrElseThrow(USER_ID))
-                .willReturn(USER);
-
             assertThrows(
                 EmptyImageException.class,
                 () -> fileService.upload(MOCK_MULTIPART_FILE_EMPTY, OBJECT_NAME, USER_ID)
