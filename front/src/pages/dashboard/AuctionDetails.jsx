@@ -1,11 +1,12 @@
 import React, {useEffect, useState} from "react";
-import {getAuction} from '@/api/auction.js'
+import {completeAuction, getAuction} from '@/api/auction.js'
 import {createBid} from '@/api/bid.js'
-import {useParams} from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 import {Button, Input} from "@material-tailwind/react";
 import {createComment, getComments} from "@/api/comment.js";
 
 export function AuctionDetails() {
+  const navigate = useNavigate();
   const auctionId = useParams();
   const [auctionResponseDto, setAuctionResponseDto] = useState([]);
   const [comments, setComments] = useState([])
@@ -44,8 +45,14 @@ export function AuctionDetails() {
   const setCommentsDto = () => {
     getComments(auctionId.auctionId)
     .then((response) => {
-      console.log(response.data.data)
-      setComments(response.data.data);
+
+      if(response.data.status == "BAD_REQUEST"){
+        setComments(null);
+      }else{
+        console.log(response.data.data)
+        setComments(response.data.data);
+      }
+
     })
   }
 
@@ -67,6 +74,23 @@ export function AuctionDetails() {
       } else {
         document.querySelector('#bid-price').textContent = bidPrice;
         alert("입찰이 완료되었습니다.")
+      }
+
+    } catch (error) {
+      console.log(error)
+    }
+  };
+
+  const submitCompleteAuction = async (event) => {
+    event.preventDefault();
+    try {
+      const response = await completeAuction(auctionId.auctionId)
+
+      if (response.data.status == "BAD_REQUEST") {
+        alert(response.data.message)
+      } else {
+        alert("옥션이 완료되었습니다.")
+        navigate(`/dashboard/home`);
       }
 
     } catch (error) {
@@ -150,6 +174,10 @@ export function AuctionDetails() {
         ) : auctionResponseDto.statusEnum === 'HOLD' ? (
 
             <div>
+              <Button className="mt-6" onClick={submitCompleteAuction}>
+                판매완료
+              </Button>
+
               <div
                   className="align-middle select-none font-sans bg-white font-bold text-center uppercase transition-all disabled:opacity-50 disabled:shadow-none disabled:pointer-events-none text-xs py-2 px-4 rounded-lg border border-gray-900 text-gray-900 hover:opacity-75 focus:ring focus:ring-gray-300 active:opacity-[0.85]">
                 최고 입찰가 : <span
@@ -191,19 +219,25 @@ export function AuctionDetails() {
                   </tr>
                   </thead>
                   <tbody>
-                  {comments.map((commentResponseDto, index) => (
-                      <tr key={index}>
-                        <td className="py-3 px-5 border-b border-blue-gray-50">
-                          <p className="block antialiased font-sans text-xs font-medium text-blue-gray-600">{commentResponseDto.nickname}</p>
-                        </td>
-                        <td className="py-3 px-5 border-b border-blue-gray-50">
-                          <p className="block antialiased font-sans text-xs font-medium text-blue-gray-600">{commentResponseDto.content}</p>
-                        </td>
-                        <td className="py-3 px-5 border-b border-blue-gray-50">
-                          <p className="block antialiased font-sans text-xs font-medium text-blue-gray-600">{commentResponseDto.createdAt}</p>
-                        </td>
+                  {comments ? (
+                      comments.map((commentResponseDto, index) => (
+                          <tr key={index}>
+                            <td className="py-3 px-5 border-b border-blue-gray-50">
+                              <p className="block antialiased font-sans text-xs font-medium text-blue-gray-600">{commentResponseDto.nickname}</p>
+                            </td>
+                            <td className="py-3 px-5 border-b border-blue-gray-50">
+                              <p className="block antialiased font-sans text-xs font-medium text-blue-gray-600">{commentResponseDto.content}</p>
+                            </td>
+                            <td className="py-3 px-5 border-b border-blue-gray-50">
+                              <p className="block antialiased font-sans text-xs font-medium text-blue-gray-600">{commentResponseDto.createdAt}</p>
+                            </td>
+                          </tr>
+                      ))
+                  ) : (
+                      <tr>
+                        <td colSpan="3" className="py-3 px-5 border-b border-blue-gray-50">댓글 조회 권한이 없습니다.</td>
                       </tr>
-                  ))}
+                  )}
                   </tbody>
                 </table>
               </div>
