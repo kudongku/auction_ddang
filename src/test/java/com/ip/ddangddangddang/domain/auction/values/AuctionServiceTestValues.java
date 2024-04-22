@@ -208,11 +208,14 @@ public interface AuctionServiceTestValues {
     AuctionRequestDto TEST_AUCTION_REQUEST_DTO1 = new AuctionRequestDto(TEST_AUCTION_TITLE,
         TEST_AUCTION_CONTENT, TEST_FILE1_ID);
 
+
     //message
     String TEST_MESSAGE_STARTS_WITH_AUCTION_ID = "auctionId:";
     String TEST_MESSAGE_NOT_STARTS_WITH_AUCTION_ID = "wrongAuctionId:";
 
     //page
+    int PAGE_NUMBER = 1;
+    int PAGE_SIZE = 1;
     Pageable TEST_PAGEABLE = PageRequest.of(1, 1);
     Slice<Auction> TEST_SLICE_AUCTION_WRITTEN_BY_ME = new SliceImpl<>(
         List.of(TEST_AUCTION1, TEST_AUCTION2),
