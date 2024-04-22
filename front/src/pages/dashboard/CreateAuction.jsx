@@ -23,11 +23,11 @@ function CreateAuction() {
     // 경매 생성 요청 보내기
     try {
       const response = await uploadImage(image, ObjectName);
-      console.log( response.data.fileId);
+      console.log( response.data.data.fileId);
 
       const formData = new FormData();
       formData.append('title', title);
-      formData.append('fileId', response.data.fileId);
+      formData.append('fileId', response.data.data.fileId);
       formData.append('content', description);
 
       await createAuction(formData);
