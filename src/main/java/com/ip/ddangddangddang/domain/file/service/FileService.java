@@ -7,6 +7,7 @@ import com.ip.ddangddangddang.domain.file.repository.FileRepository;
 import com.ip.ddangddangddang.domain.user.entity.User;
 import com.ip.ddangddangddang.domain.user.service.UserService;
 import com.ip.ddangddangddang.global.exception.custom.EmptyImageException;
+import com.ip.ddangddangddang.global.s3.FileUploadService;
 import java.io.IOException;
 import java.util.Optional;
 import java.util.UUID;
