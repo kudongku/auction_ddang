@@ -89,33 +89,20 @@ public class AuctionService {
     }
 
     @Transactional
-    public void updateStatusToHold(String message) {
+    public void updateStatusToHold(Long auctionId) {
+        log.info("경매 기한 만료, auctionId : " + auctionId);
+        Auction auction = validatedAuction(auctionId);
+        auction.updateStatusToHold();
 
-        if (message.startsWith("auctionId:")) {
-            // message = "auctionId: 1", string
-            // message.split(" ") = {"auctionId:", "1"}, Array<String>
-            // message.split(" ")[1] = "1", string
-            // Long.parseLong(message.split(" ")[1]) = 1L, Long
-            Long auctionId = Long.parseLong(message.split(":")[1]);
-            log.info("경매 기한 만료, " + message);
-            Auction auction = validatedAuction(
-                auctionId);
-            auction.updateStatusToHold();
+        Objects.requireNonNull(cacheManager.getCache("auction")).evict(auctionId);
 
-            Objects.requireNonNull(cacheManager.getCache("auction")).evict(auctionId);
-
-            mailService.sendMail(
-                auction.getUser().getEmail(),
-                auction.getUser().getNickname(),
-                auction.getBuyerId(),
-                auction.getTitle(),
-                auction.getPrice()
-            );
-
-        } else {
-            throw new RuntimeException("redis 에러");
-        }
-
+        mailService.sendMail(
+            auction.getUser().getEmail(),
+            auction.getUser().getNickname(),
+            auction.getBuyerId(),
+            auction.getTitle(),
+            auction.getPrice()
+        );
     }
 
     @CacheEvict(value = "auction", key = "#auctionId", cacheManager = "cacheManager")
