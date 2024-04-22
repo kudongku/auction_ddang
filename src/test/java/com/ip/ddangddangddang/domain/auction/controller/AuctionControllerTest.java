@@ -5,6 +5,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.times;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -53,6 +54,21 @@ class AuctionControllerTest extends ControllerTest implements AuctionServiceTest
         @Test
         void 옥션_삭제_테스트() throws Exception {
             mockMvc.perform(delete("/v1/auctions/{auctionId}", TEST_TOWN1_AUCTION1_ID))
+                .andExpect(status().isOk())
+                .andDo(print());
+        }
+    }
+
+    @Nested
+    @DisplayName("옥션 전체 조회 테스트")
+    class GetAuctionsTest {
+
+        @Test
+        void 옥션_전체_조회_테스트() throws Exception {
+            mockMvc.perform(get("/v1/auctions")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .param("page", String.valueOf(PAGE_NUMBER))
+                    .param("size", String.valueOf(PAGE_SIZE)))
                 .andExpect(status().isOk())
                 .andDo(print());
         }
