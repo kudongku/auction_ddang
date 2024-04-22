@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 
-public interface CommentServiceTestValues {
+public interface CommentTestValues {
 
     //town
     Long TEST_TOWN1_ID = 1L;
@@ -118,11 +118,15 @@ public interface CommentServiceTestValues {
         .auction(TEST_AUCTION)
         .build();
 
-    List<Comment> TEST_COMMENT_LIST = Arrays.asList(TEST_COMMENT, TEST_COMMENT2);
 
     //dto
     CommentCreateRequestDto TEST_REQUEST_DTO = new CommentCreateRequestDto(TEST_COMMENT1_TEXT);
     CommentReadResponseDto TEST_RESPONSE_DTO = new CommentReadResponseDto(TEST_COMMENT);
+    CommentReadResponseDto TEST_RESPONSE2_DTO = new CommentReadResponseDto(TEST_COMMENT2);
+
+    List<CommentReadResponseDto> TEST_COMMENT_RESPONSE_DTO_LIST = Arrays.asList(TEST_RESPONSE_DTO,
+        TEST_RESPONSE2_DTO);
+    List<Comment> TEST_COMMENT_LIST = Arrays.asList(TEST_COMMENT, TEST_COMMENT2);
 
 
 }
