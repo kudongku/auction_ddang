@@ -15,7 +15,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ip.ddangddangddang.domain.auction.service.AuctionService;
 import com.ip.ddangddangddang.domain.bid.entity.Bid;
 import com.ip.ddangddangddang.domain.bid.repository.BidRepository;
-import com.ip.ddangddangddang.domain.bid.values.BidServiceTestValues;
+import com.ip.ddangddangddang.domain.bid.values.BidTestValues;
 import com.ip.ddangddangddang.global.exception.custom.CustomBidException;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
@@ -28,7 +28,7 @@ import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
-class BidServiceTest implements BidServiceTestValues {
+class BidServiceTest implements BidTestValues {
 
     @InjectMocks
     private BidService bidService;

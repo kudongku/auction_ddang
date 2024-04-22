@@ -10,7 +10,7 @@ import com.ip.ddangddangddang.domain.user.entity.User;
 import java.time.LocalDateTime;
 import java.util.List;
 
-public interface BidServiceTestValues {
+public interface BidTestValues {
 
     //town
     Long TEST_TOWN1_ID = 1L;
@@ -122,5 +122,9 @@ public interface BidServiceTestValues {
     //dto
     BidRequestDto TEST_PROPER_REQUEST_DTO = new BidRequestDto(TEST_PRICE1);
     BidRequestDto TEST_SAME_PRICE_REQUEST_DTO = new BidRequestDto(TEST_PRICE2);
+
+    //eventPublisher
+    String TEST_TOPIC = "auction-price:" + TEST_AUCTION1_ID;
+    String TEST_EVENT = "{\"id\":1,\"auctionId\":1,\"userId\":1,\"price\":100}";
 
 }
