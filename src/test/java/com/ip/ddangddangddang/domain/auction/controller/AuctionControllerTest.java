@@ -114,4 +114,18 @@ class AuctionControllerTest extends ControllerTest implements AuctionServiceTest
         }
     }
 
+    @Nested
+    @DisplayName("내가 입찰한 옥션 전체 조회 테스트")
+    class GetMyBidsTest {
+
+        @Test
+        void 내가_입찰한_옥션_전체조회_테스트() throws Exception {
+            mockMvc.perform(get("/v1/auctions/mybids")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .param("page", String.valueOf(PAGE_NUMBER))
+                    .param("size", String.valueOf(PAGE_SIZE)))
+                .andExpect(status().isOk())
+                .andDo(print());
+        }
+    }
 }
