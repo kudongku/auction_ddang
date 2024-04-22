@@ -5,7 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.verify;
 
-import com.ip.ddangddangddang.domain.bid.values.BidServiceTestValues;
+import com.ip.ddangddangddang.domain.bid.values.BidTestValues;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -17,7 +17,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.redis.core.RedisTemplate;
 
 @ExtendWith(MockitoExtension.class)
-class BidEventPublisherTest implements BidServiceTestValues {
+class BidEventPublisherTest implements BidTestValues {
 
     @InjectMocks
     private BidEventPublisher bidEventPublisher;
