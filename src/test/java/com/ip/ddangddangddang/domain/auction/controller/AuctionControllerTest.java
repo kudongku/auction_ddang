@@ -73,4 +73,18 @@ class AuctionControllerTest extends ControllerTest implements AuctionServiceTest
                 .andDo(print());
         }
     }
+
+    @Nested
+    @DisplayName("옥션 단건 조회 테스트")
+    class GetAuctionsByIdTest {
+
+        @Test
+        void 옥션_단건_조회_테스트() throws Exception {
+            mockMvc.perform(get("/v1/auctions/{auctionId}", TEST_TOWN1_AUCTION1_ID))
+                .andExpect(status().isOk())
+                .andDo(print());
+        }
+    }
+
+
 }
