@@ -6,6 +6,7 @@ import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.times;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -86,5 +87,16 @@ class AuctionControllerTest extends ControllerTest implements AuctionServiceTest
         }
     }
 
+    @Nested
+    @DisplayName("옥션 상태변경_판매완료 테스트")
+    class CompletedAuctionTest {
+
+        @Test
+        void 옥션_상태변경_판매완료_테스트() throws Exception {
+            mockMvc.perform(patch("/v1/auctions/{auctionId}", TEST_TOWN1_AUCTION1_ID))
+                .andExpect(status().isOk())
+                .andDo(print());
+        }
+    }
 
 }
