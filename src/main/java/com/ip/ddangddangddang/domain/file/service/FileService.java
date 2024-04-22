@@ -27,12 +27,12 @@ public class FileService {
 
     @Transactional
     public FileCreateResponseDto upload(MultipartFile auctionImage, String objectName, Long userId) {
-        User user = userService.getUserByIdOrElseThrow(userId);
 
         if (auctionImage.isEmpty()) {
             throw new EmptyImageException("이미지가 존재하지 않습니다.");
         }
 
+        User user = userService.getUserByIdOrElseThrow(userId);
         String keyName = createKeyName(objectName);
 
         String filePath;
