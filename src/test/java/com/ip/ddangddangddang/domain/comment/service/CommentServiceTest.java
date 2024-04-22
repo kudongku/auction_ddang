@@ -9,7 +9,7 @@ import static org.mockito.Mockito.when;
 import com.ip.ddangddangddang.domain.auction.service.AuctionService;
 import com.ip.ddangddangddang.domain.comment.dto.response.CommentReadResponseDto;
 import com.ip.ddangddangddang.domain.comment.repository.CommentRepository;
-import com.ip.ddangddangddang.domain.comment.values.CommentServiceTestValues;
+import com.ip.ddangddangddang.domain.comment.values.CommentTestValues;
 import com.ip.ddangddangddang.domain.user.service.UserService;
 import com.ip.ddangddangddang.global.exception.custom.CustomUserException;
 import java.util.List;
@@ -23,7 +23,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
-class CommentServiceTest implements CommentServiceTestValues {
+class CommentServiceTest implements CommentTestValues {
 
     @InjectMocks
     private CommentService commentService;
