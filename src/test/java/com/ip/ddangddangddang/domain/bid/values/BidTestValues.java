@@ -10,7 +10,7 @@ import com.ip.ddangddangddang.domain.user.entity.User;
 import java.time.LocalDateTime;
 import java.util.List;
 
-public interface BidServiceTestValues {
+public interface BidTestValues {
 
     //town
     Long TEST_TOWN1_ID = 1L;
