@@ -1,25 +1,88 @@
 plugins {
-	id 'java'
-	id 'org.springframework.boot' version '3.2.4'
-	id 'io.spring.dependency-management' version '1.1.4'
+    id 'java'
+    id 'org.springframework.boot' version '3.2.4'
+    id 'io.spring.dependency-management' version '1.1.4'
 }
 
-group = 'com.ip'
+group = 'me.IP'
 version = '0.0.1-SNAPSHOT'
 
 java {
-	sourceCompatibility = '17'
+    sourceCompatibility = '17'
+}
+
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
 }
 
 repositories {
-	mavenCentral()
+    mavenCentral()
 }
 
 dependencies {
-	implementation 'org.springframework.boot:spring-boot-starter'
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    //POI
+    implementation 'org.apache.poi:poi:5.2.3'
+    implementation group: 'org.apache.poi', name: 'poi-ooxml', version: '5.2.4'
+
+    //redis
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+    implementation 'org.redisson:redisson-spring-boot-starter:3.27.2'
+
+    //WEB
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+
+    // JWT
+    compileOnly group: 'io.jsonwebtoken', name: 'jjwt-api', version: '0.11.5'
+    runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-impl', version: '0.11.5'
+    runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-jackson', version: '0.11.5'
+
+    // JPA
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+
+    // SECURITY
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+
+    // VALIDATE
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+
+    // LOMBOK
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+
+    // SQL
+    runtimeOnly 'com.mysql:mysql-connector-j'
+
+    // TEST
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework.security:spring-security-test'
+
+    //S3
+    implementation "com.amazonaws:aws-java-sdk-s3:1.12.281"
+    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+
+    // RDS
+    runtimeOnly 'org.mariadb.jdbc:mariadb-java-client'
+    implementation group: 'org.mariadb.jdbc', name: 'mariadb-java-client', version: '2.4.1'
+    compileOnly('javax.servlet:javax.servlet-api:4.0.1')
+
+    // hikariCP
+    implementation group: 'com.zaxxer', name: 'HikariCP', version: '5.0.0'
+
+    //QueryDSL
+    implementation 'com.querydsl:querydsl-jpa:5.0.0:jakarta'
+    annotationProcessor "com.querydsl:querydsl-apt:${dependencyManagement.importedProperties['querydsl.version']}:jakarta"
+    annotationProcessor "jakarta.annotation:jakarta.annotation-api"
+    annotationProcessor "jakarta.persistence:jakarta.persistence-api"
+
+    // mail
+    implementation 'org.springframework.boot:spring-boot-starter-mail'
+
+    // 역직렬화
+    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.13.3'
 }
 
 tasks.named('test') {
-	useJUnitPlatform()
+    useJUnitPlatform()
 }
