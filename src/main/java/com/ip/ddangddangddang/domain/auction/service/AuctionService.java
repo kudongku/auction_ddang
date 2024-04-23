@@ -18,10 +18,10 @@ import com.ip.ddangddangddang.global.exception.custom.UserHasNotAuthorityToAucti
 import com.ip.ddangddangddang.global.exception.custom.UserHasNotAuthorityToFileException;
 import com.ip.ddangddangddang.global.exception.custom.UserNotFoundException;
 import com.ip.ddangddangddang.global.mail.MailService;
+import com.ip.ddangddangddang.global.redis.CacheService;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -30,8 +30,6 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -46,15 +44,17 @@ public class AuctionService {
     private final FileService fileService;
     private final TownService townService;
     private final MailService mailService;
-    private final RedisTemplate<String, String> redisTemplate;
+    private final CacheService cacheService;
     private final CacheManager cacheManager;
 
     @Transactional
-    public void createAuction(AuctionRequestDto requestDto,
-        Long userId) { // Todo fileId 곂칠때 duplicated error
-        User user = userService.getUserById(userId)
-            .orElseThrow(() -> new UserNotFoundException(
-                "회원이 존재하지 않습니다.")); //  없는게 정상 로직일 수 있다 -> 없는게 정상로직일 때 옵셔널로 받아오고 있어야하는 로직은 orelsethrow를 써도 된다. 없을 게 정상로직으로 추가될 수 있으니 확장성 측면에서 옵셔널로 받는게 좋다
+    public void createAuction(
+        AuctionRequestDto requestDto,
+        Long userId
+    ) { // Todo fileId 곂칠때 duplicated error
+        User user = userService.getUserById(userId).orElseThrow(
+            () -> new UserNotFoundException("회원이 존재하지 않습니다.")
+        ); //  없는게 정상 로직일 수 있다 -> 없는게 정상로직일 때 옵셔널로 받아오고 있어야하는 로직은 orelsethrow를 써도 된다. 없을 게 정상로직으로 추가될 수 있으니 확장성 측면에서 옵셔널로 받는게 좋다
         File file = fileService.getFileById(
             requestDto.getFileId()).orElseThrow(() -> new FileNotFoundException(
             "없는 이미지 입니다."));
@@ -64,15 +64,7 @@ public class AuctionService {
         }
 
         Auction auction = auctionRepository.save(new Auction(requestDto, user, file));
-
-        ValueOperations<String, String> operations = redisTemplate.opsForValue();
-        String redisKey = "auctionId:" + auction.getId();
-        // redisKey = "auctionId:1";
-
-        operations.set(redisKey, "1");
-        redisTemplate.expire(redisKey, 5, TimeUnit.HOURS);
-
-        log.info("경매 등록, " + redisKey);
+        cacheService.setAuctionExpiredKey(auction.getId());
     }
 
     @Transactional
@@ -115,9 +107,17 @@ public class AuctionService {
         }
 
         auction.updateStatusToComplete();
-        return new AuctionUpdateResponseDto(auction.getId(), auction.getTownId(),
-            auction.getTitle(), auction.getContent(), auction.getPrice(), auction.getBuyerId(),
-            auction.getStatusEnum(), auction.getFinishedAt());
+
+        return new AuctionUpdateResponseDto(
+            auction.getId(),
+            auction.getTownId(),
+            auction.getTitle(),
+            auction.getContent(),
+            auction.getPrice(),
+            auction.getBuyerId(),
+            auction.getStatusEnum(),
+            auction.getFinishedAt()
+        );
     }
 
     @CacheEvict(value = "auction", key = "#auctionId", cacheManager = "cacheManager")
@@ -125,9 +125,16 @@ public class AuctionService {
     public AuctionUpdateResponseDto updateBid(Long auctionId, Long price, Long buyerId) {
         Auction auction = validatedAuction(auctionId);
         auction.updateBid(price, buyerId);
-        return new AuctionUpdateResponseDto(auction.getId(), auction.getTownId(),
-            auction.getTitle(), auction.getContent(), auction.getPrice(), auction.getBuyerId(),
-            auction.getStatusEnum(), auction.getFinishedAt());
+        return new AuctionUpdateResponseDto(
+            auction.getId(),
+            auction.getTownId(),
+            auction.getTitle(),
+            auction.getContent(),
+            auction.getPrice(),
+            auction.getBuyerId(),
+            auction.getStatusEnum(),
+            auction.getFinishedAt()
+        );
     }
 
     @Cacheable(value = "auctions", cacheManager = "cacheManager")
@@ -136,8 +143,10 @@ public class AuctionService {
         StatusEnum status,
         String title
     ) {
-        User user = userService.getUserById(userId)
-            .orElseThrow(() -> new UserNotFoundException("회원이 존재하지 않습니다."));
+        User user = userService.getUserById(userId).orElseThrow(
+            () -> new UserNotFoundException("회원이 존재하지 않습니다.")
+        );
+
         List<Long> townList = user.getTown().getNeighborIdList();
 
         return auctionRepository.findAllByFilters(townList, status,
@@ -175,6 +184,7 @@ public class AuctionService {
         String townName = townService.findNameByIdOrElseThrow(auction.getTownId());
 
         String buyerNickname = "";
+
         if (auction.getBuyerId() != null) {
             buyerNickname = userService.getUserByIdOrElseThrow(auction.getBuyerId()).getNickname();
         }
@@ -221,8 +231,7 @@ public class AuctionService {
 
     // todo : OrElseThrow는 private - 다른 서비스에서 필요하지 않음 - 추가로 findAuctionOrElseThrow이게 아니라 validatedAuction이라고 합니다.
     // todo : 가져다 쓰는 건 getAuction에 검증로직은 해당 서비스에 다시 리팩토링 필요
-    private Auction validatedAuction(
-        Long auctionId) {
+    private Auction validatedAuction(Long auctionId) {
         return getAuctionById(auctionId).orElseThrow(
             () -> new AuctionNotFoundException("게시글이 존재하지 않습니다.")
         );

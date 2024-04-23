@@ -10,6 +10,7 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
@@ -36,22 +37,29 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
     // 로그인 시도
     @Override
-    public Authentication attemptAuthentication(HttpServletRequest request,
-        HttpServletResponse response) throws AuthenticationException {
+    public Authentication attemptAuthentication(
+        HttpServletRequest request,
+        HttpServletResponse response
+    ) throws AuthenticationException {
         try {
-            UserSigninRequestDto requestDto = new ObjectMapper().readValue(request.getInputStream(),
-                UserSigninRequestDto.class);
+            UserSigninRequestDto requestDto = new ObjectMapper().readValue(
+                request.getInputStream(),
+                UserSigninRequestDto.class
+            );
+
             //인증 처리를 하는 메서드 입력받은 이메일과 비밀번호로 검증
-            User user = userRepository.findByEmail(
-                requestDto.getEmail()).orElseThrow(
+            User user = userRepository.findByEmail(requestDto.getEmail()).orElseThrow(
                 () -> new BadCredentialsException("잘못된 이메일을 입력했습니다.")); //인증실패를 위한 예외
+
             if (!passwordEncoder.matches(requestDto.getPassword(), user.getPassword())) {
                 throw new BadCredentialsException("잘못된 비밀번호를 입력했습니다.");
             }
+
             return new CustomAuthenticationToken(
                 user,
                 requestDto.getPassword()
             );
+
         } catch (IOException e) {
             log.error(e.getMessage());
             throw new RuntimeException(e.getMessage());
@@ -59,9 +67,12 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     }
 
     @Override
-    protected void successfulAuthentication(HttpServletRequest request,
-        HttpServletResponse response, FilterChain chain, Authentication authResult)
-        throws IOException {
+    protected void successfulAuthentication(
+        HttpServletRequest request,
+        HttpServletResponse response,
+        FilterChain chain,
+        Authentication authResult
+    ) {
         User user = (User) authResult.getPrincipal();
         String token = jwtUtil.createToken(user.getId(), user.getEmail());
         response.addHeader(JwtUtil.AUTHORIZATION_HEADER, token);
@@ -69,15 +80,18 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
     // 로그인 실패
     @Override
-    protected void unsuccessfulAuthentication(HttpServletRequest request,
-        HttpServletResponse response, AuthenticationException failed) throws IOException {
+    protected void unsuccessfulAuthentication(
+        HttpServletRequest request,
+        HttpServletResponse response,
+        AuthenticationException failed
+    ) throws IOException {
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         ObjectNode json = new ObjectMapper().createObjectNode();
         json.put("message", failed.getMessage());
         String newResponse = new ObjectMapper().writeValueAsString(json);
         response.setContentType("application/json");
-        response.setContentLength(newResponse.getBytes("UTF-8").length);
-        response.getOutputStream().write(newResponse.getBytes("UTF-8"));
+        response.setContentLength(newResponse.getBytes(StandardCharsets.UTF_8).length);
+        response.getOutputStream().write(newResponse.getBytes(StandardCharsets.UTF_8));
         log.error(failed.getMessage());
     }
 
