@@ -14,7 +14,7 @@ export function AuctionDetails() {
 
   useEffect(() => {
     console.log("event 실행")
-    const eventSource = new EventSource(`http://localhost:8081/stream/auctions/${auctionId.auctionId}`);
+    const eventSource = new EventSource(`http://tang-alb-1289213228.ap-northeast-2.elb.amazonaws.com:8081/stream/auctions/${auctionId.auctionId}`);
     console.log(eventSource)
 
     eventSource.onmessage = (event) => {

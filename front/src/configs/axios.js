@@ -2,7 +2,7 @@ import axios from 'axios';
 
 export const Axios = axios.create({
     withCredentials: true,
-    baseURL: 'http://localhost:8080',
+    baseURL: 'http://tang-alb-1289213228.ap-northeast-2.elb.amazonaws.com:8080',
     headers: {'Content-Type': 'application/json'}
 });
 
