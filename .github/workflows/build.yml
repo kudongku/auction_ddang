@@ -12,7 +12,7 @@ env:
   IMAGE_TAG: 0.1.0
   ECS_TASK_DEFINITION: tang-task-family-revision2.json
   CONTAINER_NAME: tang-container
-  ECS_SERVICE: tang_service_app
+  ECS_SERVICE: tang_service
   ECS_CLUSTER: tang-cluster
 
 jobs:
