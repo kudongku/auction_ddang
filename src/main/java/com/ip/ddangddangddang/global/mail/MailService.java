@@ -30,7 +30,7 @@ public class MailService {
         }
     }
 
-    private void sendNoBuyerNotification(String sellerEmail, String sellerNickname, String t) {
+    public void sendNoBuyerNotification(String sellerEmail, String sellerNickname, String t) {
         String title = "땅땅땅! [" + t + "] 게시글의 경매가 종료되었습니다!";
         String content =
             sellerNickname + "님!"
@@ -41,7 +41,7 @@ public class MailService {
         sendEmail(sellerEmail, title, content);
     }
 
-    private void sendSellerBuyerNotification(String sellerEmail, String sellerNickname,
+    public void sendSellerBuyerNotification(String sellerEmail, String sellerNickname,
         Long buyerId, String t, Long price) {
         User buyer = userService.getUserByIdOrElseThrow(buyerId);
 
@@ -64,7 +64,7 @@ public class MailService {
         sendEmail(buyer.getEmail(), buyerTitle, buyerContent);
     }
 
-    private void sendEmail(String recipientEmail, String subject, String text) {
+    public void sendEmail(String recipientEmail, String subject, String text) {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(recipientEmail);
         message.setFrom(senderEmail);
