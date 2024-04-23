@@ -2,7 +2,8 @@
 
 # 🛒 [땅땅땅] 우리동네 경매서비스
 
-<img width="598" alt="스크린샷 2024-04-15 12 31 40" src="https://github.com/IP-I-s-Protocol/DDang/assets/148612321/130dd804-1a60-4536-8c5f-abfa8dd5be71">
+
+![image (4)](https://github.com/IP-I-s-Protocol/DDang/assets/148612321/0ec6f2ab-78fe-4354-88e8-64d2d246f888)
 
 
 ---
@@ -19,17 +20,18 @@
 --- 
 ## 📚 기술스택
 
-- CICD와 기능으로 나눌까요?
-
 <img src="https://img.shields.io/badge/springboot-6DB33F?style=for-the-badge&logo=springboot&logoColor=white">
 <br/>
 
+```CICD```
+
 <img src="https://img.shields.io/badge/github Actions-2088FF?style=for-the-badge&logo=GitHubActions&logoColor=white">
 <img src="https://img.shields.io/badge/docker-2496ED?style=for-the-badge&logo=docker&logoColor=white">
-<br/>
 <img src="https://img.shields.io/badge/amazon ECR-FF8000?style=for-the-badge&logo=amazon&logoColor=white">
 <img src="https://img.shields.io/badge/amazon ecs-FF9900?style=for-the-badge&logo=amazonecs&logoColor=white">
 <br/>
+
+```DB```
 
 <img src="https://img.shields.io/badge/amazon s3-569A31?style=for-the-badge&logo=amazons3&logoColor=white">
 <img src="https://img.shields.io/badge/amazon elasticache-C925D1?style=for-the-badge&logo=amazon&logoColor=white">
