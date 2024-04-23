@@ -14,6 +14,7 @@ import com.ip.ddangddangddang.domain.file.repository.FileRepository;
 import com.ip.ddangddangddang.domain.file.values.FileValues;
 import com.ip.ddangddangddang.domain.user.service.UserService;
 import com.ip.ddangddangddang.global.exception.custom.EmptyImageException;
+import com.ip.ddangddangddang.global.s3.FileUploadService;
 import java.io.IOException;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
@@ -63,9 +64,6 @@ class FileServiceTest implements FileValues {
         @Test
         @DisplayName("upload시 empty fileImage로 실패시")
         public void testUpload_EmptyImageException() {
-            given(userService.getUserByIdOrElseThrow(USER_ID))
-                .willReturn(USER);
-
             assertThrows(
                 EmptyImageException.class,
                 () -> fileService.upload(MOCK_MULTIPART_FILE_EMPTY, OBJECT_NAME, USER_ID)

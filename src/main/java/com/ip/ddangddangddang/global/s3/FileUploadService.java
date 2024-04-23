@@ -1,4 +1,4 @@
-package com.ip.ddangddangddang.domain.file.service;
+package com.ip.ddangddangddang.global.s3;
 
 import java.io.IOException;
 import org.springframework.web.multipart.MultipartFile;

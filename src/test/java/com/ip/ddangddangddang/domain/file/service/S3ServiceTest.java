@@ -12,6 +12,7 @@ import com.amazonaws.services.s3.model.AmazonS3Exception;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.ip.ddangddangddang.domain.file.values.FileValues;
 import com.ip.ddangddangddang.global.exception.custom.NotValidBucketException;
+import com.ip.ddangddangddang.global.s3.S3Service;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;

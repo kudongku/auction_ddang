@@ -1,4 +1,4 @@
-package com.ip.ddangddangddang.domain.file.service;
+package com.ip.ddangddangddang.global.s3;
 
 import com.amazonaws.HttpMethod;
 import com.amazonaws.services.s3.AmazonS3;
@@ -13,12 +13,12 @@ import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 @RequiredArgsConstructor
-@Service
-public class S3Service implements FileUploadService{
+@Component
+public class S3Service implements FileUploadService {
 
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
@@ -37,7 +37,8 @@ public class S3Service implements FileUploadService{
             throw new NotValidBucketException("존재하지 않는 버킷입니다.");
         }
 
-        return URLDecoder.decode(amazonS3.getUrl(bucket, keyName).toString(), StandardCharsets.UTF_8);
+        return URLDecoder.decode(amazonS3.getUrl(bucket, keyName).toString(),
+            StandardCharsets.UTF_8);
     }
 
     @Override

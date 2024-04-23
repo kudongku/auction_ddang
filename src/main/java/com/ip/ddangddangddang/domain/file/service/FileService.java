@@ -7,6 +7,7 @@ import com.ip.ddangddangddang.domain.file.repository.FileRepository;
 import com.ip.ddangddangddang.domain.user.entity.User;
 import com.ip.ddangddangddang.domain.user.service.UserService;
 import com.ip.ddangddangddang.global.exception.custom.EmptyImageException;
+import com.ip.ddangddangddang.global.s3.FileUploadService;
 import java.io.IOException;
 import java.util.Optional;
 import java.util.UUID;
@@ -26,12 +27,12 @@ public class FileService {
 
     @Transactional
     public FileCreateResponseDto upload(MultipartFile auctionImage, String objectName, Long userId) {
-        User user = userService.getUserByIdOrElseThrow(userId);
 
         if (auctionImage.isEmpty()) {
             throw new EmptyImageException("이미지가 존재하지 않습니다.");
         }
 
+        User user = userService.getUserByIdOrElseThrow(userId);
         String keyName = createKeyName(objectName);
 
         String filePath;

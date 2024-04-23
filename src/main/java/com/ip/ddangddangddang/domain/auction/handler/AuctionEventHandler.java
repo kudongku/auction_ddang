@@ -14,7 +14,7 @@ public class AuctionEventHandler {
 
     @EventListener
     public void AuctionKeyExpiredEvent(AuctionKeyExpiredEvent auctionKeyExpiredEvent){
-        auctionService.updateStatusToHold(auctionKeyExpiredEvent.getMessage());
+        auctionService.updateStatusToHold(auctionKeyExpiredEvent.getAuctionId());
     }
 
 }

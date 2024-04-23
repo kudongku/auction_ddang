@@ -11,7 +11,7 @@ import org.springframework.jdbc.datasource.lookup.AbstractRoutingDataSource;
 public class DynamicRoutingDataSource extends AbstractRoutingDataSource {
 
     @Override
-    protected Object determineCurrentLookupKey() {
+    protected String determineCurrentLookupKey() {
         String dataSourceName = isCurrentTransactionReadOnly() ? SECONDARY : PRIMARY;
         log.info(">>>>>> current data source : {}", dataSourceName);
         return dataSourceName;

@@ -6,5 +6,5 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public class AuctionKeyExpiredEvent {
-    private String message;
+    private Long auctionId;
 }
