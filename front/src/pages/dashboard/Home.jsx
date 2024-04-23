@@ -21,30 +21,30 @@ export function Home() {
   const debounceTimer = useRef(null);
 
   //스크롤 감지 -> 다음페이지 로드하기
-  const handleObserver = (entities) => {
-    const target = entities[0];
-    if (target.isIntersecting && !isLoading && hasNextPage) {
-      setPageNumber((prevPageNumber) => prevPageNumber + 1);
-    }
-  };
-
-  useEffect(() => {
-    const option = {
-      root: null,
-      rootMargin: '20px',
-      threshold: 0,
-    };
-    const observer = new IntersectionObserver(handleObserver, option);
-    if (loader.current && hasNextPage) {
-      observer.observe(loader.current);
-    }
-
-    return () => {
-      if (loader.current) {
-        observer.unobserve(loader.current);
-      }
-    };
-  }, [isLoading, hasNextPage]);
+  // const handleObserver = (entities) => {
+  //   const target = entities[0];
+  //   if (target.isIntersecting && !isLoading && hasNextPage) {
+  //     setPageNumber((prevPageNumber) => prevPageNumber + 1);
+  //   }
+  // };
+  //
+  // useEffect(() => {
+  //   const option = {
+  //     root: null,
+  //     rootMargin: '20px',
+  //     threshold: 0,
+  //   };
+  //   const observer = new IntersectionObserver(handleObserver, option);
+  //   if (loader.current && hasNextPage) {
+  //     observer.observe(loader.current);
+  //   }
+  //
+  //   return () => {
+  //     if (loader.current) {
+  //       observer.unobserve(loader.current);
+  //     }
+  //   };
+  // }, [isLoading, hasNextPage]);
 
   // Search에 대한 Debouncing 처리
   useEffect(() => {

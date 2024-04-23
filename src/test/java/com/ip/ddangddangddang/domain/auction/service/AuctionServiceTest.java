@@ -4,7 +4,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.times;
@@ -25,9 +24,9 @@ import com.ip.ddangddangddang.global.exception.custom.FileNotFoundException;
 import com.ip.ddangddangddang.global.exception.custom.UserHasNotAuthorityToAuctionException;
 import com.ip.ddangddangddang.global.exception.custom.UserHasNotAuthorityToFileException;
 import com.ip.ddangddangddang.global.exception.custom.UserNotFoundException;
+import com.ip.ddangddangddang.global.redis.CacheService;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.TimeUnit;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -35,8 +34,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.ValueOperations;
 
 @ExtendWith(MockitoExtension.class)
 class AuctionServiceTest implements AuctionServiceTestValues {
@@ -57,10 +54,7 @@ class AuctionServiceTest implements AuctionServiceTestValues {
     private TownService townService;
 
     @Mock
-    private RedisTemplate<String, String> redisTemplate;
-
-    @Mock
-    private ValueOperations<String, String> valueOperations;
+    private CacheService cacheService;
 
     @Nested
     @DisplayName("옥션 생성 테스크")
@@ -73,13 +67,11 @@ class AuctionServiceTest implements AuctionServiceTestValues {
             given(userService.getUserById(anyLong())).willReturn(Optional.ofNullable(TEST_USER1));
             given(fileService.getFileById(anyLong())).willReturn(Optional.ofNullable(TEST_FILE1));
             given(auctionRepository.save(any(Auction.class))).willReturn(TEST_AUCTION1);
-            given(redisTemplate.opsForValue()).willReturn(valueOperations);
             //when
             auctionService.createAuction(auctionRequestDto, TEST_USER1_ID);
             //then
-            then(valueOperations).should(times(1)).set(any(String.class), any(String.class));
-            then(redisTemplate).should(times(1))
-                .expire(anyString(), anyLong(), any(TimeUnit.class));
+            then(cacheService).should(times(1))
+                .setAuctionExpiredKey(anyLong());
         }
 
         @Test
