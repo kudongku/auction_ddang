@@ -27,7 +27,7 @@ jobs:
         run: chmod +x ./gradlew
 
       - name: create application.properties
-        if: contains(github.ref, 'main')
+        if: contains(github.ref, 'dev')
         run: |
           cd ./src/main/resources
           touch ./application.properties
