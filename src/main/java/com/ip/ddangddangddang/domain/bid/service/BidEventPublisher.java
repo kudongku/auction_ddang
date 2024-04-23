@@ -4,8 +4,8 @@ import com.ip.ddangddangddang.global.redis.CacheService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-@Service
 @RequiredArgsConstructor
+@Service
 public class BidEventPublisher {
 
     private final CacheService cacheService;
