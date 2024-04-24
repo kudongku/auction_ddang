@@ -28,8 +28,11 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
     private final JwtUtil jwtUtil;
 
     @Override
-    protected void doFilterInternal(HttpServletRequest req, HttpServletResponse res,
-        FilterChain filterChain) throws ServletException, IOException {
+    protected void doFilterInternal(
+        HttpServletRequest req,
+        HttpServletResponse res,
+        FilterChain filterChain
+    ) throws ServletException, IOException {
 
         // 순수한 토큰 값
         String tokenValue = jwtUtil.getJwtFromHeader(req);
@@ -57,7 +60,9 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
                 log.error(e.getMessage());
                 return;
             }
+
         }
+
         filterChain.doFilter(req, res);
     }
 
