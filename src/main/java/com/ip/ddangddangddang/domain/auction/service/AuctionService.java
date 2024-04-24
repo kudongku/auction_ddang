@@ -47,6 +47,7 @@ public class AuctionService {
     private final CacheService cacheService;
     private final CacheManager cacheManager;
 
+    @CacheEvict(value = "auctions", allEntries = true ,cacheManager = "cacheManager")
     @Transactional
     public void createAuction(
         AuctionRequestDto requestDto,
@@ -67,6 +68,7 @@ public class AuctionService {
         cacheService.setAuctionExpiredKey(auction.getId());
     }
 
+    @CacheEvict(value = "auctions", allEntries = true ,cacheManager = "cacheManager")
     @Transactional
     public void deleteAuction(Long auctionId, Long userId) {
         Auction auction = validatedAuction(
