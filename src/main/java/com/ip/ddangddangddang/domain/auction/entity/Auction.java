@@ -18,6 +18,8 @@ import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -76,7 +78,9 @@ public class Auction extends Timestamp {
         this.content = requestDto.getContent();
         this.price = 0L;
         this.statusEnum = StatusEnum.ON_SALE;
-        this.finishedAt = LocalDateTime.now().plusMinutes(5L);
+        this.finishedAt = ZonedDateTime.now(ZoneId.of("Asia/Seoul")).toLocalDateTime()
+            .plusMinutes(5L);
+        // this.finishedAt = LocalDateTime.now().plusMinutes(5L);
         this.user = user;
         this.file = file;
     }
@@ -93,4 +97,5 @@ public class Auction extends Timestamp {
         this.price = price;
         this.buyerId = buyerId;
     }
+
 }
