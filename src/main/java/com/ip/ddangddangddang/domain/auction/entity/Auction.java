@@ -31,7 +31,7 @@ import org.hibernate.annotations.SQLRestriction;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@SQLDelete(sql = "UPDATE auctions SET deleted_at = NOW() WHERE id = ?")
+@SQLDelete(sql = "UPDATE auctions SET deleted_at = CONVERT_TZ(NOW(), @@session.time_zone, '+09:00') WHERE id = ?")
 @SQLRestriction(value = "deleted_at IS NULL")
 @Entity
 @Table(name = "auctions")

@@ -21,8 +21,7 @@ import org.hibernate.annotations.SQLRestriction;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@SQLDelete(sql = "UPDATE users SET deleted_at = NOW() WHERE id = ?")
-@SQLRestriction(value = "deleted_at IS NULL")
+@SQLDelete(sql = "UPDATE users SET deleted_at = CONVERT_TZ(NOW(), @@session.time_zone, '+09:00') WHERE id = ?")@SQLRestriction(value = "deleted_at IS NULL")
 @Entity
 @Table(name = "users")
 public class User extends Timestamp {
