@@ -76,7 +76,7 @@ public class Auction extends Timestamp {
         this.content = requestDto.getContent();
         this.price = 0L;
         this.statusEnum = StatusEnum.ON_SALE;
-        this.finishedAt = LocalDateTime.now().plusDays(1);
+        this.finishedAt = LocalDateTime.now().plusMinutes(5L);
         this.user = user;
         this.file = file;
     }
