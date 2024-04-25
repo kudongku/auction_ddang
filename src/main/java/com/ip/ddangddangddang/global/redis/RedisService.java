@@ -19,7 +19,7 @@ public class RedisService implements CacheService {
         ValueOperations<String, String> operations = redisTemplate.opsForValue();
         String redisKey = "auctionId:" + auctionId;
         operations.set(redisKey, "1");
-        redisTemplate.expire(redisKey, 5, TimeUnit.MINUTES);
+        redisTemplate.expire(redisKey, 10, TimeUnit.SECONDS);
         log.info("경매 등록, " + redisKey);
     }
 
