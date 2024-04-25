@@ -25,6 +25,7 @@ public class RedisKeyExpiredListener extends KeyExpirationEventMessageListener {
         this.applicationEventPublisher = applicationEventPublisher;
     }
 
+
     /**
      * @param message redis key
      * @param pattern __keyEvent@*__:expired 만료시 알림을 받으면 이 메소드가 실행됨
