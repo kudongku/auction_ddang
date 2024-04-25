@@ -3,6 +3,7 @@
 # 🛒 [땅땅땅] 우리동네 경매서비스
 
 
+
 ![image (4)](https://github.com/IP-I-s-Protocol/DDang/assets/148612321/0ec6f2ab-78fe-4354-88e8-64d2d246f888)
 
 

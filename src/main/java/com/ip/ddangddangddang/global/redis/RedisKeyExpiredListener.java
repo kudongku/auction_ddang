@@ -1,20 +1,16 @@
 package com.ip.ddangddangddang.global.redis;
 
 import com.ip.ddangddangddang.domain.auction.event.AuctionKeyExpiredEvent;
-import java.util.Properties;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.redis.connection.Message;
 import org.springframework.data.redis.connection.MessageListener;
-import org.springframework.data.redis.connection.RedisConnection;
 import org.springframework.data.redis.listener.KeyExpirationEventMessageListener;
 import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
 
 @Component
 public class RedisKeyExpiredListener extends KeyExpirationEventMessageListener {
 
-    private final RedisMessageListenerContainer redisMessageListenerContainer;
     private final ApplicationEventPublisher applicationEventPublisher;
 
     /**
@@ -26,26 +22,9 @@ public class RedisKeyExpiredListener extends KeyExpirationEventMessageListener {
         ApplicationEventPublisher applicationEventPublisher
     ) {
         super(listenerContainer);
-        this.redisMessageListenerContainer = listenerContainer;
         this.applicationEventPublisher = applicationEventPublisher;
     }
 
-    public void init() {
-        if (StringUtils.hasText("Ex")) {
-            RedisConnection connection = this.redisMessageListenerContainer.getConnectionFactory().getConnection();
-
-            try {
-                Properties config = connection.getConfig("notify-keyspace-events");
-                if (!StringUtils.hasText(config.getProperty("notify-keyspace-events"))) {
-                    connection.setConfig("notify-keyspace-events", "Ex");
-                }
-            } finally {
-                connection.close();
-            }
-        }
-
-        this.doRegister(this.redisMessageListenerContainer);
-    }
 
     /**
      * @param message redis key
