@@ -69,8 +69,7 @@ public class AuctionService {
     @CacheEvict(value = "auctions", allEntries = true ,cacheManager = "cacheManager")
     @Transactional
     public void deleteAuction(Long auctionId, Long userId) {
-        Auction auction = validatedAuction(
-            auctionId);
+        Auction auction = validatedAuction(auctionId);
 
         if (!userId.equals(auction.getUser().getId())) {
             throw new UserHasNotAuthorityToAuctionException("작성자가 아닙니다.");
@@ -166,8 +165,7 @@ public class AuctionService {
 
         List<Long> townList = user.getTown().getNeighborIdList();
 
-        return auctionRepository.findAllByFilters(townList, status,
-                title).stream()
+        return auctionRepository.findAllByFilters(townList, status, title).stream()
             .map(auction ->
                 new AuctionListResponseDto(
                     auction.getId(),
