@@ -18,7 +18,6 @@ public class AuctionListResponseDto {
     private String title;
     private StatusEnum status;
     private String nickname;
-
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm")

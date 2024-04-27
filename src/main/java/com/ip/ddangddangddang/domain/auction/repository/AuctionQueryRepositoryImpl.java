@@ -23,9 +23,7 @@ public class AuctionQueryRepositoryImpl implements AuctionQueryRepository {
     ) {
         return queryFactory.selectFrom(auction)
             .where(auction.townId.in(neighbor),
-                eqStatusAndContainsTitle(status, title))//.in : List안에 있는 것 중에 찾는 것
-//            .where(auction.townId.in(neighbor)
-//                .and(eqStatusAndContainsTitle(status, title))) -> 이렇게도 가능
+                eqStatusAndContainsTitle(status, title))
             .orderBy(auction.createdAt.desc())
             .fetch();
 
@@ -86,10 +84,7 @@ public class AuctionQueryRepositoryImpl implements AuctionQueryRepository {
         if (resultStatus != null) {
             return resultStatus;
         }
-        if (resultContainsTitle != null) {
-            return resultContainsTitle;
-        }
-        return null;
+        return resultContainsTitle;
     }
 
 }
