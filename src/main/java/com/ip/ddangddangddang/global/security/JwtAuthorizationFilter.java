@@ -34,9 +34,8 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
         FilterChain filterChain
     ) throws ServletException, IOException {
 
-        // 순수한 토큰 값
         String tokenValue = jwtUtil.getJwtFromHeader(req);
-        // 토큰이 비어 있는지 확인
+
         if (StringUtils.hasText(tokenValue)) {
 
             try {
@@ -66,7 +65,6 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
         filterChain.doFilter(req, res);
     }
 
-    // 인증 처리
     public void setAuthentication(Long userId, String email) {
         SecurityContext context = SecurityContextHolder.createEmptyContext();
         Authentication authentication = createAuthentication(userId, email);
@@ -75,7 +73,6 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
         SecurityContextHolder.setContext(context);
     }
 
-    // 인증 객체 생성
     private Authentication createAuthentication(Long userId, String email) {
         User user = new User(userId, email);
         UserDetails userDetails = new UserDetailsImpl(user);

@@ -8,7 +8,6 @@ import lombok.Getter;
 public class FileReadResponseDto {
 
     private Long fileId;
-
     private String preSignedUrl;
 
 }

@@ -23,7 +23,6 @@ public abstract class Timestamp {
     @Column
     private LocalDateTime deletedAt;
 
-    // 생성 시간을 한국 시간으로 설정하는 메서드
     @PrePersist
     public void prePersist() {
         ZoneId zoneId = ZoneId.of("Asia/Seoul");

@@ -68,7 +68,6 @@ public class UserService {
         ));
     }
 
-    // 굳이 하고 싶을 때 이런 식으로 하나 더 만들어도 된다.
     public User getUserByIdOrElseThrow(Long userId) {
         return getUserById(userId).orElseThrow(
             () -> new CustomUserException("회원이 존재하지 않습니다."));

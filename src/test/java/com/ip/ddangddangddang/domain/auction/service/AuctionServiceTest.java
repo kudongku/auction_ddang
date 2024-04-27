@@ -152,7 +152,7 @@ class AuctionServiceTest implements AuctionServiceTestValues {
             AuctionUpdateResponseDto auctionUpdateResponseDto = auctionService.updateStatusToHold(
                 TEST_TOWN1_AUCTION1_ID);
             //then
-            assertEquals(StatusEnum.HOLD, auctionUpdateResponseDto.getStatusEnum()); // service에서 void로 두니까 이게 안돼서 수정
+            assertEquals(StatusEnum.HOLD, auctionUpdateResponseDto.getStatusEnum());
             then(mailService).should(times(1)).sendMail(any(), any(), any(), any(), any());
         }
 
@@ -254,7 +254,6 @@ class AuctionServiceTest implements AuctionServiceTestValues {
 
         }
 
-        //todo
         @Test
         void 옥션_전체_조회_실패_테스트_유저가_없음() {
             //given

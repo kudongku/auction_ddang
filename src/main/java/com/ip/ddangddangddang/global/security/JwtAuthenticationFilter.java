@@ -35,7 +35,6 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         setFilterProcessesUrl("/v1/users/signin");
     }
 
-    // 로그인 시도
     @Override
     public Authentication attemptAuthentication(
         HttpServletRequest request,
@@ -47,9 +46,8 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
                 UserSigninRequestDto.class
             );
 
-            //인증 처리를 하는 메서드 입력받은 이메일과 비밀번호로 검증
             User user = userRepository.findByEmail(requestDto.getEmail()).orElseThrow(
-                () -> new BadCredentialsException("잘못된 이메일을 입력했습니다.")); //인증실패를 위한 예외
+                () -> new BadCredentialsException("잘못된 이메일을 입력했습니다."));
 
             if (!passwordEncoder.matches(requestDto.getPassword(), user.getPassword())) {
                 throw new BadCredentialsException("잘못된 비밀번호를 입력했습니다.");
@@ -78,7 +76,6 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         response.addHeader(JwtUtil.AUTHORIZATION_HEADER, token);
     }
 
-    // 로그인 실패
     @Override
     protected void unsuccessfulAuthentication(
         HttpServletRequest request,

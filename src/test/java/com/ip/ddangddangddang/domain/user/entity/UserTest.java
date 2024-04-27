@@ -20,9 +20,9 @@ public class UserTest implements UserFixture {
         User user = new User(userId, email);
 
         // then
-        assertNotNull(user); // User 객체가 null이 아닌지 확인
-        assertEquals(userId, user.getId()); // userId가 올바르게 설정되었는지 확인
-        assertEquals(email, user.getEmail()); // email이 올바르게 설정되었는지 확인
+        assertNotNull(user);
+        assertEquals(userId, user.getId());
+        assertEquals(email, user.getEmail());
     }
 
     @Test
