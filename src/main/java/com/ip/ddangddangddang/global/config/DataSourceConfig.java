@@ -58,7 +58,6 @@ public class DataSourceConfig {
     @Primary
     @Bean
     public DataSource dataSource(DataSource routingDataSource) {
-        log.info(">>>>>>>>>>>>>>>???");
         return new LazyConnectionDataSourceProxy(routingDataSource);
     }
 
