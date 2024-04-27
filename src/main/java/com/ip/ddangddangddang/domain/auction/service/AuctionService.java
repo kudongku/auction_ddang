@@ -28,6 +28,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
@@ -49,10 +50,7 @@ public class AuctionService {
 
     @CacheEvict(value = "auctions", allEntries = true ,cacheManager = "cacheManager")
     @Transactional
-    public void createAuction(
-        AuctionRequestDto requestDto,
-        Long userId
-    ) { // Todo fileId 곂칠때 duplicated error
+    public void createAuction(AuctionRequestDto requestDto, Long userId) { // Todo fileId 곂칠때 duplicated error
         User user = userService.getUserById(userId).orElseThrow(
             () -> new UserNotFoundException("회원이 존재하지 않습니다.")
         ); //  없는게 정상 로직일 수 있다 -> 없는게 정상로직일 때 옵셔널로 받아오고 있어야하는 로직은 orelsethrow를 써도 된다. 없을 게 정상로직으로 추가될 수 있으니 확장성 측면에서 옵셔널로 받는게 좋다
@@ -83,12 +81,10 @@ public class AuctionService {
     }
 
     @Transactional
-    public void updateStatusToHold(Long auctionId) {
+    public AuctionUpdateResponseDto updateStatusToHold(Long auctionId) {
         log.info("경매 기한 만료, auctionId : " + auctionId);
         Auction auction = validatedAuction(auctionId);
         auction.updateStatusToHold();
-
-        Objects.requireNonNull(cacheManager.getCache("auction")).evict(auctionId);
 
         mailService.sendMail(
             auction.getUser().getEmail(),
@@ -96,6 +92,17 @@ public class AuctionService {
             auction.getBuyerId(),
             auction.getTitle(),
             auction.getPrice()
+        );
+
+        return new AuctionUpdateResponseDto(
+            auction.getId(),
+            auction.getTownId(),
+            auction.getTitle(),
+            auction.getContent(),
+            auction.getPrice(),
+            auction.getBuyerId(),
+            auction.getStatusEnum(),
+            auction.getFinishedAt()
         );
     }
 
@@ -197,8 +204,7 @@ public class AuctionService {
 
     // TODO: 4/8/24 자신이 올린 옥션리스트 보기 getList
     public Slice<AuctionListResponseDto> getMyAuctions(Long userId, Pageable pageable) {
-        return auctionRepository.
-            findAuctionsByUserId(userId, pageable)
+        return auctionRepository.findAuctionsByUserId(userId, pageable)
             .map( // page에는 .map이 내장되어있음
 //                (Auction auction) -> {
 //                    return new AuctionListResponseDto(auction.getId(), auction.getTitle(), // (의미적)한 문장이면 return 생략
@@ -218,7 +224,8 @@ public class AuctionService {
 
     // TODO: 4/8/24 자신이 입찰한(최고가를 부른 게시글) 게시글리스트 보기 getList
     public Slice<AuctionListResponseDto> getMyBids(Long userId, Pageable pageable) {
-        return auctionRepository.findBidsByBuyerId(userId, pageable).map(
+        return auctionRepository.findBidsByBuyerId(userId, pageable)
+            .map(
             auction -> new AuctionListResponseDto(
                 auction.getId(),
                 auction.getTitle(),
