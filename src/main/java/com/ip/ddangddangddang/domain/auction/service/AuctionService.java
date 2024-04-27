@@ -80,6 +80,10 @@ public class AuctionService {
         auctionRepository.delete(auction);
     }
 
+    @Caching(evict = {
+        @CacheEvict(value = "auction", key = "#auctionId", cacheManager = "cacheManager"),
+        @CacheEvict(value = "auctions", allEntries = true, cacheManager = "cacheManager")
+    })
     @Transactional
     public AuctionUpdateResponseDto updateStatusToHold(Long auctionId) {
         log.info("경매 기한 만료, auctionId : " + auctionId);
@@ -106,6 +110,10 @@ public class AuctionService {
         );
     }
 
+    @Caching(evict = {
+        @CacheEvict(value = "auction", key = "#auctionId", cacheManager = "cacheManager"),
+        @CacheEvict(value = "auctions", allEntries = true, cacheManager = "cacheManager")
+    })
     @CacheEvict(value = "auction", allEntries = true , cacheManager = "cacheManager")
     @Transactional
     public AuctionUpdateResponseDto updateStatusToComplete(Long auctionId, Long userId) {
