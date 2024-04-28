@@ -2,15 +2,7 @@
 
 # 🛒 [땅땅땅] 우리동네 경매서비스
 
-
-
-![image (4)](https://github.com/IP-I-s-Protocol/DDang/assets/148612321/0ec6f2ab-78fe-4354-88e8-64d2d246f888)
-
-
----
-## 🏛️ 기술 아키텍쳐
-
-<img width="950" alt="팀플 아키텍처 - 거의 최종" src="https://github.com/IP-I-s-Protocol/DDang/assets/151606621/06daf0f6-163a-44f3-8c9c-58e0933782b3">
+<img width="950" alt="제목을-입력해주세요_-001 (1)" src="https://github.com/IP-I-s-Protocol/DDang/assets/151606621/575a46f1-8128-44fd-ad01-9c158fe15148">
 
 ---
 ## 👫🏼 Team
@@ -39,8 +31,14 @@
 <img src="https://img.shields.io/badge/amazon Aurora DB-527FFF?style=for-the-badge&logo=amazonrds&logoColor=white">
 
 ---
+## 🏛️ 기술 아키텍쳐
+
+<img width="950" alt="팀플 아키텍처 - 거의 최종" src="https://github.com/IP-I-s-Protocol/DDang/assets/151606621/06daf0f6-163a-44f3-8c9c-58e0933782b3">
+
+---
+## 🍀 ERD
+<img width="950" alt="image (5)" src="https://github.com/IP-I-s-Protocol/DDang/assets/151606621/6d99c9aa-e501-451c-b691-0cf8b3781d80">
 
 
-###### 기술스택 출처: https://cocoon1787.tistory.com/689
-###### 팀원표 출처: https://profile-table-md.vercel.app/
+
 <img src="https://capsule-render.vercel.app/api?type=waving&color=BDBDC8&height=150&section=footer" />
