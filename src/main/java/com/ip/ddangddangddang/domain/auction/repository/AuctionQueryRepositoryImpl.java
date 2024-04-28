@@ -18,14 +18,14 @@ public class AuctionQueryRepositoryImpl implements AuctionQueryRepository {
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public List<Auction> findAllByFilters(List<Long> neighbor,
-        StatusEnum status, String title
+    public List<Auction> findAllByFilters(
+        List<Long> neighbor,
+        StatusEnum status,
+        String title
     ) {
         return queryFactory.selectFrom(auction)
             .where(auction.townId.in(neighbor),
-                eqStatusAndContainsTitle(status, title))//.in : List안에 있는 것 중에 찾는 것
-//            .where(auction.townId.in(neighbor)
-//                .and(eqStatusAndContainsTitle(status, title))) -> 이렇게도 가능
+                eqStatusAndContainsTitle(status, title))
             .orderBy(auction.createdAt.desc())
             .fetch();
 
@@ -44,14 +44,12 @@ public class AuctionQueryRepositoryImpl implements AuctionQueryRepository {
         return new SliceImpl<>(result, pageable, hasNextPage(result, pageable.getPageSize()));
     }
 
-    @Override // Todo 해결해야해
+    @Override
     public Slice<Auction> findBidsByBuyerId(Long userId, Pageable pageable) {
 
         List<Auction> result = queryFactory.selectFrom(auction)
-            .where(
-                auction.buyerId.isNotNull()
-                    .and(auction.buyerId.eq(userId))
-            )
+            .where(auction.buyerId.isNotNull()
+                    .and(auction.buyerId.eq(userId)))
             .offset(pageable.getOffset())
             .limit(pageable.getPageSize())
             .fetch();
@@ -86,10 +84,7 @@ public class AuctionQueryRepositoryImpl implements AuctionQueryRepository {
         if (resultStatus != null) {
             return resultStatus;
         }
-        if (resultContainsTitle != null) {
-            return resultContainsTitle;
-        }
-        return null;
+        return resultContainsTitle;
     }
 
 }

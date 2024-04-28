@@ -61,7 +61,6 @@ public class Auction extends Timestamp {
     private StatusEnum statusEnum;
 
     @Column
-    @Temporal(TemporalType.TIMESTAMP)
     private LocalDateTime finishedAt;
 
     @ManyToOne

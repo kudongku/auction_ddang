@@ -8,8 +8,7 @@ import org.springframework.data.domain.Slice;
 
 public interface AuctionQueryRepository {
 
-    List<Auction> findAllByFilters(List<Long> neighbor, StatusEnum status,
-        String title);
+    List<Auction> findAllByFilters(List<Long> neighbor, StatusEnum status, String title);
 
     Slice<Auction> findAuctionsByUserId(Long userId, Pageable pageable);
 
