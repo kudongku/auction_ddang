@@ -2,7 +2,7 @@
 
 # 🛒 [땅땅땅] 우리동네 경매서비스
 
-<img width="950" alt="제목을-입력해주세요_-001 (1)" src="https://github.com/IP-I-s-Protocol/DDang/assets/151606621/575a46f1-8128-44fd-ad01-9c158fe15148">
+<img width="900" alt="제목을-입력해주세요_-001 (1)" src="https://github.com/IP-I-s-Protocol/DDang/assets/151606621/575a46f1-8128-44fd-ad01-9c158fe15148">
 
 ---
 ## 👫🏼 Team
