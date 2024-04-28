@@ -113,7 +113,6 @@ public class AuctionService {
         @CacheEvict(value = "auction", key = "#auctionId", cacheManager = "cacheManager"),
         @CacheEvict(value = "auctions", allEntries = true, cacheManager = "cacheManager")
     })
-    @CacheEvict(value = "auction", allEntries = true , cacheManager = "cacheManager")
     @Transactional
     public AuctionUpdateResponseDto updateStatusToComplete(Long auctionId, Long userId) {
         Auction auction = validatedAuction(auctionId);
