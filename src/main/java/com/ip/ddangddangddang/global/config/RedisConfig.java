@@ -1,5 +1,6 @@
 package com.ip.ddangddangddang.global.config;
 
+import com.ip.ddangddangddang.global.exception.CustomErrorHandler;
 import java.time.Duration;
 import org.redisson.Redisson;
 import org.redisson.api.RedissonClient;
@@ -64,6 +65,7 @@ public class RedisConfig {
     ) {
         RedisMessageListenerContainer redisMessageListenerContainer = new RedisMessageListenerContainer();
         redisMessageListenerContainer.setConnectionFactory(redisConnectionFactory);
+        redisMessageListenerContainer.setErrorHandler(new CustomErrorHandler());
         return redisMessageListenerContainer;
     }
 
