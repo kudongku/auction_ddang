@@ -1,6 +1,10 @@
 package com.ip.ddangddangddang.global.config;
 
+import com.ip.ddangddangddang.global.exception.CustomErrorHandler;
 import java.time.Duration;
+import org.redisson.Redisson;
+import org.redisson.api.RedissonClient;
+import org.redisson.config.Config;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.EnableCaching;
@@ -9,7 +13,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.cache.RedisCacheConfiguration;
 import org.springframework.data.redis.cache.RedisCacheManager;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
-import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
@@ -24,18 +27,21 @@ public class RedisConfig {
     private String host;
     @Value("${spring.data.redis.port}")
     private int port;
+    private static final String REDISSON_HOST_PREFIX = "redis://";
 
     @Bean
-    public RedisConnectionFactory redisConnectionFactory() {
-        return new LettuceConnectionFactory(host, port);
+    public RedissonClient redissonClient(){
+        Config config = new Config();
+        config.useSingleServer().setAddress(REDISSON_HOST_PREFIX + host + ":" + port);
+        return Redisson.create(config);
     }
 
     @Bean
-    public RedisTemplate<String, String> redisTemplate() {
+    public RedisTemplate<String, String> redisTemplate(RedisConnectionFactory redisConnectionFactory) {
         RedisTemplate<String, String> redisTemplate = new RedisTemplate<>(); // String, String 이유 설명
         redisTemplate.setKeySerializer(new StringRedisSerializer());
         redisTemplate.setValueSerializer(new StringRedisSerializer());
-        redisTemplate.setConnectionFactory(redisConnectionFactory());
+        redisTemplate.setConnectionFactory(redisConnectionFactory);
         return redisTemplate;
     }
 
@@ -53,16 +59,13 @@ public class RedisConfig {
             .cacheDefaults(redisCacheConfiguration).build();
     }
 
-    /*
-    기존 redis : key value 형태로 데이터 저장, 만료기한 정할 수 있음, 만료시 조용히 사라짐
-    bean 등록시 : 만료시 만료된 사실을 알 수 있음
-     */
     @Bean
     public RedisMessageListenerContainer redisMessageListenerContainer(
         RedisConnectionFactory redisConnectionFactory
     ) {
         RedisMessageListenerContainer redisMessageListenerContainer = new RedisMessageListenerContainer();
         redisMessageListenerContainer.setConnectionFactory(redisConnectionFactory);
+        redisMessageListenerContainer.setErrorHandler(new CustomErrorHandler());
         return redisMessageListenerContainer;
     }
 

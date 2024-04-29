@@ -25,16 +25,13 @@ public class ExcelReader {
 
         try (FileInputStream file = new FileInputStream(
             ("src/main/resources/townlist.xlsx"))) {
-            // 엑셀 파일 열기
+
             Workbook workbook = WorkbookFactory.create(file);
             int sheets = workbook.getNumberOfSheets();
 
-            // 총 시트 수만큼 for문 -> 모든 시트 돌려보기
             for (int i = 0; i < sheets; i++) {
-                // i 번째 시트 가져오기
                 Sheet sheet = workbook.getSheetAt(i);
 
-                // 모든 행 반복
                 for (int j = 1; j < sheet.getPhysicalNumberOfRows(); j++) {
                     Row row = sheet.getRow(j);
 

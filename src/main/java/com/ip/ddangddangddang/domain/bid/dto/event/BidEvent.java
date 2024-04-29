@@ -6,11 +6,8 @@ import lombok.Getter;
 public class BidEvent {
 
     private final Long bidId;
-
     private final Long auctionId;
-
     private final Long userId;
-
     private final Long price;
 
     public BidEvent(Long bidId, Long auctionId, Long userId, Long price) {

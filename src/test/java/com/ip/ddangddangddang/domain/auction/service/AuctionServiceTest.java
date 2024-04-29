@@ -4,8 +4,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 
 import com.ip.ddangddangddang.domain.auction.dto.request.AuctionRequestDto;
@@ -24,6 +26,7 @@ import com.ip.ddangddangddang.global.exception.custom.FileNotFoundException;
 import com.ip.ddangddangddang.global.exception.custom.UserHasNotAuthorityToAuctionException;
 import com.ip.ddangddangddang.global.exception.custom.UserHasNotAuthorityToFileException;
 import com.ip.ddangddangddang.global.exception.custom.UserNotFoundException;
+import com.ip.ddangddangddang.global.mail.MailService;
 import com.ip.ddangddangddang.global.redis.CacheService;
 import java.util.List;
 import java.util.Optional;
@@ -56,6 +59,9 @@ class AuctionServiceTest implements AuctionServiceTestValues {
     @Mock
     private CacheService cacheService;
 
+    @Mock
+    private MailService mailService;
+
     @Nested
     @DisplayName("옥션 생성 테스크")
     public class AuctionCreateTest {
@@ -86,7 +92,6 @@ class AuctionServiceTest implements AuctionServiceTestValues {
 
         }
 
-        //todo
         @Test
         void 옥션_생성_실패_테스트_유저가_존재하지_않음() {
             //given
@@ -97,7 +102,6 @@ class AuctionServiceTest implements AuctionServiceTestValues {
                 () -> auctionService.createAuction(auctionRequestDto, TEST_USER1_ID));
         }
 
-        //todo
         @Test
         void 옥션_생성_실패_테스트_이미지가_없음() {
             //given
@@ -136,18 +140,32 @@ class AuctionServiceTest implements AuctionServiceTestValues {
         }
     }
 
-//    @Nested
-//    @DisplayName("옥션 상태 hold로 변경")
-//    public class AuctionStatusHoldTest {
-//
-//        @Test
-//        void 옥션_HOLD로_상태_변경_성공_테스트() {
-//            //given
-//            given(auctionRepository.findById())
-//            //when
-//            //then
-//        }
-//    }
+    @Nested
+    @DisplayName("옥션 상태 hold로 변경")
+    public class AuctionStatusHoldTest {
+
+        @Test
+        void 옥션_HOLD로_상태_변경_성공_테스트() {
+            //given
+            given(auctionRepository.findById(anyLong())).willReturn(Optional.ofNullable(TEST_AUCTION1));
+            //when
+            AuctionUpdateResponseDto auctionUpdateResponseDto = auctionService.updateStatusToHold(
+                TEST_TOWN1_AUCTION1_ID);
+            //then
+            assertEquals(StatusEnum.HOLD, auctionUpdateResponseDto.getStatusEnum());
+            then(mailService).should(times(1)).sendMail(any(), any(), any(), any(), any());
+        }
+
+        @Test
+        void 옥션_HOLD로_상태_변경_실패_테스트_게시글_X() {
+            //given
+            given(auctionRepository.findById(anyLong())).willReturn(
+                Optional.empty());
+            //when,then
+            assertThrows(AuctionNotFoundException.class,
+                () -> auctionService.updateStatusToHold(TEST_TOWN1_AUCTION1_ID));
+        }
+    }
 
     @Nested
     @DisplayName("옥션 상태 completed로 변경 테스트")
@@ -236,7 +254,6 @@ class AuctionServiceTest implements AuctionServiceTestValues {
 
         }
 
-        //todo
         @Test
         void 옥션_전체_조회_실패_테스트_유저가_없음() {
             //given

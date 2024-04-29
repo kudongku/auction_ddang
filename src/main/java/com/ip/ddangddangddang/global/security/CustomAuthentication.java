@@ -12,7 +12,7 @@ public class CustomAuthentication implements Authentication {
 
     public CustomAuthentication(UserDetails userDetails) {
         this.userDetails = userDetails;
-        this.authenticated = true; // 사용자가 인증된 경우
+        this.authenticated = true;
     }
 
     @Override
@@ -20,20 +20,19 @@ public class CustomAuthentication implements Authentication {
         return null;
     }
 
-
     @Override
     public Object getCredentials() {
-        return null; // 사용자의 자격 증명 정보
+        return null;
     }
 
     @Override
     public Object getDetails() {
-        return null; // 기타 인증 정보
+        return null;
     }
 
     @Override
     public Object getPrincipal() {
-        return userDetails; // 사용자 정보
+        return userDetails;
     }
 
     @Override
@@ -49,6 +48,6 @@ public class CustomAuthentication implements Authentication {
     // nickname이 반환됨
     @Override
     public String getName() {
-        return userDetails.getUsername(); // 사용자 이름
+        return userDetails.getUsername();
     }
 }
