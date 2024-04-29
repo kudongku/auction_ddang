@@ -15,11 +15,9 @@ import com.ip.ddangddangddang.global.exception.custom.UserHasNotAuthorityToFileE
 import com.ip.ddangddangddang.global.exception.custom.UserNotFoundException;
 import jakarta.persistence.EntityNotFoundException;
 import java.io.FileNotFoundException;
-import java.util.Objects;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
@@ -42,7 +40,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(EntityNotFoundException.class)
     public ResponseEntity<ExceptionDto> entityNotFoundException(final EntityNotFoundException e) {
         log.error("EntityNotFoundException: ", e);
-        return createResponse(HttpStatus.BAD_REQUEST,  e.getMessage());
+        return createResponse(HttpStatus.BAD_REQUEST, e.getMessage());
     }
 
     @ExceptionHandler(CustomAuctionException.class)
@@ -90,14 +88,14 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(FileNotFoundException.class)
     public ResponseEntity<ExceptionDto> fileNotFoundException(final FileNotFoundException e) {
         log.error("FileNotFoundException: ", e);
-        return createResponse(HttpStatus.BAD_REQUEST,  e.getMessage());
+        return createResponse(HttpStatus.BAD_REQUEST, e.getMessage());
     }
 
     @ExceptionHandler(UserHasNotAuthorityToFileException.class)
     public ResponseEntity<ExceptionDto> userHasNoAuthorityException(
         final UserHasNotAuthorityToFileException e) {
         log.error("UserHasNoAuthorityException: ", e);
-        return createResponse(HttpStatus.BAD_REQUEST,e.getMessage());
+        return createResponse(HttpStatus.BAD_REQUEST, e.getMessage());
     }
 
     @ExceptionHandler(UserHasNotAuthorityToAuctionException.class)
