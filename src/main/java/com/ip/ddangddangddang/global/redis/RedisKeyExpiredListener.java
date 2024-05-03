@@ -3,7 +3,6 @@ package com.ip.ddangddangddang.global.redis;
 import com.ip.ddangddangddang.domain.auction.event.AuctionKeyExpiredEvent;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.redis.connection.Message;
-import org.springframework.data.redis.connection.MessageListener;
 import org.springframework.data.redis.listener.KeyExpirationEventMessageListener;
 import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 import org.springframework.stereotype.Component;
