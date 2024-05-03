@@ -17,10 +17,13 @@ import org.springframework.stereotype.Component;
 public class RedisLockAspect {
 
     private final RedissonClient redissonClient;
+    private final AopForTransaction aopForTransaction;
 
     @Around("@annotation(distributedLock)")
-    public Object applyLock(ProceedingJoinPoint joinPoint, DistributedLock distributedLock)
-        throws Throwable {
+    public Object applyLock(
+        ProceedingJoinPoint joinPoint,
+        DistributedLock distributedLock
+    ) throws Throwable {
         RLock lock = redissonClient.getFairLock(distributedLock.value());
 
         try {
@@ -29,13 +32,14 @@ public class RedisLockAspect {
                 distributedLock.leaseTime(),
                 distributedLock.timeUnit()
             );
+
             log.info("Lock 획득 성공");
 
             if (!isLockSuccess) {
                 throw new TimeOutLockException("Lock 획득 실패");
             }
 
-            return joinPoint.proceed();
+            return aopForTransaction.proceed(joinPoint);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             throw new TimeOutLockException("Lock 획득 시 Interrupt 발생");
@@ -43,6 +47,7 @@ public class RedisLockAspect {
             log.info("Lock 해제 성공");
             lock.unlock();
         }
+
     }
 
 }
