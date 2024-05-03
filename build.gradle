@@ -87,6 +87,10 @@ dependencies {
 
     // 역직렬화
     implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.13.3'
+
+    // ehcache
+    implementation 'org.springframework.boot:spring-boot-starter-cache'
+    implementation 'org.ehcache:ehcache'
 }
 
 tasks.named('test') {
