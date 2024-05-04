@@ -13,14 +13,10 @@ export function AuctionDetails() {
   const [events, setEvents] = useState([]);
 
   useEffect(() => {
-    console.log("event 실행")
     const eventSource = new EventSource(`http://tang-alb-1289213228.ap-northeast-2.elb.amazonaws.com:8081/stream/auctions/${auctionId.auctionId}`);
-    console.log(eventSource)
 
     eventSource.onmessage = (event) => {
-      // 서버로부터 받은 데이터 처리
       const eventData = JSON.parse(event.data);
-      console.log(eventData)
       document.querySelector('#bid-price').textContent = eventData.price;
       setEvents(prevEvents => [...prevEvents, eventData]);
     };
@@ -42,6 +38,7 @@ export function AuctionDetails() {
       setAuctionResponseDto(response.data);
     })
   }
+
   const setCommentsDto = () => {
     getComments(auctionId.auctionId)
     .then((response) => {
@@ -49,7 +46,6 @@ export function AuctionDetails() {
       if(response.data.status == "BAD_REQUEST"){
         setComments(null);
       }else{
-        console.log(response.data.data)
         setComments(response.data.data);
       }
 
@@ -72,7 +68,6 @@ export function AuctionDetails() {
       if (response.data.status == "BAD_REQUEST") {
         alert(response.data.message)
       } else {
-        document.querySelector('#bid-price').textContent = bidPrice;
         alert("입찰이 완료되었습니다.")
       }
 
@@ -108,6 +103,7 @@ export function AuctionDetails() {
         alert(response.data.message)
       } else {
         alert("댓글 작성이 완료되었습니다.")
+        window.location.reload()
       }
 
     } catch (error) {
