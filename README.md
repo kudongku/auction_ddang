@@ -32,7 +32,7 @@
 ---
 ## 🏛️ 기술 아키텍쳐
 
-<img width="950" alt="팀플 아키텍처 _최종" src="https://github.com/IP-I-s-Protocol/DDang/assets/151606621/d8d7d367-cc40-4f02-94f5-d69f82e53089">
+<img width="950" alt="팀플 아키텍처 - 최최종" src="https://github.com/IP-I-s-Protocol/DDang/assets/151606621/126d756f-d8d9-421c-b782-c0a2c0d592d3">
 
 ---
 ## 🍀 ERD
