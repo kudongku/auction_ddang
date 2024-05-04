@@ -12,20 +12,20 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
-import { BrowserRouter } from 'react-router-dom';
+import { HashRouter as Router } from 'react-router-dom';
 import { ThemeProvider } from '@material-tailwind/react';
 import { MaterialTailwindControllerProvider } from '@/context';
 import '../public/css/tailwind.css';
 import { SearchProvider } from '@/context/search-context.jsx';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
-  <BrowserRouter>
-    <SearchProvider>
-      <ThemeProvider>
-        <MaterialTailwindControllerProvider>
-          <App />
-        </MaterialTailwindControllerProvider>
-      </ThemeProvider>
-    </SearchProvider>
-  </BrowserRouter>,
+    <Router>
+      <SearchProvider>
+        <ThemeProvider>
+          <MaterialTailwindControllerProvider>
+            <App />
+          </MaterialTailwindControllerProvider>
+        </ThemeProvider>
+      </SearchProvider>
+    </Router>,
 );
