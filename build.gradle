@@ -28,10 +28,6 @@ dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.10.0'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.10.0'
 
-    //POI
-    implementation 'org.apache.poi:poi:5.2.3'
-    implementation group: 'org.apache.poi', name: 'poi-ooxml', version: '5.2.4'
-
     //redis
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
     implementation 'org.redisson:redisson-spring-boot-starter:3.27.2'
