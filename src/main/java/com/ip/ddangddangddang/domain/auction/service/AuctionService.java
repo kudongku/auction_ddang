@@ -182,14 +182,24 @@ public class AuctionService {
 
         String townName = townService.findNameByIdOrElseThrow(auction.getTownId());
 
-        String buyerNickname = "";
-
         if (auction.getBuyerId() != null) {
-            buyerNickname = userService.getUserByIdOrElseThrow(auction.getBuyerId()).getNickname();
+            String buyerNickname = userService.getUserByIdOrElseThrow(auction.getBuyerId())
+                .getNickname();
+
+            return new AuctionResponseDto(
+                auction,
+                townName,
+                buyerNickname,
+                auction.getFile().getFilePath()
+            );
         }
 
-        return new AuctionResponseDto(auction, townName, buyerNickname,
-            auction.getFile().getFilePath());
+        return new AuctionResponseDto(
+            auction,
+            townName,
+            null,
+            auction.getFile().getFilePath()
+        );
     }
 
     public Slice<AuctionListResponseDto> getMyAuctions(Long userId, Pageable pageable) {
