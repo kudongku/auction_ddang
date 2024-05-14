@@ -7,7 +7,6 @@ import com.ip.ddangddangddang.domain.file.entity.File;
 import com.ip.ddangddangddang.domain.town.entity.Town;
 import com.ip.ddangddangddang.domain.user.entity.User;
 import com.ip.ddangddangddang.global.security.UserDetailsImpl;
-import java.net.URL;
 import java.util.ArrayList;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
@@ -49,6 +48,7 @@ public interface FileValues {
 
     String KEY_NAME = "keyName";
     String FILE_PATH = "http://example.com/file-path";
+    String CDN_PATH = "https://dccg5mv6uel89.cloudfront.net/keyName";
 
     // file
     Long FILE_ID = 0L;

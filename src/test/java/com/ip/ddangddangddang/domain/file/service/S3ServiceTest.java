@@ -45,15 +45,12 @@ class S3ServiceTest implements FileValues {
         @Test
         @DisplayName("업로드 성공")
         void upload() throws IOException {
-            given(amazonS3.getUrl(bucket, KEY_NAME))
-                .willReturn(new URL(FILE_PATH));
-
             // Act
             String url = s3Service.upload(MOCK_MULTIPART_FILE, KEY_NAME);
 
             // Assert
             assertNotNull(url);
-            assertEquals(FILE_PATH, url);
+            assertEquals(CDN_PATH, url);
         }
 
         @Test

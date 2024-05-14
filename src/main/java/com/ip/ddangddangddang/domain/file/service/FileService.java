@@ -35,16 +35,14 @@ public class FileService {
         User user = userService.getUserByIdOrElseThrow(userId);
         String keyName = createKeyName(objectName);
 
-        String filePath;
         try {
-            filePath = fileUploadService.upload(auctionImage, keyName);
+            String filePath = fileUploadService.upload(auctionImage, keyName);
+            Long fileId = fileRepository.save(new File(objectName, keyName, filePath, user)).getId();
+            return new FileCreateResponseDto(fileId);
         } catch (IOException e) {
             throw new IllegalArgumentException();
         }
 
-        Long fileId = fileRepository.save(new File(objectName, keyName, filePath, user)).getId();
-
-        return new FileCreateResponseDto(fileId);
     }
 
     @Transactional
