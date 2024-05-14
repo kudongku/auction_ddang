@@ -1,4 +1,4 @@
-package com.ip.ddangddangddang.global.common.controller;
+package com.ip.ddangddangddang.domain.common.controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
