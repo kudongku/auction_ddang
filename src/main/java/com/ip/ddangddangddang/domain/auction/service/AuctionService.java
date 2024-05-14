@@ -20,12 +20,10 @@ import com.ip.ddangddangddang.global.exception.custom.UserNotFoundException;
 import com.ip.ddangddangddang.global.mail.MailService;
 import com.ip.ddangddangddang.global.redis.CacheService;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
@@ -47,7 +45,7 @@ public class AuctionService {
     private final MailService mailService;
     private final CacheService cacheService;
 
-    @CacheEvict(value = "auctions", allEntries = true ,cacheManager = "cacheManager")
+    @CacheEvict(value = "auctions", allEntries = true, cacheManager = "cacheManager")
     @Transactional
     public void createAuction(AuctionRequestDto requestDto, Long userId) {
         User user = userService.getUserById(userId).orElseThrow(
@@ -55,7 +53,7 @@ public class AuctionService {
         );
         File file = fileService.getFileById(
             requestDto.getFileId()).orElseThrow(
-                () -> new FileNotFoundException("없는 이미지 입니다.")
+            () -> new FileNotFoundException("없는 이미지 입니다.")
         );
 
         if (!file.getUser().equals(user)) {
@@ -66,7 +64,7 @@ public class AuctionService {
         cacheService.setAuctionExpiredKey(auction.getId());
     }
 
-    @CacheEvict(value = "auctions", allEntries = true ,cacheManager = "cacheManager")
+    @CacheEvict(value = "auctions", allEntries = true, cacheManager = "cacheManager")
     @Transactional
     public void deleteAuction(Long auctionId, Long userId) {
         Auction auction = validatedAuction(auctionId);
@@ -213,13 +211,13 @@ public class AuctionService {
         return auctionRepository.findBidsByBuyerId(userId, pageable)
             .map(
                 auction -> new AuctionListResponseDto(
-                  auction.getId(),
-                  auction.getTitle(),
-                  auction.getStatusEnum(),
-                  auction.getUser().getNickname(),
-                  auction.getFinishedAt(),
-                  auction.getFile().getFilePath(),
-                  auction.getPrice()
+                    auction.getId(),
+                    auction.getTitle(),
+                    auction.getStatusEnum(),
+                    auction.getUser().getNickname(),
+                    auction.getFinishedAt(),
+                    auction.getFile().getFilePath(),
+                    auction.getPrice()
                 )
             );
     }
