@@ -3,6 +3,7 @@ package com.ip.ddangddangddang.domain.auction.values;
 import com.ip.ddangddangddang.domain.auction.dto.request.AuctionRequestDto;
 import com.ip.ddangddangddang.domain.auction.entity.Auction;
 import com.ip.ddangddangddang.domain.auction.entity.StatusEnum;
+import com.ip.ddangddangddang.domain.auction.event.AuctionKeyExpiredEvent;
 import com.ip.ddangddangddang.domain.file.entity.File;
 import com.ip.ddangddangddang.domain.town.entity.Town;
 import com.ip.ddangddangddang.domain.user.entity.User;
@@ -169,6 +170,10 @@ public interface AuctionServiceTestValues {
         .user(TEST_USER2)
         .file(TEST_FILE1)
         .build();
+
+    AuctionKeyExpiredEvent EVENT = new AuctionKeyExpiredEvent(
+        1L
+    );
 
     //dto
     AuctionRequestDto TEST_AUCTION_REQUEST_DTO1 = new AuctionRequestDto(TEST_AUCTION_TITLE,
