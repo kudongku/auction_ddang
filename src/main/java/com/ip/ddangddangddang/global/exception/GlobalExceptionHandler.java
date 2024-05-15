@@ -32,6 +32,12 @@ public class GlobalExceptionHandler {
         return createResponse(HttpStatus.REQUEST_TIMEOUT, e.getMessage());
     }
 
+    @ExceptionHandler(RuntimeException.class)
+    public ResponseEntity<ExceptionDto> runtimeException(final RuntimeException e) {
+        log.error(e.getMessage());
+        return createResponse(HttpStatus.REQUEST_TIMEOUT, e.getMessage());
+    }
+
     @ExceptionHandler(InvalidAuthorityException.class)
     public ResponseEntity<ExceptionDto> invalidAuthorityException(final InvalidAuthorityException e) {
         log.error(e.getMessage());

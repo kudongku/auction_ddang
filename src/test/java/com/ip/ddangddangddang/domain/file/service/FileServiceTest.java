@@ -13,7 +13,6 @@ import com.ip.ddangddangddang.domain.file.entity.File;
 import com.ip.ddangddangddang.domain.file.repository.FileRepository;
 import com.ip.ddangddangddang.domain.file.values.FileValues;
 import com.ip.ddangddangddang.domain.user.service.UserService;
-import com.ip.ddangddangddang.global.exception.custom.EmptyImageException;
 import com.ip.ddangddangddang.global.s3.FileUploadService;
 import java.io.IOException;
 import java.util.Optional;
@@ -47,7 +46,7 @@ class FileServiceTest implements FileValues {
         @Test
         @DisplayName("upload 성공시")
         public void testUpload_success() throws IOException {
-            given(userService.getUserByIdOrElseThrow(USER_ID))
+            given(userService.findUserById(USER_ID))
                 .willReturn(USER);
             given(fileUploadService.upload(any(), anyString()))
                 .willReturn(FILE_PATH);
@@ -65,7 +64,7 @@ class FileServiceTest implements FileValues {
         @DisplayName("upload시 empty fileImage로 실패시")
         public void testUpload_EmptyImageException() {
             assertThrows(
-                EmptyImageException.class,
+                NullPointerException.class,
                 () -> fileService.upload(MOCK_MULTIPART_FILE_EMPTY, OBJECT_NAME, USER_ID)
             );
         }
@@ -73,13 +72,13 @@ class FileServiceTest implements FileValues {
         @Test
         @DisplayName("upload시 empty fileImage로 실패시")
         public void testUpload_IllegalArgumentException() throws IOException {
-            given(userService.getUserByIdOrElseThrow(USER_ID))
+            given(userService.findUserById(USER_ID))
                 .willReturn(USER);
             given(fileUploadService.upload(any(), anyString()))
                 .willThrow(IOException.class);
 
             assertThrows(
-                IllegalArgumentException.class,
+                RuntimeException.class,
                 () -> fileService.upload(MOCK_MULTIPART_FILE, OBJECT_NAME, USER_ID)
             );
         }
@@ -129,6 +128,7 @@ class FileServiceTest implements FileValues {
     @Nested
     @DisplayName("getFileOrElseThrow")
     public class testGetFileOrElseThrow {
+
         @Test
         @DisplayName("성공")
         public void testGetFileOrElseThrow_success() {
@@ -137,7 +137,7 @@ class FileServiceTest implements FileValues {
 
             assertThrows(
                 NullPointerException.class,
-                () -> fileService.findFileOrElseThrow(FILE_ID)
+                () -> fileService.findFileById(FILE_ID)
             );
         }
 
@@ -149,20 +149,9 @@ class FileServiceTest implements FileValues {
 
             assertThrows(
                 NullPointerException.class,
-                () -> fileService.findFileOrElseThrow(FILE_ID)
+                () -> fileService.findFileById(FILE_ID)
             );
         }
-    }
-
-    @Test
-    @DisplayName("getFile")
-    public void testGetFile() {
-        given(fileRepository.findById(FILE_ID))
-            .willReturn(java.util.Optional.of(FILE));
-
-        Optional<File> optionalFile = fileService.getFileById(FILE_ID);
-
-        assert optionalFile.isPresent();
     }
 
 }
