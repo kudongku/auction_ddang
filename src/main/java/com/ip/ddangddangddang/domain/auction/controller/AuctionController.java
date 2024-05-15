@@ -52,8 +52,12 @@ public class AuctionController {
         @RequestParam(required = false) StatusEnum status,
         @RequestParam(required = false) String title
     ) {
-        List<AuctionListResponseDto> auctions = auctionService.getAuctions(userDetails.getUserId(),
-            status, title);
+        List<AuctionListResponseDto> auctions = auctionService.getAuctions(
+            userDetails.getUserId(),
+            status,
+            title
+        );
+
         return Response.ok(auctions);
     }
 

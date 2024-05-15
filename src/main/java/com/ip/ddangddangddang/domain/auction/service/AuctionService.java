@@ -3,7 +3,6 @@ package com.ip.ddangddangddang.domain.auction.service;
 import com.ip.ddangddangddang.domain.auction.dto.request.AuctionRequestDto;
 import com.ip.ddangddangddang.domain.auction.dto.response.AuctionListResponseDto;
 import com.ip.ddangddangddang.domain.auction.dto.response.AuctionResponseDto;
-import com.ip.ddangddangddang.domain.auction.dto.response.AuctionUpdateResponseDto;
 import com.ip.ddangddangddang.domain.auction.entity.Auction;
 import com.ip.ddangddangddang.domain.auction.entity.StatusEnum;
 import com.ip.ddangddangddang.domain.auction.repository.AuctionRepository;
@@ -12,15 +11,10 @@ import com.ip.ddangddangddang.domain.file.service.FileService;
 import com.ip.ddangddangddang.domain.town.service.TownService;
 import com.ip.ddangddangddang.domain.user.entity.User;
 import com.ip.ddangddangddang.domain.user.service.UserService;
-import com.ip.ddangddangddang.global.exception.custom.AuctionNotFoundException;
-import com.ip.ddangddangddang.global.exception.custom.FileNotFoundException;
-import com.ip.ddangddangddang.global.exception.custom.UserHasNotAuthorityToAuctionException;
-import com.ip.ddangddangddang.global.exception.custom.UserHasNotAuthorityToFileException;
-import com.ip.ddangddangddang.global.exception.custom.UserNotFoundException;
+import com.ip.ddangddangddang.global.exception.customedExceptions.InvalidAuthorityException;
 import com.ip.ddangddangddang.global.mail.MailService;
 import com.ip.ddangddangddang.global.redis.CacheService;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -47,30 +41,25 @@ public class AuctionService {
 
     @CacheEvict(value = "auctions", allEntries = true, cacheManager = "cacheManager")
     @Transactional
-    public void createAuction(AuctionRequestDto requestDto, Long userId) {
-        User user = userService.getUserById(userId).orElseThrow(
-            () -> new UserNotFoundException("회원이 존재하지 않습니다.")
-        );
-        File file = fileService.getFileById(
-            requestDto.getFileId()).orElseThrow(
-            () -> new FileNotFoundException("없는 이미지 입니다.")
-        );
+    public void createAuction(AuctionRequestDto auctionRequestDto, Long userId) {
+        User user = userService.findUserById(userId);
+        File file = fileService.findFileById(auctionRequestDto.getFileId());
 
         if (!file.getUser().equals(user)) {
-            throw new UserHasNotAuthorityToFileException("파일에 대한 권한이 없습니다.");
+            throw new InvalidAuthorityException("파일에 대한 권한이 없습니다.");
         }
 
-        Auction auction = auctionRepository.save(new Auction(requestDto, user, file));
+        Auction auction = auctionRepository.save(new Auction(auctionRequestDto, user, file));
         cacheService.setAuctionExpiredKey(auction.getId());
     }
 
     @CacheEvict(value = "auctions", allEntries = true, cacheManager = "cacheManager")
     @Transactional
     public void deleteAuction(Long auctionId, Long userId) {
-        Auction auction = validatedAuction(auctionId);
+        Auction auction = findAuctionById(auctionId);
 
         if (!userId.equals(auction.getUser().getId())) {
-            throw new UserHasNotAuthorityToAuctionException("작성자가 아닙니다.");
+            throw new InvalidAuthorityException("경매에 대한 권한이 없습니다.");
         }
 
         fileService.delete(auction.getFile());
@@ -82,9 +71,9 @@ public class AuctionService {
         @CacheEvict(value = "auctions", allEntries = true, cacheManager = "cacheManager")
     })
     @Transactional
-    public AuctionUpdateResponseDto updateStatusToHold(Long auctionId) {
+    public void updateStatusToHold(Long auctionId) {
         log.info("경매 기한 만료, auctionId : " + auctionId);
-        Auction auction = validatedAuction(auctionId);
+        Auction auction = findAuctionById(auctionId);
         auction.updateStatusToHold();
 
         mailService.sendMail(
@@ -94,17 +83,6 @@ public class AuctionService {
             auction.getTitle(),
             auction.getPrice()
         );
-
-        return new AuctionUpdateResponseDto(
-            auction.getId(),
-            auction.getTownId(),
-            auction.getTitle(),
-            auction.getContent(),
-            auction.getPrice(),
-            auction.getBuyerId(),
-            auction.getStatusEnum(),
-            auction.getFinishedAt()
-        );
     }
 
     @Caching(evict = {
@@ -112,42 +90,20 @@ public class AuctionService {
         @CacheEvict(value = "auctions", allEntries = true, cacheManager = "cacheManager")
     })
     @Transactional
-    public AuctionUpdateResponseDto updateStatusToComplete(Long auctionId, Long userId) {
-        Auction auction = validatedAuction(auctionId);
+    public void updateStatusToComplete(Long auctionId, Long userId) {
+        Auction auction = findAuctionById(auctionId);
 
         if (!auction.getUser().getId().equals(userId)) {
-            throw new UserHasNotAuthorityToAuctionException("사용자가 불일치");
+            throw new InvalidAuthorityException("경매에 대한 권한이 없습니다.");
         }
 
         auction.updateStatusToComplete();
-
-        return new AuctionUpdateResponseDto(
-            auction.getId(),
-            auction.getTownId(),
-            auction.getTitle(),
-            auction.getContent(),
-            auction.getPrice(),
-            auction.getBuyerId(),
-            auction.getStatusEnum(),
-            auction.getFinishedAt()
-        );
     }
 
-    @CacheEvict(value = "auction", key = "#auctionId", cacheManager = "cacheManager")
+    @CacheEvict(value = "auction", key = "#auction.getId()", cacheManager = "cacheManager")
     @Transactional
-    public AuctionUpdateResponseDto updateBid(Long auctionId, Long price, Long buyerId) {
-        Auction auction = validatedAuction(auctionId);
+    public void updateBid(Auction auction, Long price, Long buyerId) {
         auction.updateBid(price, buyerId);
-        return new AuctionUpdateResponseDto(
-            auction.getId(),
-            auction.getTownId(),
-            auction.getTitle(),
-            auction.getContent(),
-            auction.getPrice(),
-            auction.getBuyerId(),
-            auction.getStatusEnum(),
-            auction.getFinishedAt()
-        );
     }
 
     @Cacheable(value = "auctions", cacheManager = "cacheManager")
@@ -156,34 +112,31 @@ public class AuctionService {
         StatusEnum status,
         String title
     ) {
-        User user = userService.getUserById(userId).orElseThrow(
-            () -> new UserNotFoundException("회원이 존재하지 않습니다.")
-        );
-
+        User user = userService.findUserById(userId);
         List<Long> townList = user.getTown().getNeighborIdList();
 
-        return auctionRepository.findAllByFilters(townList, status, title).stream()
-            .map(auction ->
-                new AuctionListResponseDto(
-                    auction.getId(),
-                    auction.getTitle(),
-                    auction.getStatusEnum(),
-                    auction.getUser().getNickname(),
-                    auction.getFinishedAt(),
-                    auction.getFile().getFilePath(),
-                    auction.getPrice()
-                )
-            ).collect(Collectors.toList());
+        return auctionRepository.findAllByFilters(townList, status, title)
+            .stream()
+            .map(auction -> new AuctionListResponseDto(
+                auction.getId(),
+                auction.getTitle(),
+                auction.getStatusEnum(),
+                auction.getUser().getNickname(),
+                auction.getFinishedAt(),
+                auction.getFile().getFilePath(),
+                auction.getPrice()
+            ))
+            .collect(Collectors.toList());
     }
 
     @Cacheable(value = "auction", key = "#auctionId", cacheManager = "cacheManager")
     public AuctionResponseDto getAuction(Long auctionId) {
-        Auction auction = validatedAuction(auctionId);
-
-        String townName = townService.findNameByIdOrElseThrow(auction.getTownId());
+        Auction auction = findAuctionById(auctionId);
+        String townName = townService.findNameById(auction.getTownId());
 
         if (auction.getBuyerId() != null) {
-            String buyerNickname = userService.getUserByIdOrElseThrow(auction.getBuyerId())
+            String buyerNickname = userService
+                .findUserById(auction.getBuyerId())
                 .getNickname();
 
             return new AuctionResponseDto(
@@ -204,41 +157,34 @@ public class AuctionService {
 
     public Slice<AuctionListResponseDto> getMyAuctions(Long userId, Pageable pageable) {
         return auctionRepository.findAuctionsByUserId(userId, pageable)
-            .map(
-                auction -> new AuctionListResponseDto(
-                    auction.getId(),
-                    auction.getTitle(),
-                    auction.getStatusEnum(),
-                    auction.getUser().getNickname(),
-                    auction.getFinishedAt(),
-                    auction.getFile().getFilePath(),
-                    auction.getPrice()
-                )
-            );
+            .map(auction -> new AuctionListResponseDto(
+                auction.getId(),
+                auction.getTitle(),
+                auction.getStatusEnum(),
+                auction.getUser().getNickname(),
+                auction.getFinishedAt(),
+                auction.getFile().getFilePath(),
+                auction.getPrice()
+            ));
     }
 
     public Slice<AuctionListResponseDto> getMyBids(Long userId, Pageable pageable) {
         return auctionRepository.findBidsByBuyerId(userId, pageable)
-            .map(
-                auction -> new AuctionListResponseDto(
-                    auction.getId(),
-                    auction.getTitle(),
-                    auction.getStatusEnum(),
-                    auction.getUser().getNickname(),
-                    auction.getFinishedAt(),
-                    auction.getFile().getFilePath(),
-                    auction.getPrice()
-                )
-            );
+            .map(auction -> new AuctionListResponseDto(
+                auction.getId(),
+                auction.getTitle(),
+                auction.getStatusEnum(),
+                auction.getUser().getNickname(),
+                auction.getFinishedAt(),
+                auction.getFile().getFilePath(),
+                auction.getPrice()
+            ));
     }
 
-    private Auction validatedAuction(Long auctionId) {
-        return getAuctionById(auctionId).orElseThrow(
-            () -> new AuctionNotFoundException("게시글이 존재하지 않습니다.")
+    public Auction findAuctionById(Long auctionId) {
+        return auctionRepository.findById(auctionId).orElseThrow(
+            () -> new NullPointerException("게시글이 존재하지 않습니다.")
         );
     }
 
-    public Optional<Auction> getAuctionById(Long auctionId) {
-        return auctionRepository.findById(auctionId);
-    }
 }
