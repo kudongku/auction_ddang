@@ -6,7 +6,6 @@ import com.ip.ddangddangddang.domain.file.entity.File;
 import com.ip.ddangddangddang.domain.file.repository.FileRepository;
 import com.ip.ddangddangddang.domain.user.entity.User;
 import com.ip.ddangddangddang.domain.user.service.UserService;
-import com.ip.ddangddangddang.global.exception.custom.EmptyImageException;
 import com.ip.ddangddangddang.global.exception.customedExceptions.InvalidAuthorityException;
 import com.ip.ddangddangddang.global.s3.FileUploadService;
 import java.io.IOException;
@@ -26,7 +25,8 @@ public class FileService {
     private final UserService userService;
 
     @Transactional
-    public FileCreateResponseDto upload(MultipartFile auctionImage, String objectName, Long userId) {
+    public FileCreateResponseDto upload(MultipartFile auctionImage, String objectName,
+        Long userId) {
 
         if (auctionImage.isEmpty()) {
             throw new NullPointerException("이미지가 존재하지 않습니다.");
@@ -37,7 +37,8 @@ public class FileService {
 
         try {
             String filePath = fileUploadService.upload(auctionImage, keyName);
-            Long fileId = fileRepository.save(new File(objectName, keyName, filePath, user)).getId();
+            Long fileId = fileRepository.save(new File(objectName, keyName, filePath, user))
+                .getId();
             return new FileCreateResponseDto(fileId);
         } catch (IOException e) {
             throw new RuntimeException();

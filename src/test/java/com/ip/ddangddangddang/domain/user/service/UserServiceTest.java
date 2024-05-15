@@ -13,8 +13,7 @@ import com.ip.ddangddangddang.common.UserFixture;
 import com.ip.ddangddangddang.domain.town.service.TownService;
 import com.ip.ddangddangddang.domain.user.entity.User;
 import com.ip.ddangddangddang.domain.user.repository.UserRepository;
-import com.ip.ddangddangddang.global.exception.custom.CustomTownException;
-import com.ip.ddangddangddang.global.exception.custom.CustomUserException;
+import com.ip.ddangddangddang.global.exception.customedExceptions.CustomUserException;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -166,7 +165,7 @@ public class UserServiceTest implements UserFixture {
         void 성공() {
             // given
             given(userRepository.findById(TEST_USER2_ID)).willReturn(Optional.of(TEST_USER2));
-            given(townService.findTownByName(TEST_ANOTHER_TOWN1_NAME)).willReturn(Optional.of(TEST_ANOTHER_TOWN1));
+            given(townService.findTownByNameOrElseThrow(TEST_ANOTHER_TOWN1_NAME)).willReturn(TEST_ANOTHER_TOWN1);
 
             // when & then
             var request = TEST_LOCATION_REQUEST_DTO;
@@ -182,17 +181,6 @@ public class UserServiceTest implements UserFixture {
             assertThatThrownBy(() -> userService.updateLocation(TEST_NON_EXISTENT_USER_ID, TEST_LOCATION_REQUEST_DTO))
                 .isInstanceOf(CustomUserException.class)
                 .hasMessageContaining("회원이 존재하지 않습니다.");
-        }
-
-        @Test
-        void 실패_존재하지_않는_동네() {
-            // given
-            given(userRepository.findById(TEST_USER2_ID)).willReturn(Optional.of(TEST_USER2));
-
-            // when & then
-            assertThatThrownBy(() -> userService.updateLocation(TEST_USER2_ID, TEST_LOCATION_REQUEST_DTO_FAIL))
-                .isInstanceOf(CustomTownException.class)
-                .hasMessageContaining("해당 동네가 없습니다.");
         }
 
     }

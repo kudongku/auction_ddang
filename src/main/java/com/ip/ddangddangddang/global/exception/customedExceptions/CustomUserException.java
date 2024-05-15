@@ -1,4 +1,4 @@
-package com.ip.ddangddangddang.global.exception.custom;
+package com.ip.ddangddangddang.global.exception.customedExceptions;
 
 public class CustomUserException extends RuntimeException {
 

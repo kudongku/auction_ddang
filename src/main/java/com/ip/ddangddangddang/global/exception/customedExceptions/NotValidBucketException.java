@@ -1,4 +1,4 @@
-package com.ip.ddangddangddang.global.exception.custom;
+package com.ip.ddangddangddang.global.exception.customedExceptions;
 
 import com.amazonaws.services.s3.model.AmazonS3Exception;
 

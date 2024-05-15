@@ -1,6 +1,6 @@
 package com.ip.ddangddangddang.global.aop;
 
-import com.ip.ddangddangddang.global.exception.custom.TimeOutLockException;
+import com.ip.ddangddangddang.global.exception.customedExceptions.TimeOutLockException;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;

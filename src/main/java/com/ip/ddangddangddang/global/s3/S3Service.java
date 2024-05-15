@@ -5,7 +5,7 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.AmazonS3Exception;
 import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest;
 import com.amazonaws.services.s3.model.ObjectMetadata;
-import com.ip.ddangddangddang.global.exception.custom.NotValidBucketException;
+import com.ip.ddangddangddang.global.exception.customedExceptions.NotValidBucketException;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Date;
