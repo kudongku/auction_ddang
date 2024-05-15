@@ -34,7 +34,7 @@ public class MailServiceTest implements UserFixture, AuctionFixture {
     @Test
     void 퍈매자_낙찰자_메일() {
         // given
-        when(userService.getUserByIdOrElseThrow(TEST_AUCTION_BUYER_ID)).thenReturn(
+        when(userService.findUserById(TEST_AUCTION_BUYER_ID)).thenReturn(
             TEST_BUYER_USER1);
 
         // when
@@ -94,7 +94,7 @@ public class MailServiceTest implements UserFixture, AuctionFixture {
     @Test
     void 판매자_낙찰자_메일_알림() {
         // given
-        when(userService.getUserByIdOrElseThrow(TEST_AUCTION_BUYER_ID))
+        when(userService.findUserById(TEST_AUCTION_BUYER_ID))
             .thenReturn(TEST_BUYER_USER1);
 
         // when

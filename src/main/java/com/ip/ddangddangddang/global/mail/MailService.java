@@ -43,7 +43,7 @@ public class MailService {
 
     public void sendSellerBuyerNotification(String sellerEmail, String sellerNickname,
         Long buyerId, String t, Long price) {
-        User buyer = userService.getUserByIdOrElseThrow(buyerId);
+        User buyer = userService.findUserById(buyerId);
 
         String sellerTitle = "땅땅땅! [" + t + "] 게시글의 경매가 종료되었습니다!";
         String sellerContent =
