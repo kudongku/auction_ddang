@@ -3,7 +3,7 @@ package com.ip.ddangddangddang.global.exception;
 import com.ip.ddangddangddang.domain.common.dto.ExceptionDto;
 import com.ip.ddangddangddang.global.exception.custom.AuctionNotFoundException;
 import com.ip.ddangddangddang.global.exception.custom.CustomAuctionException;
-import com.ip.ddangddangddang.global.exception.custom.CustomBidException;
+import com.ip.ddangddangddang.global.exception.customedExceptions.InvalidBidException;
 import com.ip.ddangddangddang.global.exception.custom.CustomCommentException;
 import com.ip.ddangddangddang.global.exception.custom.CustomResultException;
 import com.ip.ddangddangddang.global.exception.custom.CustomTownException;
@@ -13,6 +13,7 @@ import com.ip.ddangddangddang.global.exception.custom.TimeOutLockException;
 import com.ip.ddangddangddang.global.exception.custom.UserHasNotAuthorityToAuctionException;
 import com.ip.ddangddangddang.global.exception.custom.UserHasNotAuthorityToFileException;
 import com.ip.ddangddangddang.global.exception.custom.UserNotFoundException;
+import com.ip.ddangddangddang.global.exception.customedExceptions.InvalidAuthorityException;
 import jakarta.persistence.EntityNotFoundException;
 import java.io.FileNotFoundException;
 import lombok.extern.slf4j.Slf4j;
@@ -27,6 +28,18 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(TimeOutLockException.class)
     public ResponseEntity<ExceptionDto> timeOutLockException(final TimeOutLockException e) {
+        log.error(e.getMessage());
+        return createResponse(HttpStatus.REQUEST_TIMEOUT, e.getMessage());
+    }
+
+    @ExceptionHandler(InvalidAuthorityException.class)
+    public ResponseEntity<ExceptionDto> invalidAuthorityException(final InvalidAuthorityException e) {
+        log.error(e.getMessage());
+        return createResponse(HttpStatus.REQUEST_TIMEOUT, e.getMessage());
+    }
+
+    @ExceptionHandler(NullPointerException.class)
+    public ResponseEntity<ExceptionDto> nullPointerException(final NullPointerException e) {
         log.error(e.getMessage());
         return createResponse(HttpStatus.REQUEST_TIMEOUT, e.getMessage());
     }
@@ -49,8 +62,8 @@ public class GlobalExceptionHandler {
         return createResponse(HttpStatus.BAD_REQUEST, e.getMessage());
     }
 
-    @ExceptionHandler(CustomBidException.class)
-    public ResponseEntity<ExceptionDto> customBidException(final CustomBidException e) {
+    @ExceptionHandler(InvalidBidException.class)
+    public ResponseEntity<ExceptionDto> invalidBidException(final InvalidBidException e) {
         log.error("CustomBidException: ", e);
         return createResponse(HttpStatus.BAD_REQUEST, e.getMessage());
     }

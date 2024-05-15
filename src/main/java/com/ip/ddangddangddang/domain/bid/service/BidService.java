@@ -10,8 +10,7 @@ import com.ip.ddangddangddang.domain.bid.dto.request.BidRequestDto;
 import com.ip.ddangddangddang.domain.bid.entity.Bid;
 import com.ip.ddangddangddang.domain.bid.repository.BidRepository;
 import com.ip.ddangddangddang.global.aop.DistributedLock;
-import com.ip.ddangddangddang.global.exception.custom.CustomBidException;
-import java.util.Optional;
+import com.ip.ddangddangddang.global.exception.customedExceptions.InvalidBidException;
 import java.util.concurrent.TimeUnit;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -26,49 +25,38 @@ public class BidService {
     private final ObjectMapper objectMapper;
 
     @DistributedLock(value = "bidLock", waitTime = 50, leaseTime = 50, timeUnit = TimeUnit.MINUTES)
-    public void createBid(Long auctionId, BidRequestDto requestDto, Long userId)
-        throws JsonProcessingException {
-        Optional<Auction> foundAuction = auctionService.getAuctionById(auctionId);
+    public void createBid(
+        Long auctionId,
+        BidRequestDto requestDto,
+        Long userId
+    ) throws JsonProcessingException {
 
-        Auction auction = validatedAuction(foundAuction);
-        validateAuctionStatus(auction);
+        Auction auction = auctionService.findAuctionById(auctionId);
 
-        Long seller = auction.getUser().getId();
-        validateBidBySeller(seller, userId);
+        if (!auction.getStatusEnum().equals(StatusEnum.ON_SALE)) {
+            throw new InvalidBidException("입찰 기간이 종료되었습니다.");
+        }
 
-        validatePrice(auction.getPrice(), requestDto.getPrice());
-        auctionService.updateBid(auctionId, requestDto.getPrice(), userId);
+        if (auction.getUser().getId().equals(userId)) {
+            throw new InvalidBidException("본인의 게시글은 입찰을 할 수 없습니다.");
+        }
 
-        Bid savedBid = bidRepository.save(new Bid(auctionId, userId, requestDto.getPrice()));
+        if (auction.getPrice() >= requestDto.getPrice()) {
+            throw new InvalidBidException("현재 가격보다 높은 가격을 입력해주세요.");
+        }
+
+        auctionService.updateBid(auction, requestDto.getPrice(), userId);
+
+        Bid bid = new Bid(auctionId, userId, requestDto.getPrice());
+        bidRepository.save(bid);
 
         BidEvent bidEvent = new BidEvent(
-            savedBid.getId(),
-            savedBid.getAuctionId(),
-            savedBid.getUserId(),
-            savedBid.getPrice());
+            bid.getId(),
+            auctionId,
+            userId,
+            requestDto.getPrice()
+        );
         bidEventPublisher.publishEvent(auctionId, objectMapper.writeValueAsString(bidEvent));
-    }
-
-    private void validateAuctionStatus(Auction auction) {
-        if (!auction.getStatusEnum().equals(StatusEnum.ON_SALE)) {
-            throw new CustomBidException("입찰 기간이 종료되었습니다.");
-        }
-    }
-
-    private void validateBidBySeller(Long sellerId, Long userId) {
-        if (sellerId.equals(userId)) {
-            throw new CustomBidException("본인의 게시글은 입찰을 할 수 없습니다.");
-        }
-    }
-
-    private void validatePrice(Long auctionPrice, Long bidPrice) {
-        if (auctionPrice >= bidPrice) {
-            throw new CustomBidException("현재 가격보다 높은 가격을 입력해주세요.");
-        }
-    }
-
-    private Auction validatedAuction(Optional<Auction> auction) {
-        return auction.orElseThrow(() -> new IllegalArgumentException("게시글이 존재하지 않습니다."));
     }
 
 }
