@@ -8,9 +8,8 @@ import com.ip.ddangddangddang.domain.comment.entity.Comment;
 import com.ip.ddangddangddang.domain.comment.repository.CommentRepository;
 import com.ip.ddangddangddang.domain.user.entity.User;
 import com.ip.ddangddangddang.domain.user.service.UserService;
-import com.ip.ddangddangddang.global.exception.custom.CustomUserException;
+import com.ip.ddangddangddang.global.exception.customedExceptions.InvalidAuthorityException;
 import java.util.List;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,10 +25,8 @@ public class CommentService {
 
     @Transactional
     public void createComment(Long auctionId, CommentCreateRequestDto requestDto, Long userId) {
-        User user = userService.getUserByIdOrElseThrow(userId);
-        Optional<Auction> foundAuction = auctionService.getAuctionById(auctionId);
-        Auction auction = validatedAuction(foundAuction);
-
+        User user = userService.findUserById(userId);
+        Auction auction = auctionService.findAuctionById(auctionId);
         Long sellerId = auction.getUser().getId();
         Long buyerId = auction.getBuyerId();
 
@@ -39,36 +36,24 @@ public class CommentService {
     }
 
     public List<CommentReadResponseDto> getComments(Long auctionId, Long userId) {
-        Optional<Auction> foundAuction = auctionService.getAuctionById(auctionId);
-        Auction auction = validatedAuction(foundAuction);
-
+        Auction auction = auctionService.findAuctionById(auctionId);
         Long sellerId = auction.getUser().getId();
         Long buyerId = auction.getBuyerId();
 
         validateUser(sellerId, buyerId, userId);
 
-        return commentRepository.findAllByAuctionId(auctionId).stream()
+        return commentRepository.findAllByAuctionId(auctionId)
+            .stream()
             .map(CommentReadResponseDto::new)
             .toList();
     }
 
-    private boolean isSellerOfAuction(Long sellerId, Long userId) {
-        return userId.equals(sellerId);
-    }
-
-    private boolean isBuyerOfAuction(Long buyerId, Long userId) {
-        return userId.equals(buyerId);
-    }
-
     private void validateUser(Long sellerId, Long buyerId, Long userId) {
-        if (!isSellerOfAuction(sellerId, userId)
-            && !isBuyerOfAuction(buyerId, userId)) {
-            throw new CustomUserException("댓글 권한이 없습니다.");
-        }
-    }
 
-    private Auction validatedAuction(Optional<Auction> auction) {
-        return auction.orElseThrow(() -> new IllegalArgumentException("게시글이 존재하지 않습니다."));
+        if (!(userId.equals(sellerId) || userId.equals(buyerId))) {
+            throw new InvalidAuthorityException("댓글 권한이 없습니다.");
+        }
+
     }
 
 }
