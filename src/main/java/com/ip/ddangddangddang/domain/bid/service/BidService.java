@@ -33,7 +33,7 @@ public class BidService {
 
         Auction auction = auctionService.findAuctionById(auctionId);
 
-        if (!auction.getStatusEnum().equals(StatusEnum.ON_SALE)) {
+        if (!auction.getStatus().equals(StatusEnum.ON_SALE)) {
             throw new InvalidBidException("입찰 기간이 종료되었습니다.");
         }
 

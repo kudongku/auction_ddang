@@ -38,7 +38,7 @@ public class AuctionResponseDto implements Serializable {
         this.title = auction.getTitle();
         this.content = auction.getContent();
         this.price = auction.getPrice();
-        this.statusEnum = auction.getStatusEnum();
+        this.statusEnum = auction.getStatus();
         this.finishedAt = auction.getFinishedAt();
         this.sellerNickname = auction.getUser().getNickname();
         this.buyerNickname = buyerNickname;

@@ -54,9 +54,9 @@ public class Auction extends Timestamp {
     @Column
     private Long buyerId;
 
-    @Column(nullable = false, name = "status_enum")
+    @Column(nullable = false, name = "status")
     @Enumerated(EnumType.STRING)
-    private StatusEnum statusEnum;
+    private StatusEnum status;
 
     @Column
     private LocalDateTime finishedAt;
@@ -74,7 +74,7 @@ public class Auction extends Timestamp {
         this.title = requestDto.getTitle();
         this.content = requestDto.getContent();
         this.price = 0L;
-        this.statusEnum = StatusEnum.ON_SALE;
+        this.status = StatusEnum.ON_SALE;
         this.finishedAt = ZonedDateTime
             .now(ZoneId.of("Asia/Seoul"))
             .toLocalDateTime()
@@ -84,11 +84,11 @@ public class Auction extends Timestamp {
     }
 
     public void updateStatusToHold() {
-        this.statusEnum = StatusEnum.HOLD;
+        this.status = StatusEnum.HOLD;
     }
 
     public void updateStatusToComplete() {
-        this.statusEnum = StatusEnum.COMPLETED;
+        this.status = StatusEnum.COMPLETED;
     }
 
     public void updateBid(Long price, Long buyerId) {

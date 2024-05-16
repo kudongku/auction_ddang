@@ -15,7 +15,6 @@ import com.ip.ddangddangddang.global.exception.customedExceptions.InvalidAuthori
 import com.ip.ddangddangddang.global.mail.MailService;
 import com.ip.ddangddangddang.global.redis.CacheService;
 import java.util.List;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheEvict;
@@ -106,7 +105,7 @@ public class AuctionService {
         auction.updateBid(price, buyerId);
     }
 
-    @Cacheable(value = "auctions", cacheManager = "cacheManager")
+//    @Cacheable(value = "auctions", cacheManager = "cacheManager")
     public List<AuctionListResponseDto> getAuctions(
         Long userId,
         StatusEnum status,
@@ -115,18 +114,7 @@ public class AuctionService {
         User user = userService.findUserById(userId);
         List<Long> townList = user.getTown().getNeighborIdList();
 
-        return auctionRepository.findAllByFilters(townList, status, title)
-            .stream()
-            .map(auction -> new AuctionListResponseDto(
-                auction.getId(),
-                auction.getTitle(),
-                auction.getStatusEnum(),
-                auction.getUser().getNickname(),
-                auction.getFinishedAt(),
-                auction.getFile().getFilePath(),
-                auction.getPrice()
-            ))
-            .collect(Collectors.toList());
+        return auctionRepository.findAllByFilters(townList, status, title);
     }
 
     @Cacheable(value = "auction", key = "#auctionId", cacheManager = "cacheManager")
@@ -160,7 +148,7 @@ public class AuctionService {
             .map(auction -> new AuctionListResponseDto(
                 auction.getId(),
                 auction.getTitle(),
-                auction.getStatusEnum(),
+                auction.getStatus(),
                 auction.getUser().getNickname(),
                 auction.getFinishedAt(),
                 auction.getFile().getFilePath(),
@@ -173,7 +161,7 @@ public class AuctionService {
             .map(auction -> new AuctionListResponseDto(
                 auction.getId(),
                 auction.getTitle(),
-                auction.getStatusEnum(),
+                auction.getStatus(),
                 auction.getUser().getNickname(),
                 auction.getFinishedAt(),
                 auction.getFile().getFilePath(),

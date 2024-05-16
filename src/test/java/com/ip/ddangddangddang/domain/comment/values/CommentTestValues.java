@@ -92,7 +92,7 @@ public interface CommentTestValues {
         .content(TEST_AUCTION_CONTENT)
         .price(TEST_AUCTION_PRICE)
         .buyerId(TEST_BUYER_ID)
-        .statusEnum(StatusEnum.ON_SALE)
+        .status(StatusEnum.ON_SALE)
         .finishedAt(TEST_LOCAL_DATETIME_TOMORROW)
         .user(TEST_SELLER_USER)
         .file(TEST_FILE1)
