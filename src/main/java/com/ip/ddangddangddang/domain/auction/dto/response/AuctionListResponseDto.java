@@ -8,10 +8,12 @@ import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import com.ip.ddangddangddang.domain.auction.entity.StatusEnum;
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
+@Builder
 @NoArgsConstructor
 public class AuctionListResponseDto implements Serializable {
 

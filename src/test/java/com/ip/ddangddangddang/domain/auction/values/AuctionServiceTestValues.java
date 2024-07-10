@@ -1,6 +1,7 @@
 package com.ip.ddangddangddang.domain.auction.values;
 
 import com.ip.ddangddangddang.domain.auction.dto.request.AuctionRequestDto;
+import com.ip.ddangddangddang.domain.auction.dto.response.AuctionListResponseDto;
 import com.ip.ddangddangddang.domain.auction.entity.Auction;
 import com.ip.ddangddangddang.domain.auction.entity.StatusEnum;
 import com.ip.ddangddangddang.domain.auction.event.AuctionKeyExpiredEvent;
@@ -114,10 +115,28 @@ public interface AuctionServiceTestValues {
         .content(TEST_AUCTION_CONTENT)
         .price(TEST_AUCTION_PRICE)
         .buyerId(TEST_ANOTHER_USER1_ID)
-        .statusEnum(StatusEnum.ON_SALE)
+        .status(StatusEnum.ON_SALE)
         .finishedAt(TEST_LOCAL_DATETIME_TOMORROW)
         .user(TEST_USER1)
         .file(TEST_FILE1)
+        .build();
+
+    AuctionListResponseDto TEST_AUCTION1_LIST = AuctionListResponseDto.builder()
+        .auctionId(TEST_TOWN1_AUCTION1_ID)
+        .title(TEST_AUCTION_TITLE)
+        .price(TEST_AUCTION_PRICE)
+        .status(StatusEnum.ON_SALE)
+        .finishedAt(TEST_LOCAL_DATETIME_TOMORROW)
+        .filePath(TEST_FILE1.getFilePath())
+        .build();
+
+    AuctionListResponseDto TEST_AUCTION2_LIST = AuctionListResponseDto.builder()
+        .auctionId(TEST_TOWN1_AUCTION1_ID)
+        .title(TEST_AUCTION_TITLE)
+        .price(TEST_AUCTION_PRICE)
+        .status(StatusEnum.ON_SALE)
+        .finishedAt(TEST_LOCAL_DATETIME_TOMORROW)
+        .filePath(TEST_FILE1.getFilePath())
         .build();
 
     Auction TEST_AUCTION2 = Auction.builder()
@@ -127,7 +146,7 @@ public interface AuctionServiceTestValues {
         .content(TEST_AUCTION_CONTENT)
         .price(TEST_AUCTION_PRICE)
         .buyerId(TEST_ANOTHER_USER1_ID)
-        .statusEnum(StatusEnum.ON_SALE)
+        .status(StatusEnum.ON_SALE)
         .finishedAt(TEST_LOCAL_DATETIME_TOMORROW)
         .user(TEST_USER1)
         .file(TEST_FILE1)
@@ -139,7 +158,7 @@ public interface AuctionServiceTestValues {
         .content(TEST_AUCTION_CONTENT)
         .price(TEST_AUCTION_PRICE)
         .buyerId(null)
-        .statusEnum(StatusEnum.ON_SALE)
+        .status(StatusEnum.ON_SALE)
         .finishedAt(TEST_LOCAL_DATETIME_TOMORROW)
         .user(TEST_USER1)
         .file(TEST_FILE1)
@@ -152,7 +171,7 @@ public interface AuctionServiceTestValues {
         .content(TEST_AUCTION_CONTENT)
         .price(TEST_AUCTION_PRICE)
         .buyerId(TEST_USER1_ID)
-        .statusEnum(StatusEnum.HOLD)
+        .status(StatusEnum.HOLD)
         .finishedAt(TEST_LOCAL_DATETIME_TOMORROW)
         .user(TEST_USER2)
         .file(TEST_FILE1)
@@ -165,7 +184,7 @@ public interface AuctionServiceTestValues {
         .content(TEST_AUCTION_CONTENT)
         .price(TEST_AUCTION_PRICE)
         .buyerId(TEST_USER1_ID)
-        .statusEnum(StatusEnum.HOLD)
+        .status(StatusEnum.HOLD)
         .finishedAt(TEST_LOCAL_DATETIME_TOMORROW)
         .user(TEST_USER2)
         .file(TEST_FILE1)

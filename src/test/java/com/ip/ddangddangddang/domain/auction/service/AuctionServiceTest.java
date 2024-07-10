@@ -181,8 +181,8 @@ class AuctionServiceTest implements AuctionServiceTestValues {
         void 옥션_전체_조회_성공_테스트() {
             //given
             given(userService.findUserById(anyLong())).willReturn(TEST_USER1);
-            given(auctionRepository.findAllByFilters(any(), any(), any())).willReturn(
-                List.of(TEST_AUCTION1, TEST_AUCTION2));
+            given(auctionRepository.findAllByFilters(any(), any(), any()))
+                .willReturn(List.of(TEST_AUCTION1_LIST, TEST_AUCTION2_LIST));
             //when
             List<AuctionListResponseDto> auctionListResponseDtoList = auctionService.getAuctions(
                 TEST_USER1_ID,
